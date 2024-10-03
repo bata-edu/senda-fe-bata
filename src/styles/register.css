@@ -1,0 +1,154 @@
+/* Página de registro */
+.register-page {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #ffffff;
+    position: relative;
+    padding: 30px;
+    height: 100vh;
+  }
+  
+  .register-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 3rem;
+    background-color: #fff;
+    border-radius: 15px;
+    width: 800px;
+    text-align: center;
+  }
+
+  .register-form{
+    width: 100%;
+  }
+  
+  /* Estilo para el logo/título */
+  .create-profile {
+    font-size: 3rem;
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+    color: #343a40;
+  }
+  
+  /* Estilo general para las entradas del formulario */
+  .form-group {
+    margin-bottom: 1rem;
+    width: 100%;
+  }
+  
+  .input-field {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1rem !important;
+    border: 1px solid #ced4da;
+    border-radius: 30px;
+    color: #495057;
+    background-color: #fff;
+  }
+  
+  /* Nota pequeña debajo del campo de edad */
+  .form-note {
+    font-size: 1rem;
+    color: #6c757d;
+    text-align: center;
+    margin-top: 0.5rem;
+  }
+  
+  /* Botón de crear cuenta */
+  .register-btn {
+    padding: 1rem;
+    width: 100%;
+    border: none;
+    border-radius: 30px;
+    background-color: #e5e5ff;
+    color: white;
+    background-color: #6f42c1;
+    font-size: 1.5rem;
+    cursor: pointer;
+    margin-top: 1rem;
+  }
+  
+  .register-btn:disabled {
+    background-color: #b3b7ff;
+    cursor: not-allowed;
+  }
+  
+  .register-btn:hover {
+    background-color: #563d7c;
+  }
+  
+  /* Separador antes del botón de Facebook */
+  .separator {
+    display: flex;
+    align-items: center;
+    margin: 20px 0;
+    width: 100%;
+  }
+  
+  .separator .line {
+    flex: 1;
+    border: none;
+    height: 4px;
+    background-color: #ced4da;
+  }
+  
+  .separator span {
+    margin: 0 10px;
+    font-size: 1rem;
+    color: #4b4f53;
+  }
+
+  .social-login{
+    width: 100%;
+  }
+  
+  /* Estilo para el botón de Facebook */
+  .facebook-btn {
+    width: 100%;
+    padding: 1rem;
+    margin-top: 1.5rem;
+    background-color: #1877f2;
+    color: white;
+    border: none;
+    border-radius: 30px;
+    font-size: 1.2rem;
+    cursor: pointer;
+  }
+  
+  .facebook-btn:hover {
+    background-color: #145dbf;
+  }
+  
+  /* Texto de los términos y condiciones */
+  .terms {
+    font-size: 1rem;
+    color: #6c757d;
+    margin-top: 1.5rem;
+    text-align: center;
+  }
+  
+  .error {
+    color: red;
+    margin-top: 1rem;
+  }
+  
+  /* Enlace de iniciar sesión */
+  .login-link {
+    margin-top: 1rem;
+    font-size: 1.5rem;
+    color: #6c757d;
+  }
+  
+  .login-link a {
+    color: #ff6600;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  
+  .login-link a:hover {
+    text-decoration: underline;
+  }
+  

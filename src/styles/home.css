@@ -1,0 +1,162 @@
+/* General */
+.home-container {
+    display: flex;
+    height: 100vh;
+    overflow: hidden; /* Para ocultar cualquier scroll externo */
+  }
+  
+  /* Sidebar - Izquierda */
+  .sidebar {
+    width: 20%;
+    padding: 30px 20px;
+    background-color: #f8f9fa;
+    position: sticky;
+    top: 0; /* Fijo en su posición */
+    height: 100vh;
+  }
+  
+  .logo {
+    font-size: 4rem;
+    color: #0056b3;
+    font-weight: 900; /* Más negrita */
+    margin-bottom: 40px;
+  }
+  
+  .nav-list {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .nav-list li {
+    margin: 25px 0;
+  }
+  
+  .nav-list a {
+    text-decoration: none;
+    font-size: 1.5rem;
+    color: #333;
+    font-weight: 700; /* Más negrita */
+  }
+  
+  .league {
+    margin-top: 60px;
+  }
+  
+  .league h2 {
+    font-size: 1.8rem;
+    font-weight: 800; /* Más negrita */
+    margin-bottom: 20px;
+  }
+  
+  .ranking {
+    list-style: none;
+    padding: 0;
+    font-size: 1.2rem;
+  }
+  
+  .ranking li {
+    margin: 12px 0;
+    font-size: 1.1rem;
+    font-weight: 600; /* Puntuación más negrita */
+  }
+  
+  /* MainContent - Centro */
+  .main-content {
+    width: 60%;
+    height: 100vh; /* Ocupa toda la altura */
+    padding: 50px;
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* Para que el contenido esté en la parte superior */
+    align-items: center;
+    overflow: hidden; /* Evita que todo el contenedor tenga scroll */
+  }
+
+  .main-content h2{
+    font-size: 2rem;
+  }
+  
+  .section-header {
+    background-color: #f0f4ff;
+    padding: 20px;
+    border-radius: 12px;
+    width: 100%;
+    text-align: center;
+    margin-bottom: 30px;
+    font-weight: 900;
+    position: sticky; /* Para que siempre sea visible */
+    top: 0; /* Mantiene el contenedor fijo en la parte superior */
+  }
+  
+
+  .progress-path {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; 
+    width: 100%;
+    overflow-y: auto; 
+  }
+  
+  .stars-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 400px;
+    overflow-y: scroll; 
+    scrollbar-width: none;
+  }
+    
+  .star {
+    font-size: 4rem; 
+    margin: 30px 0;
+  }
+  
+  .robot {
+    display: flex;
+    align-items: flex-end;
+    margin-right: -300px;
+    width: 600px;
+  }
+  
+  
+  /* SidebarRight - Derecha */
+  .sidebar-right {
+    width: 20%;
+    padding: 30px;
+    background-color: #f8f9fa;
+    position: sticky;
+    top: 0; /* Fijo en su posición */
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .icons {
+    display: flex;
+    justify-content: space-between;
+    width: 80%;
+    margin-bottom: 40px;
+  }
+  
+  .icons span {
+    font-size: 1.5rem;
+  }
+  
+  .web-preview {
+    text-align: center;
+  }
+  
+  .web-preview h3 {
+    font-size: 2rem;
+    font-weight: 700; /* Más negrita */
+    margin-bottom: 20px;
+  }
+  
+  .preview-images img {
+    width: 90%;
+    margin-bottom: 15px;
+  }
+  
