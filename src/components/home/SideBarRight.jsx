@@ -1,13 +1,16 @@
 import React from 'react';
-import laptopImage from '../../assets/laptop.png'
+import { useSelector } from 'react-redux';
+import laptopImage from '../../assets/laptop.png';
 
 const SidebarRight = () => {
+  const { user } = useSelector((state) => state.user || {});
+
   return (
     <div className="sidebar-right">
       <div className="icons">
-        <span className="bell-icon">🔔</span>
-        <span className="flame-icon">🔥 4</span>
-        <span className="heart-icon">❤️ 2</span>
+        <span className="diamond-icon">💎 {user.points}</span>
+        <span className="flame-icon">🔥 {user.streak}</span>
+        <span className="heart-icon">❤️ {user.life}</span>
       </div>
       <div className="web-preview">
         <h3>Mi página web</h3>

@@ -2,7 +2,8 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LoginPage from '../pages/LoginPage';
 import RegisterPage from '../pages/RegisterPage';
 import Home from '../pages/HomePage';
-import AuthGuard from '../utils/guards/authGuard'
+import LoginGuard from '../utils/guards/loginGuard'
+import AuthGuard from '../utils/guards/authGuard';
 
 const AppRoutes = () => {
   return (
@@ -11,13 +12,27 @@ const AppRoutes = () => {
       <Route 
           path="/login" 
           element={
-            <AuthGuard>
+            <LoginGuard>
               <LoginPage/>
-            </AuthGuard>
+            </LoginGuard>
           }
         />
-        <Route path="/home" element={<Home />} />
-        <Route path="/register" element={<RegisterPage />} />
+        <Route 
+            path="/home"
+            element={
+              <AuthGuard>
+                <Home />
+              </AuthGuard>
+            } 
+          />
+        <Route 
+          path="/register"
+          element={
+            <LoginGuard>
+              <RegisterPage/>
+            </LoginGuard>
+          }
+          />
       </Routes>
     </Router>
   );

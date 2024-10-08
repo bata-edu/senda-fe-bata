@@ -14,6 +14,11 @@
     top: 0; /* Fijo en su posición */
     height: 100vh;
   }
+
+  .sidebar-header{
+    display: flex;
+    justify-content: space-between;
+  }
   
   .logo {
     font-size: 4rem;
@@ -63,14 +68,14 @@
   /* MainContent - Centro */
   .main-content {
     width: 60%;
-    height: 100vh; /* Ocupa toda la altura */
+    height: 100vh; 
     padding: 50px;
     background-color: #ffffff;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start; /* Para que el contenido esté en la parte superior */
+    justify-content: flex-start;
     align-items: center;
-    overflow: hidden; /* Evita que todo el contenedor tenga scroll */
+    overflow: hidden;
   }
 
   .main-content h2{
@@ -78,47 +83,93 @@
   }
   
   .section-header {
-    background-color: #f0f4ff;
+    background-color: #001e76;
     padding: 20px;
     border-radius: 12px;
     width: 100%;
     text-align: center;
     margin-bottom: 30px;
     font-weight: 900;
-    position: sticky; /* Para que siempre sea visible */
-    top: 0; /* Mantiene el contenedor fijo en la parte superior */
+    position: sticky; 
+    top: 0;
+  }
+
+  .section-header h2 {
+    color: #fff !important;
+  }
+
+  .section-content{
+    display: flex;
+    justify-content: space-around;
+    width: 75%;
   }
   
-
   .progress-path {
     display: flex;
     justify-content: center;
-    align-items: flex-start; 
+    align-items: flex-start;
     width: 100%;
-    overflow-y: auto; 
+    overflow-y: auto;
   }
   
-  .stars-container {
+  .section-container {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
     min-height: 400px;
-    overflow-y: scroll; 
+    overflow-y: scroll;
     scrollbar-width: none;
   }
-    
-  .star {
-    font-size: 4rem; 
-    margin: 30px 0;
+  
+  .level-stars {
+    margin-bottom: 30px;
+    min-width: 800px;
   }
   
+  
+  .snake-path {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+  
+  .section-icon {
+    width: 80px;
+    height: auto;
+    margin: 20px;
+    transition: transform 0.2s;
+    position: relative;
+    cursor: pointer;
+  }
+      
   .robot {
     display: flex;
-    align-items: flex-end;
-    margin-right: -300px;
-    width: 600px;
+    align-items: center;
+    margin-right: -280px;
+    width: 350px;
   }
+
+  .section-tooltip {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 8px 12px;
+    background-color: #333;
+    color: #fff;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    z-index: 10;
+    pointer-events: none;
+  }
+  
+  .section-icon:hover {
+    transform: scale(1.1);
+  }
+  
   
   
   /* SidebarRight - Derecha */

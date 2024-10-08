@@ -1,0 +1,72 @@
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { ALL_LEVELS_ENDPOINT, LEVEL_ENDPOINT, LEVEL_INFO_ENDPOINT } from "../../utils/constants";
+import apiClient from "../../utils/interceptors/authInterceptor";
+
+// Thunk para obtener la información de un nivel
+export const fetchLevelInfo = createAsyncThunk(
+    "level/fetchLevelInfo",
+    async ({ courseId, page, limit }, { rejectWithValue }) => {
+        try {
+        const response = await apiClient.get(`${LEVEL_INFO_ENDPOINT}/${courseId}?page=${page}&limit=${limit}`);
+        return response.data;
+        } catch (error) {
+        return rejectWithValue(error.response.data);
+        }
+    }
+    );
+
+// Thunk para obtener todos los niveles de un módulo
+export const fetchAllLevels = createAsyncThunk(
+    "level/fetchAllLevels",
+    async ({courseId}, { rejectWithValue }) => {
+        try {
+        const response = await apiClient.get(`${ALL_LEVELS_ENDPOINT}/${courseId}`);
+        return response.data;
+        } catch (error) {
+        return rejectWithValue(error.response.data);
+        }
+    }
+    );
+
+const levelSlice = createSlice({
+    name: "level",
+    initialState: {
+        levelsInfo: null,
+        levels: null,
+        loading: false,
+        error: null,
+    },
+    reducers: {},
+    extraReducers: (builder) => {
+        builder
+        .addCase(fetchLevelInfo.pending, (state) => {
+            state.loading = true;
+            state.error = null;
+        })
+        .addCase(fetchLevelInfo.fulfilled, (state, action) => {
+            state.loading = false;
+            state.levelsInfo = action.payload;
+        })
+        .addCase(fetchLevelInfo.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload;
+        });
+
+        builder
+        .addCase(fetchAllLevels.pending, (state) => {
+            state.loading = true;
+            state.error = null;
+        })
+        .addCase(fetchAllLevels.fulfilled, (state, action) => {
+            state.loading = false;
+            state.levels = action.payload;
+        })
+        .addCase(fetchAllLevels.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload;
+        });
+    },
+});
+
+export default levelSlice.reducer;
+

@@ -1,11 +1,26 @@
 import React from 'react';
 import logoImage from '../../assets/logo 3.png'
+import logoutIcon from '../../assets/logOut.svg'
+import {logoutUser} from '../../features/auth/authService'
+import { useNavigate } from 'react-router-dom';
 
 const Sidebar = () => {
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await logoutUser()
+    navigate('/login')
+  }
+
   return (
       <div className="sidebar">
-        <div className='logo-sideBar'>
-            <img src={logoImage}/>
+        <div className='sidebar-header'>
+          <div className='logo-sideBar'>
+              <img src={logoImage}/>
+          </div>
+          <div className="logout-section" onClick={handleLogout}>
+            <img src={logoutIcon} alt="Logout" className="logout-icon" />
+          </div>
         </div>
       <ul className="nav-list">
         <li><a href="#">APRENDER</a></li>

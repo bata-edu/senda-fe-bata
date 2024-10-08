@@ -30,6 +30,11 @@ const getAuthData = () => {
   return { accessToken, refreshToken, accessExpires, refreshExpires, user };
 };
 
+// Obtener información del usuario
+const getUser = () => {
+  return JSON.parse(localStorage.getItem('user'));
+};
+
 // Hacer login y almacenar los datos
 const loginUser = async (email, password) => {
   const response = await axios.post(LOGIN_ENDPOINT, { email, password });
@@ -70,5 +75,6 @@ export {
   refreshAccessToken,
   getAuthData,
   clearAuthData,
-  registerUser
+  registerUser,
+  getUser
 };
