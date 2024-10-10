@@ -1,5 +1,5 @@
 import apiClient from '../../utils/interceptors/authInterceptor';
-import { LOGIN_ENDPOINT,REGISTER_ENDPOINT, LOGOUT_ENDPOINT, REFRESH_TOKEN_ENDPOINT } from '../../utils/constants';
+import { LOGIN_ENDPOINT,REGISTER_ENDPOINT, LOGOUT_ENDPOINT, REFRESH_TOKEN_ENDPOINT, RESET_PASSWORD_ENDPOINT, FORGOT_PASSWORD_ENDPOINT, VERIFY_EMAIL_ENDPOINT } from '../../utils/constants';
 
 // Guardar los tokens y la información del usuario en localStorage
 const setAuthData = ({ tokens, user }) => {
@@ -74,6 +74,24 @@ const refreshAccessToken = async () => {
   return null;
 };
 
+// Olvide mi contraseña
+const forgotPassword = async (email) => {
+  const response = await apiClient.post(FORGOT_PASSWORD_ENDPOINT, { email });
+  return response.data;
+}
+
+// Resetear la contraseña
+const resetPassword = async (password, token) => {
+  const response = await apiClient.post(`${RESET_PASSWORD_ENDPOINT}?token=${token}`, { password });
+  return response.data;
+}
+
+// Verificar el correo electrónico
+const verifyEmail = async (token) => {
+  const response = await apiClient.post(`${VERIFY_EMAIL_ENDPOINT}?token=${token}`);
+  return response.data;
+}
+
 export {
   loginUser,
   logoutUser,
@@ -81,5 +99,8 @@ export {
   getAuthData,
   clearAuthData,
   registerUser,
-  getUser
+  getUser,
+  forgotPassword,
+  resetPassword,
+  verifyEmail,
 };

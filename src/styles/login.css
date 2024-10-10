@@ -92,3 +92,22 @@
 .signup-link a:hover {
   text-decoration: underline;
 }
+
+.forgot-password-link {
+  margin-top: 1.5rem;
+}
+
+.link-button {
+  background: none;
+  border: none;
+  color: #ff6600;
+  font-size: 1.5rem;
+  cursor: pointer;
+  font-weight: bold;
+  }
+
+.link-button:hover {
+  color: #ff4500;
+  text-decoration: underline;
+
+}
