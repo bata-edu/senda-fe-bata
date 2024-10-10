@@ -7,6 +7,8 @@ const SidebarRight = () => {
 
   return (
     <div className="sidebar-right">
+    {user && (
+      <div>
       <div className="icons">
         <span className="diamond-icon">💎 {user.points}</span>
         <span className="flame-icon">🔥 {user.streak}</span>
@@ -19,8 +21,11 @@ const SidebarRight = () => {
           <img src={laptopImage} alt="Laptop 2" />
         </div>
       </div>
+      </div>
+    )}
     </div>
   );
+
 };
 
 export default SidebarRight;

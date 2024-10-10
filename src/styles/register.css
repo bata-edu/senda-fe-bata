@@ -129,12 +129,7 @@
     margin-top: 1.5rem;
     text-align: center;
   }
-  
-  .error {
-    color: red;
-    margin-top: 1rem;
-  }
-  
+    
   /* Enlace de iniciar sesión */
   .login-link {
     margin-top: 1rem;

@@ -1,0 +1,47 @@
+.levels-page {
+    padding: 40px;
+    background-color: #ffffff;
+  }
+  
+  .levels-page h2 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    font-weight: bold;
+  }
+
+  .levels-container{
+    display: flex;
+    justify-content: center;
+  }
+  
+  .levels-grid {
+    display: grid;
+    width: 80%;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 60px;
+  }
+  
+.level {
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.level.active {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.level.current {
+  background-color: #001e76;
+  color: white;
+}
+
+.level.disabled {
+  background-color: #ddd;
+  color: #999;
+  cursor: not-allowed;
+}
+  

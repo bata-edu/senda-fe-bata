@@ -1,4 +1,4 @@
-import axios from 'axios';
+import apiClient from '../../utils/interceptors/authInterceptor';
 import { LOGIN_ENDPOINT,REGISTER_ENDPOINT, LOGOUT_ENDPOINT, REFRESH_TOKEN_ENDPOINT } from '../../utils/constants';
 
 // Guardar los tokens y la información del usuario en localStorage
@@ -37,15 +37,15 @@ const getUser = () => {
 
 // Hacer login y almacenar los datos
 const loginUser = async (email, password) => {
-  const response = await axios.post(LOGIN_ENDPOINT, { email, password });
+  const response = await apiClient.post(LOGIN_ENDPOINT, { email, password });
   setAuthData(response.data);
   return response.data;
 };
 
 // Hacer register y almacenar los datos
-const registerUser = async (name, lastName, email, password) => {
-  const response = await axios.post(REGISTER_ENDPOINT, { name, lastName, email, password });
-  setAuthData(response.data); // Guardamos los tokens y el usuario en localStorage
+const registerUser = async ({name, lastName, email, password, confirmPassword}) => {
+  const response = await apiClient.post(REGISTER_ENDPOINT, { name, lastName, email, password, confirmPassword });
+  setAuthData(response.data);
   return response.data;
 };
 
@@ -53,8 +53,13 @@ const registerUser = async (name, lastName, email, password) => {
 const logoutUser = async () => {
   const { refreshToken } = getAuthData();
   if (refreshToken) {
-    await axios.post(LOGOUT_ENDPOINT, { refreshToken });
-    clearAuthData();
+    try{
+      await apiClient.post(LOGOUT_ENDPOINT, { refreshToken });
+      clearAuthData();
+    }
+    catch(err){
+      clearAuthData();
+    }
   }
 };
 
@@ -62,7 +67,7 @@ const logoutUser = async () => {
 const refreshAccessToken = async () => {
   const { refreshToken } = getAuthData();
   if (refreshToken) {
-    const response = await axios.post(REFRESH_TOKEN_ENDPOINT, { refreshToken });
+    const response = await apiClient.post(REFRESH_TOKEN_ENDPOINT, { refreshToken });
     setAuthData(response.data);
     return response.data.tokens.access.token;
   }

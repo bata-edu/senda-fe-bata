@@ -1,10 +1,12 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 import { getAuthData, refreshAccessToken, logoutUser } from '../../features/auth/authService';
+import LoadingPage from '../../pages/LoadingPage';
 
 const AuthGuard = ({ children }) => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -12,6 +14,7 @@ const AuthGuard = ({ children }) => {
       const now = dayjs();
 
       if (accessToken && dayjs(accessExpires).isAfter(now)) {
+        setLoading(false);
         return;
       } 
 
@@ -19,13 +22,16 @@ const AuthGuard = ({ children }) => {
         if (refreshToken && dayjs(refreshExpires).isAfter(now)) {
           try {
             await refreshAccessToken();
+            setLoading(false);
             return; 
           } catch (error) {
+            setLoading(false);
             logoutUser();
             navigate('/login');
             return;
           }
         } else {
+          setLoading(false);
           logoutUser();
           navigate('/login');
         }
@@ -35,6 +41,10 @@ const AuthGuard = ({ children }) => {
     checkAuth(); 
 
   }, [navigate]);
+
+  if (loading) {
+    return <LoadingPage />;
+  }
 
   return children;
 };

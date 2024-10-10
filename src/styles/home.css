@@ -2,7 +2,7 @@
 .home-container {
     display: flex;
     height: 100vh;
-    overflow: hidden; /* Para ocultar cualquier scroll externo */
+    overflow: hidden; 
   }
   
   /* Sidebar - Izquierda */
@@ -11,7 +11,7 @@
     padding: 30px 20px;
     background-color: #f8f9fa;
     position: sticky;
-    top: 0; /* Fijo en su posición */
+    top: 0;
     height: 100vh;
   }
 
@@ -23,7 +23,7 @@
   .logo {
     font-size: 4rem;
     color: #0056b3;
-    font-weight: 900; /* Más negrita */
+    font-weight: 900; 
     margin-bottom: 40px;
   }
   
@@ -34,14 +34,13 @@
   
   .nav-list li {
     margin: 25px 0;
-  }
-  
-  .nav-list a {
     text-decoration: none;
     font-size: 1.5rem;
     color: #333;
-    font-weight: 700; /* Más negrita */
+    font-weight: 700; 
+    cursor: pointer;
   }
+  
   
   .league {
     margin-top: 60px;
@@ -49,7 +48,7 @@
   
   .league h2 {
     font-size: 1.8rem;
-    font-weight: 800; /* Más negrita */
+    font-weight: 800;
     margin-bottom: 20px;
   }
   
@@ -62,115 +61,8 @@
   .ranking li {
     margin: 12px 0;
     font-size: 1.1rem;
-    font-weight: 600; /* Puntuación más negrita */
+    font-weight: 600; 
   }
-  
-  /* MainContent - Centro */
-  .main-content {
-    width: 60%;
-    height: 100vh; 
-    padding: 50px;
-    background-color: #ffffff;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    overflow: hidden;
-  }
-
-  .main-content h2{
-    font-size: 2rem;
-  }
-  
-  .section-header {
-    background-color: #001e76;
-    padding: 20px;
-    border-radius: 12px;
-    width: 100%;
-    text-align: center;
-    margin-bottom: 30px;
-    font-weight: 900;
-    position: sticky; 
-    top: 0;
-  }
-
-  .section-header h2 {
-    color: #fff !important;
-  }
-
-  .section-content{
-    display: flex;
-    justify-content: space-around;
-    width: 75%;
-  }
-  
-  .progress-path {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    width: 100%;
-    overflow-y: auto;
-  }
-  
-  .section-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    min-height: 400px;
-    overflow-y: scroll;
-    scrollbar-width: none;
-  }
-  
-  .level-stars {
-    margin-bottom: 30px;
-    min-width: 800px;
-  }
-  
-  
-  .snake-path {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-  }
-  
-  .section-icon {
-    width: 80px;
-    height: auto;
-    margin: 20px;
-    transition: transform 0.2s;
-    position: relative;
-    cursor: pointer;
-  }
-      
-  .robot {
-    display: flex;
-    align-items: center;
-    margin-right: -280px;
-    width: 350px;
-  }
-
-  .section-tooltip {
-    position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 8px 12px;
-    background-color: #333;
-    color: #fff;
-    border-radius: 6px;
-    font-size: 0.9rem;
-    white-space: nowrap;
-    z-index: 10;
-    pointer-events: none;
-  }
-  
-  .section-icon:hover {
-    transform: scale(1.1);
-  }
-  
-  
   
   /* SidebarRight - Derecha */
   .sidebar-right {
@@ -178,7 +70,7 @@
     padding: 30px;
     background-color: #f8f9fa;
     position: sticky;
-    top: 0; /* Fijo en su posición */
+    top: 0;
     height: 100vh;
     display: flex;
     flex-direction: column;
@@ -202,7 +94,7 @@
   
   .web-preview h3 {
     font-size: 2rem;
-    font-weight: 700; /* Más negrita */
+    font-weight: 700;
     margin-bottom: 20px;
   }
   

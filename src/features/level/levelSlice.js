@@ -28,13 +28,16 @@ export const fetchAllLevels = createAsyncThunk(
     }
     );
 
+
 const levelSlice = createSlice({
     name: "level",
     initialState: {
+        module: null,
         levelsInfo: null,
         levels: null,
         loading: false,
         error: null,
+        page: 0,
     },
     reducers: {},
     extraReducers: (builder) => {
@@ -45,7 +48,11 @@ const levelSlice = createSlice({
         })
         .addCase(fetchLevelInfo.fulfilled, (state, action) => {
             state.loading = false;
-            state.levelsInfo = action.payload;
+            state.page = state.page + 1;
+            state.levelsInfo = state.levelsInfo 
+                ? [...state.levelsInfo, ...action.payload.levels] 
+                : action.payload.levels;
+            state.module = action.payload.module;
         })
         .addCase(fetchLevelInfo.rejected, (state, action) => {
             state.loading = false;

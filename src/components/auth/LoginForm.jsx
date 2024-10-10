@@ -59,7 +59,7 @@ const LoginForm = () => {
           >
             {isLoading ? 'Cargando...' : 'Iniciar sesión'}
           </button>
-          {error && <p className="error">{error}</p>}
+          {error && <p className="error-auth">{error}</p>}
           <div className="signup-link">
             ¿No tienes cuenta? <a href="/register">Crear cuenta</a>
           </div>

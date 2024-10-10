@@ -3,41 +3,64 @@ import { useDispatch, useSelector } from 'react-redux';
 import { registerUser } from '../../features/auth/authService';
 import '../../styles/register.css'
 import logoImage from '../../assets/logo 3.png'
+import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
+
+const MySwal = withReactContent(Swal);
 
 const RegisterForm = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [name, setName] = useState('');
   const [lastName, setLastName] = useState('');
-  const dispatch = useDispatch();
+  const [error, setError] = useState(null);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (password !== confirmPassword) {
-      alert('Las contraseñas no coinciden');
-      return;
+    try{
+      await registerUser({ email, password, name, lastName, confirmPassword });
+      MySwal.fire({
+        icon: 'success',
+        title: 'Registro exitoso',
+        text: 'Ve tu correo electrónico para terminar el proceso',
+        confirmButtonText: 'Ok',
+      }).then(() => {
+        navigate('/login');
+      });
+    } catch (err) {
+      setError(err.response?.data?.message || 'Error al iniciar sesión');
     }
-
-    dispatch(registerUser({ email, password, name, lastName }));
   };
 
   return (
     <div className="register-page">
-      <div className="register-container">
         <div className='logo'>
           <img src={logoImage} />
         </div>
+      <div className="register-container">
         <h1 className="create-profile">Crea tu perfil</h1>
         <form className="register-form" onSubmit={handleSubmit}>
           <div className="form-group">
             <input
               type="text"
               className="form-control input-field"
-              placeholder="Nombre (opcional)"
+              placeholder="Nombre"
               value={name}
               onChange={(e) => setName(e.target.value)}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <input
+              type="text"
+              className="form-control input-field"
+              placeholder="Apellido"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
               required
             />
           </div>
@@ -74,16 +97,17 @@ const RegisterForm = () => {
           <button
             type="submit"
             className="register-btn"
-            disabled={!email || !password || !confirmPassword}
+            disabled={!email || !password || !confirmPassword || !name || !lastName}
           >
             {'Crear cuenta'}
           </button>
         </form>
 
-
         <div className="social-login">
           <button className="facebook-btn">Facebook</button>
         </div>
+
+        {error && <p className="error-auth">{error}</p>}
 
         <div className="separator">
           <hr className="line" />

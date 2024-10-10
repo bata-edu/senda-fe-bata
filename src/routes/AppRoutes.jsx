@@ -4,6 +4,9 @@ import RegisterPage from '../pages/RegisterPage';
 import Home from '../pages/HomePage';
 import LoginGuard from '../utils/guards/loginGuard'
 import AuthGuard from '../utils/guards/authGuard';
+import MainContent from '../components/home/MainContent';
+import Levels from '../components/home/Levels';
+import EditorPage from '../pages/EditorPage';
 
 const AppRoutes = () => {
   return (
@@ -18,14 +21,6 @@ const AppRoutes = () => {
           }
         />
         <Route 
-            path="/home"
-            element={
-              <AuthGuard>
-                <Home />
-              </AuthGuard>
-            } 
-          />
-        <Route 
           path="/register"
           element={
             <LoginGuard>
@@ -33,6 +28,18 @@ const AppRoutes = () => {
             </LoginGuard>
           }
           />
+        <Route 
+          path="/home" 
+          element={
+            <AuthGuard>
+              <Home />
+            </AuthGuard>
+          }
+        >
+          <Route index element={<MainContent />} />
+          <Route path="levels" element={<Levels />} />
+          <Route path='editor' element={<EditorPage />}/>
+        </Route>
       </Routes>
     </Router>
   );

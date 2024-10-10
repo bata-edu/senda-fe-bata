@@ -12,6 +12,10 @@ const Sidebar = () => {
     navigate('/login')
   }
 
+  const handleNavigation = (path) => {
+    navigate(path);
+  };
+
   return (
       <div className="sidebar">
         <div className='sidebar-header'>
@@ -23,10 +27,10 @@ const Sidebar = () => {
           </div>
         </div>
       <ul className="nav-list">
-        <li><a href="#">APRENDER</a></li>
-        <li><a href="#">NIVELES</a></li>
-        <li><a href="#">PERFIL</a></li>
-        <li><a href="#">LIBRE</a></li>
+      <li onClick={() => handleNavigation('/home')}>APRENDER</li>
+        <li onClick={() => handleNavigation('/home/levels')}>NIVELES</li>
+        <li onClick={() => handleNavigation('/home/profile')}>PERFIL</li>
+        <li onClick={() => handleNavigation('/home/editor')}>LIBRE</li>
       </ul>
 
       <div className="league">

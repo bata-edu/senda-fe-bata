@@ -5,7 +5,7 @@ import apiClient from '../../utils/interceptors/authInterceptor';
 // Thunk para obtener el progreso del curso del usuario
 export const fetchUserProgress = createAsyncThunk(
     'userProgress/fetchUserProgress',
-    async ({ courseId }, { rejectWithValue }) => {
+    async (courseId, { rejectWithValue }) => {
       try {
         const response = await apiClient.get(`${USER_PROGRESS_ENDPOINT}?courseId=${courseId}`);
         return response.data; 
@@ -44,7 +44,7 @@ const userProgressSlice = createSlice({
       })
       .addCase(fetchUserProgress.fulfilled, (state, action) => {
         state.loading = false;
-        state.progress = action.payload; 
+        state.progress = action.payload[0]; 
       })
       .addCase(fetchUserProgress.rejected, (state, action) => {
         state.loading = false;
