@@ -7,6 +7,8 @@ import AuthGuard from '../utils/guards/authGuard';
 import MainContent from '../components/home/MainContent';
 import Levels from '../components/home/Levels';
 import EditorPage from '../pages/EditorPage';
+import ResetPasswordPage from '../pages/ResetPasswordPage';
+
 
 const AppRoutes = () => {
   return (
@@ -28,6 +30,10 @@ const AppRoutes = () => {
             </LoginGuard>
           }
           />
+        <Route
+          path='/reset-password'
+          element={<ResetPasswordPage/>}
+        />
         <Route 
           path="/home" 
           element={
