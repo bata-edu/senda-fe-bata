@@ -10,8 +10,7 @@ const Levels = () => {
 
   const { levels = [], module } = useSelector((state) => state.level || {});
   const { progress } = useSelector((state) => state.userProgress || {});
-
-  const currentLevelOrder = levels.find((level) => level.id === progress.currentLevel)?.order || 0;
+  const currentLevelOrder = levels.find((level) => level.id === progress[0].currentLevel)?.order || 0;
 
   const navigateToLevel = (levelId) => {
     navigate(`/home#${levelId}`);

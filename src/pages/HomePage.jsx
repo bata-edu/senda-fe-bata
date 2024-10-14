@@ -12,26 +12,28 @@ import LoadingPage from './LoadingPage';
 
 const Home = () => {
   const dispatch = useDispatch();
-  const courseId = "66fc2fb14c227e973f81b4d1";
   const [loading, setLoading] = useState(true);
   const { page } = useSelector((state) => state.level || {});
 
   useEffect(() => {
     const fetchData = async () => {
       try{
-        await Promise.all([
-          dispatch(fetchAllLevels({ courseId })),
-          dispatch(fetchLevelInfo({ courseId, page, limit: 3 })),
-          dispatch(fetchUser()),
-          dispatch(fetchUserProgress(courseId))
-        ]);
+        const response = await dispatch(fetchUserProgress()).unwrap();
+        if(response.length > 0){
+          await Promise.all([
+            dispatch(fetchLevelInfo({ courseId: response[0].course, page, limit: 3 })),
+            dispatch(fetchAllLevels({ courseId: response[0].course }))
+          ]);
+        }
+        dispatch(fetchUser())
         setLoading(false);
       } catch (error) {
+        console.log('Error loading data:', error);
         setLoading(true)
       }
     };
     fetchData();
-  }, [dispatch, courseId]);
+  }, [dispatch]);
 
   if (loading) {
     return <LoadingPage/>;

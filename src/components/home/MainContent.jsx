@@ -1,23 +1,36 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchLevelInfo } from '../../features/level/levelSlice';
+import { fetchLevelInfo, fetchAllLevels } from '../../features/level/levelSlice';
+import { fetchUserProgress, startCourse } from '../../features/userProgress/userProgressSlice';
 import robot from '../../assets/robot.png';
 import '../../styles/mainContent.css';
+import LoadingPage from '../../pages/LoadingPage';
 
 const MainContent = () => {
   const dispatch = useDispatch();
-  const { levelsInfo = [], page, loading } = useSelector((state) => state.level || {});
-  const { progress } = useSelector((state) => state.userProgress || {});
+  const { levelsInfo = [], page, loading : loadingLevel } = useSelector((state) => state.level || {});
+  const { progress, courseId, loading : loadingProgress } = useSelector((state) => state.userProgress || {});
   const [hoveredSection, setHoveredSection] = useState(null);
   const [hasMoreLevels, setHasMoreLevels] = useState(true);
   const [showNoMoreLevels, setShowNoMoreLevels] = useState(false);
   const sentinelRef = useRef(null);
-  const courseId = "66fc2fb14c227e973f81b4d1";
   const levelRefs = useRef({});
+  const [loading, setLoading] = useState(false);
+  const [isLoadingMoreLevels, setIsLoadingMoreLevels] = useState(false); 
 
-  const currentLevel = levelsInfo.find((level) => level._id === progress.currentLevel);
-  const currentLevelIndex = levelsInfo.findIndex((level) => level._id === progress.currentLevel);
-  const currentSectionIndex = currentLevel?.sections.findIndex((section) => section._id === progress.currentSection) || 0;
+  let currentLevel, currentLevelIndex, currentSectionIndex;
+
+  const setLevelInfo = async () => {
+    if (courseId) {
+      currentLevel = levelsInfo.find((level) => level._id === progress[0].currentLevel);
+      currentLevelIndex = levelsInfo.findIndex((level) => level._id === progress[0].currentLevel);
+      currentSectionIndex = currentLevel?.sections.findIndex((section) => section._id === progress[0].currentSection) || 0;
+    }
+  };
+
+  useEffect(() => {
+    setLevelInfo();
+  }, []);
 
   const getImageSrc = (index) => {
     const sectionNumber = (index % 6) + 1;
@@ -29,24 +42,22 @@ const MainContent = () => {
   };
 
   useEffect(() => {
-    
     const observer = new IntersectionObserver(
       async ([entry]) => {
-        if (entry.isIntersecting && hasMoreLevels && !loading) {
+        if (entry.isIntersecting && hasMoreLevels && !loadingLevel) {
           try {
-
             if (window.location.hash) {
               window.history.replaceState(null, null, window.location.pathname);
             }
 
             const response = await dispatch(fetchLevelInfo({ courseId, page, limit: 3 })).unwrap();
-            if (response.levels.length > 0) {
-            } else {
+            if (response.levels.length === 0) {
               setHasMoreLevels(false);
               setShowNoMoreLevels(true); 
             }
           } catch (error) {
             console.error('Error loading more levels:', error);
+          } finally {
           }
         }
       },
@@ -66,36 +77,36 @@ const MainContent = () => {
         observer.unobserve(sentinelRef.current);
       }
     };
-  }, [page, hasMoreLevels, dispatch]);
+  }, [page, hasMoreLevels]);
 
   useEffect(() => {
     const handleHashChange = async () => {
       const levelId = window.location.hash.replace('#', '');
-      if(levelId){
+      if (levelId) {
         let targetLevel = levelsInfo.find((level) => level._id === levelId);
-  
-        while (!targetLevel && hasMoreLevels && !loading) {
+        let levelPage = 0;
+        while (!targetLevel && hasMoreLevels && !loadingLevel) {
           try {
-            const response = await dispatch(fetchLevelInfo({ courseId, page, limit: 3 })).unwrap();
+            const response = await dispatch(fetchLevelInfo({ courseId, page: levelPage, limit: 3 })).unwrap();
             if (response.levels.length === 0) {
               setHasMoreLevels(false);
               break;
             }
             targetLevel = response.levels.find((level) => level._id === levelId);
+            levelPage++;
           } catch (error) {
             console.error('Error fetching levels:', error);
             setHasMoreLevels(false);
             break;
           }
         }
-  
+
         if (targetLevel) {
           const targetElement = levelRefs.current[levelId];
           if (targetElement) {
             targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
           }
         }
-
       }
     };
 
@@ -105,7 +116,8 @@ const MainContent = () => {
     return () => {
       window.removeEventListener('hashchange', handleHashChange);
     };
-  }, [levelsInfo]);
+  }, []);
+
 
   useEffect(() => {
     if (showNoMoreLevels) {
@@ -116,8 +128,30 @@ const MainContent = () => {
     }
   }, [showNoMoreLevels]);
 
+  const handleStartCourse = async () => {
+    try{
+      setLoading(true);
+      const response = await dispatch(startCourse('66fc2fb14c227e973f81b4d1')).unwrap();
+      await Promise.all([
+        dispatch(fetchUserProgress()),
+        dispatch(fetchLevelInfo({ courseId: response.course, page, limit: 3 })),
+        dispatch(fetchAllLevels({ courseId: response.course }))
+      ]);
+      setLevelInfo();
+      setLoading(false);
+    }
+    catch (error) {
+      console.log('Error starting course:', error);
+    }
+  };
+
   return (
     <div className="main-content">
+      {loading && (
+        <div className="loading">
+          <LoadingPage />
+          </div>
+      )}
       {levelsInfo?.length ? (
         <div className="progress-path">
           <div className="level-container">
@@ -166,7 +200,8 @@ const MainContent = () => {
         </div>
       ) : (
         <div className="no-progress">
-          <h2>You are not enrolled in any courses</h2>
+          <h2>No has comenzado ningun curso</h2>
+          <button className='btn-start-course' onClick={handleStartCourse}>Empezar curso</button>
         </div>
       )}
       {showNoMoreLevels && (
