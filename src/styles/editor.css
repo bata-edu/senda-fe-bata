@@ -77,3 +77,28 @@
   height: 100%;
   border: none;
 }
+
+/* Botones de acción */
+.action-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.clear-button, .save-button {
+  background-color: #333;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.clear-button:hover {
+  background-color: #d9534f;
+}
+
+.save-button:hover {
+  background-color: #5cb85c;
+}
+

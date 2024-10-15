@@ -5,6 +5,7 @@ import { html } from '@codemirror/lang-html';
 import { css } from '@codemirror/lang-css';
 
 const Editor = ({ activeTab, htmlCode, setHtmlCode, cssCode, setCssCode }) => {
+
   const handleChange = React.useCallback((value) => {
     if (activeTab === 'html') {
       setHtmlCode(value);
