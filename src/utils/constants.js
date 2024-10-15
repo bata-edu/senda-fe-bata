@@ -1,5 +1,6 @@
 export const API_BASE_URL =
   process.env.REACT_APP_BACKEND_URL ?? "http://localhost:3002";
+export const RESET_STATE = 'RESET_STATE';
 
 export const AUTH_ENDPOINT = `${API_BASE_URL}/v1/auth`;
 export const LOGIN_ENDPOINT = `${AUTH_ENDPOINT}/login`;
