@@ -16,15 +16,15 @@ const MainContent = () => {
   const sentinelRef = useRef(null);
   const levelRefs = useRef({});
   const [loading, setLoading] = useState(false);
-  const [isLoadingMoreLevels, setIsLoadingMoreLevels] = useState(false); 
 
-  let currentLevel, currentLevelIndex, currentSectionIndex;
+  const [userCurrentInfo, setUserCurrentInfo] = useState({currentLevelIndex: 0, currentSectionIndex: 0});
 
   const setLevelInfo = async () => {
     if (courseId) {
-      currentLevel = levelsInfo.find((level) => level._id === progress[0].currentLevel);
-      currentLevelIndex = levelsInfo.findIndex((level) => level._id === progress[0].currentLevel);
-      currentSectionIndex = currentLevel?.sections.findIndex((section) => section._id === progress[0].currentSection) || 0;
+      const currentLevel = levelsInfo.find((level) => level._id === progress[0].currentLevel);
+      const currentLevelIndex = levelsInfo.findIndex((level) => level._id === progress[0].currentLevel);
+      const currentSectionIndex = currentLevel?.sections.findIndex((section) => section._id === progress[0].currentSection) || 0;
+      setUserCurrentInfo({ currentLevelIndex, currentSectionIndex });
     }
   };
 
@@ -144,7 +144,6 @@ const MainContent = () => {
       console.log('Error starting course:', error);
     }
   };
-
   return (
     <div className="main-content">
       {loading && (
@@ -158,7 +157,7 @@ const MainContent = () => {
             {levelsInfo.map((level, levelIndex) => (
               <div key={level._id} 
                 className={`level-info
-                ${levelIndex <= currentLevelIndex ? 'active' : 'disabled'}`}
+                ${levelIndex <= userCurrentInfo.currentLevelIndex ? 'active' : 'disabled'}`}
                 ref={(el) => (levelRefs.current[level._id] = el)}
                 >
                 <div className="level-header">
@@ -169,7 +168,7 @@ const MainContent = () => {
                     {level.sections.map((section, sectionIndex) => (
                       <div 
                         key={section._id} 
-                        className={`section-icon ${levelIndex < currentLevelIndex || (levelIndex === currentLevelIndex && sectionIndex <= currentSectionIndex) ? 'active' : 'disabled'}`}
+                        className={`section-icon ${levelIndex < userCurrentInfo.currentLevelIndex || (levelIndex === userCurrentInfo.currentLevelIndex && sectionIndex <= userCurrentInfo.currentSectionIndex) ? 'active' : 'disabled'}`}
                         style={getMarginStyle(sectionIndex)}
                         onMouseEnter={() => setHoveredSection(section.name)}
                         onMouseLeave={() => setHoveredSection(null)}

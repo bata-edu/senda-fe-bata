@@ -8,6 +8,8 @@ export const REFRESH_TOKEN_ENDPOINT = `${AUTH_ENDPOINT}/refresh-tokens`;
 export const FORGOT_PASSWORD_ENDPOINT = `${AUTH_ENDPOINT}/forgot-password`;
 export const RESET_PASSWORD_ENDPOINT = `${AUTH_ENDPOINT}/reset-password`;
 export const VERIFY_EMAIL_ENDPOINT = `${AUTH_ENDPOINT}/verify-email`;
+export const GOOGLE_LOGIN_ENDPOINT = `${AUTH_ENDPOINT}/google-login`;
+export const GOOGLE_REGISTER_ENDPOINT = `${AUTH_ENDPOINT}/google-register`;
 
 export const USER_PROGRESS_ENDPOINT = `${API_BASE_URL}/v1/userCourseProgress`;
 export const START_COURSE_ENDPOINT = `${USER_PROGRESS_ENDPOINT}/start`;

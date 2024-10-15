@@ -28,7 +28,7 @@ const Levels = () => {
                 ${level.order < currentLevelOrder ? 'active' : ''}
                 ${level.order === currentLevelOrder ? 'current' : ''}
                 ${level.order > currentLevelOrder ? 'disabled' : ''}`}
-              onClick={() => navigateToLevel(level.id)}
+              onClick={() => {if(level.order <= currentLevelOrder) navigateToLevel(level.id)}}
             >
               NIVEL {level.order}
             </div>

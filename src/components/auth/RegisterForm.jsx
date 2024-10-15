@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { registerUser } from '../../features/auth/authService';
+import { registerUser, googleRegister } from '../../features/auth/authService';
 import '../../styles/register.css'
 import logoImage from '../../assets/logo 3.png'
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
+import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
 
 const MySwal = withReactContent(Swal);
 
@@ -36,7 +36,24 @@ const RegisterForm = () => {
     }
   };
 
+  const handleGoogleRegister = async (response) => {
+    try {
+      await googleRegister(response.credential);
+      MySwal.fire({
+        icon: 'success',
+        title: 'Registro con Google exitoso',
+        text: 'Ve tu correo electrónico para terminar el proceso',
+        confirmButtonText: 'Ok',
+      }).then(() => {
+        navigate('/login');
+      });
+    } catch (err) {
+      setError(err.response?.data?.message || 'Error al registrar con Google');
+    }
+  };
+
   return (
+    <GoogleOAuthProvider clientId="356389118966-2akqqdndqdf44ves4l0hdcj3j1mcooh5.apps.googleusercontent.com">
     <div className="register-page">
         <div className='logo'>
           <img src={logoImage} />
@@ -104,7 +121,11 @@ const RegisterForm = () => {
         </form>
 
         <div className="social-login">
-          <button className="facebook-btn">Facebook</button>
+          <GoogleLogin
+            onSuccess={handleGoogleRegister}
+            onError={() => setError('Error al autenticar con Google')}
+            
+          />
         </div>
 
         {error && <p className="error-auth">{error}</p>}
@@ -124,6 +145,7 @@ const RegisterForm = () => {
 
       </div>
     </div>
+    </GoogleOAuthProvider>
   );
 };
 

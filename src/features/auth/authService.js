@@ -1,5 +1,5 @@
 import apiClient from '../../utils/interceptors/authInterceptor';
-import { LOGIN_ENDPOINT,REGISTER_ENDPOINT, LOGOUT_ENDPOINT, REFRESH_TOKEN_ENDPOINT, RESET_PASSWORD_ENDPOINT, FORGOT_PASSWORD_ENDPOINT, VERIFY_EMAIL_ENDPOINT } from '../../utils/constants';
+import { LOGIN_ENDPOINT,REGISTER_ENDPOINT, LOGOUT_ENDPOINT, REFRESH_TOKEN_ENDPOINT, RESET_PASSWORD_ENDPOINT, FORGOT_PASSWORD_ENDPOINT, VERIFY_EMAIL_ENDPOINT, GOOGLE_LOGIN_ENDPOINT, GOOGLE_REGISTER_ENDPOINT } from '../../utils/constants';
 
 // Guardar los tokens y la información del usuario en localStorage
 const setAuthData = ({ tokens, user }) => {
@@ -92,6 +92,20 @@ const verifyEmail = async (token) => {
   return response.data;
 }
 
+// Login con Google
+const googleLogin = async (token) => {
+  const response = await apiClient.post(GOOGLE_LOGIN_ENDPOINT, { token });
+  setAuthData(response.data);
+  return response.data;
+};
+
+// Registro con Google
+const googleRegister = async (token) => {
+  const response = await apiClient.post(GOOGLE_REGISTER_ENDPOINT, { token });
+  setAuthData(response.data);
+  return response.data;
+};
+
 export {
   loginUser,
   logoutUser,
@@ -103,4 +117,6 @@ export {
   forgotPassword,
   resetPassword,
   verifyEmail,
+  googleLogin,
+  googleRegister
 };
