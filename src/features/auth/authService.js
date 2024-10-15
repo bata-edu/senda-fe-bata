@@ -45,7 +45,6 @@ const loginUser = async (email, password) => {
 // Hacer register y almacenar los datos
 const registerUser = async ({name, lastName, email, password, confirmPassword}) => {
   const response = await apiClient.post(REGISTER_ENDPOINT, { name, lastName, email, password, confirmPassword });
-  setAuthData(response.data);
   return response.data;
 };
 
@@ -102,7 +101,6 @@ const googleLogin = async (token) => {
 // Registro con Google
 const googleRegister = async (token) => {
   const response = await apiClient.post(GOOGLE_REGISTER_ENDPOINT, { token });
-  setAuthData(response.data);
   return response.data;
 };
 

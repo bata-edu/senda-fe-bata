@@ -32,7 +32,7 @@ const RegisterForm = () => {
         navigate('/login');
       });
     } catch (err) {
-      setError(err.response?.data?.message || 'Error al iniciar sesión');
+      setError(err.response?.data?.message || 'Error al registrar');
     }
   };
 
