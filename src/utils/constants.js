@@ -19,5 +19,6 @@ export const LEVEL_INFO_ENDPOINT = `${LEVEL_ENDPOINT}/info`;
 export const ALL_LEVELS_ENDPOINT = `${LEVEL_ENDPOINT}/module`;
 
 export const USER_ENDPOINT = `${API_BASE_URL}/v1/user`;
+export const USER_FREE_MODE = `${USER_ENDPOINT}/freeModeProgress`;
 
 
