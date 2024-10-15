@@ -1,6 +1,7 @@
-export const API_BASE_URL = process.env.BACKEND_URL ?? 'http://localhost:3001';
+export const API_BASE_URL =
+  process.env.REACT_APP_BACKEND_URL ?? "http://localhost:3002";
 
-export const AUTH_ENDPOINT = `${API_BASE_URL}/v1/auth`; 
+export const AUTH_ENDPOINT = `${API_BASE_URL}/v1/auth`;
 export const LOGIN_ENDPOINT = `${AUTH_ENDPOINT}/login`;
 export const LOGOUT_ENDPOINT = `${AUTH_ENDPOINT}/logout`;
 export const REGISTER_ENDPOINT = `${AUTH_ENDPOINT}/register`;
@@ -20,5 +21,3 @@ export const ALL_LEVELS_ENDPOINT = `${LEVEL_ENDPOINT}/module`;
 
 export const USER_ENDPOINT = `${API_BASE_URL}/v1/user`;
 export const USER_FREE_MODE = `${USER_ENDPOINT}/freeModeProgress`;
-
-
