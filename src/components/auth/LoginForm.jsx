@@ -1,19 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { loginUser, forgotPassword, verifyEmail, googleLogin } from '../../features/auth/authService';
-import '../../styles/login.css';
-import logoImage from '../../assets/logo 3.png';
-import Swal from 'sweetalert2';
-import withReactContent from 'sweetalert2-react-content';
-import { toast } from 'react-toastify';
-import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
-import 'react-toastify/dist/ReactToastify.css';
+import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import {
+  loginUser,
+  forgotPassword,
+  verifyEmail,
+  googleLogin,
+} from "../../features/auth/authService";
+import "../../styles/login.css";
+import logoImage from "../../assets/logo 3.png";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+import { toast } from "react-toastify";
+import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
+import "react-toastify/dist/ReactToastify.css";
 
 const MySwal = withReactContent(Swal);
 
 const LoginForm = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -22,7 +27,7 @@ const LoginForm = () => {
   const validateEmailToken = async (token) => {
     try {
       await verifyEmail(token);
-      toast.success('¡Correo verificado exitosamente!', {
+      toast.success("¡Correo verificado exitosamente!", {
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,
@@ -32,12 +37,12 @@ const LoginForm = () => {
         progress: undefined,
       });
     } catch (err) {
-      setError(err.response?.data?.message || 'Error al verificar el correo');
+      setError(err.response?.data?.message || "Error al verificar el correo");
     }
   };
 
   useEffect(() => {
-    const token = new URLSearchParams(location.search).get('token');
+    const token = new URLSearchParams(location.search).get("token");
     if (token) {
       validateEmailToken(token);
     }
@@ -48,9 +53,9 @@ const LoginForm = () => {
     setIsLoading(true);
     try {
       await loginUser(email, password);
-      navigate('/home');
+      navigate("/home");
     } catch (err) {
-      setError(err.response?.data?.message || 'Error al iniciar sesión');
+      setError(err.response?.data?.message || "Error al iniciar sesión");
     } finally {
       setIsLoading(false);
     }
@@ -58,15 +63,15 @@ const LoginForm = () => {
 
   const handleForgotPassword = async () => {
     const { value: emailForReset } = await MySwal.fire({
-      title: 'Recuperar Contraseña',
-      input: 'email',
-      inputPlaceholder: 'Ingresa tu correo electrónico',
+      title: "Recuperar Contraseña",
+      input: "email",
+      inputPlaceholder: "Ingresa tu correo electrónico",
       showCancelButton: true,
-      confirmButtonText: 'Enviar',
-      cancelButtonText: 'Cancelar',
+      confirmButtonText: "Enviar",
+      cancelButtonText: "Cancelar",
       inputValidator: (value) => {
         if (!value) {
-          return 'Necesitas ingresar un correo electrónico';
+          return "Necesitas ingresar un correo electrónico";
         }
       },
     });
@@ -74,9 +79,17 @@ const LoginForm = () => {
     if (emailForReset) {
       try {
         await forgotPassword(emailForReset);
-        MySwal.fire('¡Éxito!', 'Se ha enviado un enlace para restablecer tu contraseña a tu correo.', 'success');
+        MySwal.fire(
+          "¡Éxito!",
+          "Se ha enviado un enlace para restablecer tu contraseña a tu correo.",
+          "success"
+        );
       } catch (err) {
-        MySwal.fire('Error', 'Hubo un problema al enviar el correo. Inténtalo nuevamente.', 'error');
+        MySwal.fire(
+          "Error",
+          "Hubo un problema al enviar el correo. Inténtalo nuevamente.",
+          "error"
+        );
       }
     }
   };
@@ -84,17 +97,17 @@ const LoginForm = () => {
   const handleGoogleLogin = async (response) => {
     try {
       await googleLogin(response.credential);
-      navigate('/home');
+      navigate("/home");
     } catch (error) {
-      setError('Error al autenticar con Google');
+      setError("Error al autenticar con Google");
       console.error(error);
     }
   };
 
   return (
-    <GoogleOAuthProvider clientId="356389118966-2akqqdndqdf44ves4l0hdcj3j1mcooh5.apps.googleusercontent.com">
+    <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
       <div className="login-page">
-        <div className='logo'>
+        <div className="logo">
           <img src={logoImage} alt="" />
         </div>
         <div className="login-container">
@@ -125,16 +138,20 @@ const LoginForm = () => {
               className="login-btn"
               disabled={isLoading || !email || !password}
             >
-              {isLoading ? 'Cargando...' : 'Iniciar sesión'}
+              {isLoading ? "Cargando..." : "Iniciar sesión"}
             </button>
-          <div className="social-login">
-            <GoogleLogin
-              onSuccess={handleGoogleLogin}
-              onError={() => setError('Error al autenticar con Google')}
-            />
-          </div>
+            <div className="social-login">
+              <GoogleLogin
+                onSuccess={handleGoogleLogin}
+                onError={() => setError("Error al autenticar con Google")}
+              />
+            </div>
             <div className="forgot-password-link">
-              <button type="button" className="link-button" onClick={handleForgotPassword}>
+              <button
+                type="button"
+                className="link-button"
+                onClick={handleForgotPassword}
+              >
                 Olvidé mi contraseña
               </button>
             </div>
