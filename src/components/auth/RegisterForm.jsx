@@ -124,6 +124,7 @@ const RegisterForm = () => {
 
           <div className="social-login">
             <GoogleLogin
+              text="signup_with"
               onSuccess={handleGoogleRegister}
               onError={() => setError("Error al autenticar con Google")}
             />

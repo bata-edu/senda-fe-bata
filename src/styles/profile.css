@@ -1,0 +1,86 @@
+/* General */
+
+.profile-container {
+   padding: 20px;
+}
+
+/* user info */
+.user-info-container{
+  
+}
+.image-icons-div{
+  display: flex;
+  justify-content: space-between;
+  
+}
+.profile-img{
+  border-radius: 50%;
+  width: 100px;
+  height: 100px;
+}
+.user-name{
+  font-size: 2.2rem;
+  margin-top: 10px;
+}
+.user-nickName{
+  margin-top: 10px;
+
+  font-size: 1.8rem;
+}
+.user-date{
+  margin-top: 10px;
+  font-size: 1.5rem;
+}
+.name-created-div{
+  display: flex;
+  flex-direction: column;
+}
+
+/* streaks */
+
+.streaks-container{
+  width: 50%;
+  margin: auto;
+
+}
+.streak{
+  margin-top: 20px;
+  padding: 30px;
+  background-color: darkblue;
+  font-weight: 600;
+  font-size: 1.5rem;
+  border-radius:10px;
+}
+
+.fire-streak{
+  color: orange;
+}
+.diamond-streak{
+  color:darkturquoise;
+}
+.golden-streak{
+  color:gold;
+}
+
+/* My web page */
+
+.web-page-container{
+  margin-top: 20px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.web-page-title{
+  font-weight: 600;
+  font-size: 2rem;
+
+}
+.laptop-containter span{
+  font-weight: 600;
+  font-size: 1.5rem;
+}
+.laptop-containter{
+  margin: auto;
+  display: flex;
+  justify-content: center;
+}
