@@ -9,11 +9,13 @@ import Levels from "../components/home/Levels";
 import EditorPage from "../pages/EditorPage";
 import ResetPasswordPage from "../pages/ResetPasswordPage";
 import Profile from "../pages/ProfilePage";
+import RootRedirect from "../utils/guards/rootRedirect";
 
 const AppRoutes = () => {
   return (
     <Router>
       <Routes>
+        <Route path="/" element={<RootRedirect />} />
         <Route
           path="/login"
           element={
