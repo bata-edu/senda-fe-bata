@@ -3,9 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 import { getAuthData, refreshAccessToken, logoutUser } from '../../features/auth/authService';
 import LoadingPage from '../../pages/LoadingPage';
+import { useDispatch } from 'react-redux';
+import { RESET_STATE } from '../constants';
 
 const AuthGuard = ({ children }) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -27,12 +30,14 @@ const AuthGuard = ({ children }) => {
           } catch (error) {
             setLoading(false);
             logoutUser();
+            dispatch({ type: RESET_STATE });
             navigate('/login');
             return;
           }
         } else {
           setLoading(false);
           logoutUser();
+          dispatch({ type: RESET_STATE });
           navigate('/login');
         }
       }
