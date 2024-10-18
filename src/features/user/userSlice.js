@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { USER_ENDPOINT } from "../../utils/constants";
+import { USER_ENDPOINT, RESET_STATE } from "../../utils/constants";
 import apiClient from "../../utils/interceptors/authInterceptor";
 import { getUser } from "../auth/authService";
 
@@ -121,6 +121,15 @@ const userSlice = createSlice({
         .addCase(createUserFreeModeProgress.rejected, (state, action) => {
             state.loading = false;
             state.error = action.payload;
+        })
+          // Manejar el caso RESET_STATE
+        .addCase(RESET_STATE, (state) => {
+        return {
+            user: null,
+            loading: false,
+            error: null,
+            freeModeProgress: null
+        };
         });
     },
 });

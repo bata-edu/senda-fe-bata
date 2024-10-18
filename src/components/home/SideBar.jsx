@@ -3,12 +3,16 @@ import logoImage from '../../assets/logo 3.png'
 import logoutIcon from '../../assets/logOut.svg'
 import {logoutUser} from '../../features/auth/authService'
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { RESET_STATE } from '../../utils/constants';
 
 const Sidebar = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleLogout = async () => {
     await logoutUser()
+    dispatch({type: RESET_STATE})
     navigate('/login')
   }
 
