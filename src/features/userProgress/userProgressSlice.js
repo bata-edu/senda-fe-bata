@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { USER_PROGRESS_ENDPOINT, START_COURSE_ENDPOINT } from '../../utils/constants';
+import { USER_PROGRESS_ENDPOINT, START_COURSE_ENDPOINT, RESET_STATE } from '../../utils/constants';
 import apiClient from '../../utils/interceptors/authInterceptor';
 
 // Thunk para obtener el progreso del curso del usuario
@@ -68,6 +68,14 @@ const userProgressSlice = createSlice({
       .addCase(startCourse.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+      .addCase(RESET_STATE,(state) => {
+        return {
+          progress: null,
+          loading: false,
+          error: null,
+          courseId: null
+        }
       });
   },
 });

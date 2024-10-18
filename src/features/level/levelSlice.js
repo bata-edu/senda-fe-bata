@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { ALL_LEVELS_ENDPOINT, LEVEL_ENDPOINT, LEVEL_INFO_ENDPOINT } from "../../utils/constants";
+import { ALL_LEVELS_ENDPOINT, LEVEL_ENDPOINT, LEVEL_INFO_ENDPOINT, RESET_STATE } from "../../utils/constants";
 import apiClient from "../../utils/interceptors/authInterceptor";
 
 // Thunk para obtener la información de un nivel
@@ -71,6 +71,16 @@ const levelSlice = createSlice({
         .addCase(fetchAllLevels.rejected, (state, action) => {
             state.loading = false;
             state.error = action.payload;
+        })
+        .addCase(RESET_STATE, (state) => {
+            return {
+                module: null,
+                levelsInfo: null,
+                levels: null,
+                loading: false,
+                error: null,
+                page: 0,
+            };
         });
     },
 });
