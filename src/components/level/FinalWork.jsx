@@ -23,11 +23,9 @@ const FinalWork = ({ title, description, dueDate, attemptsLeft }) => {
         <button className="close-button" onClick={() => navigate('/home')}>X</button>
       </div>
 
-      {/* Contenido de la descripción */}
       <div className="description">{description}</div>
 
       <div className="main-content">
-        {/* Dialogo del robot al costado */}
         <div className="robot-container">
           <div className="speech-bubble">
             ¡No olvides completar tu trabajo a tiempo!
@@ -36,10 +34,8 @@ const FinalWork = ({ title, description, dueDate, attemptsLeft }) => {
         </div>
 
         <div className="editor-preview-container">
-          {/* Pestañas para elegir entre HTML y CSS */}
           <CodeTabs activeTab={activeTab} setActiveTab={setActiveTab} />
 
-          {/* Componente de Editor */}
           <Editor
             activeTab={activeTab}
             htmlCode={htmlCode}
@@ -48,12 +44,10 @@ const FinalWork = ({ title, description, dueDate, attemptsLeft }) => {
             setCssCode={setCssCode}
           />
 
-          {/* Botón para activar la previsualización */}
           <button onClick={() => setPlay(!play)} className="play-button">
             Jugar
           </button>
 
-          {/* Componente de Previsualización */}
           <Preview htmlCode={htmlCode} cssCode={cssCode} play={play} />
         </div>
       </div>
