@@ -9,6 +9,7 @@ const Streaks = () => {
     <div className="streaks-container">
       {user && (
         <div>
+          <hr />
           <div className="streak">
             <span className="fire-streak">💎 {user.points}</span>
           </div>

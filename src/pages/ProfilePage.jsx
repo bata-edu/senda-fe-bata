@@ -12,21 +12,17 @@ import MyWebPage from "../components/profile/MyWebPage";
 
 const Profile = () => {
   const dispatch = useDispatch();
-  const [loading, setLoading] = useState(true);
-  const { page } = useSelector((state) => state.level || {});
+  const [loading, setLoading] = useState(false);
+  const { user } = useSelector((state) => state.user || {});
 
   useEffect(() => {
+    if (user && user.name) {
+      setLoading(false);
+      return;
+    }
     const fetchData = async () => {
       try {
-        const response = await dispatch(fetchUserProgress()).unwrap();
-        if (response.length > 0) {
-          await Promise.all([
-            dispatch(
-              fetchLevelInfo({ courseId: response[0].course, page, limit: 3 })
-            ),
-            dispatch(fetchAllLevels({ courseId: response[0].course })),
-          ]);
-        }
+        setLoading(true);
         dispatch(fetchUser());
         setLoading(false);
       } catch (error) {
