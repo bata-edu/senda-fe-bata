@@ -11,7 +11,7 @@ const appReducer = combineReducers({
 });
 const rootReducer = (state, action) => {
     if (action.type === RESET_STATE) {
-        state = undefined;
+        state = {};
     }
     return appReducer(state, action);
 };
