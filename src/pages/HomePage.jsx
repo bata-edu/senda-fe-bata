@@ -1,48 +1,54 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchAllLevels, fetchLevelInfo } from '../features/level/levelSlice';
-import { fetchUser } from '../features/user/userSlice';
-import { fetchUserProgress } from '../features/userProgress/userProgressSlice';
-import Sidebar from '../components/home/SideBar';
-import SidebarRight from '../components/home/SideBarRight';
-import '../styles/home.css';
-import { Outlet } from 'react-router-dom';
-import LoadingPage from './LoadingPage';
-
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchAllLevels, fetchLevelInfo } from "../features/level/levelSlice";
+import { fetchUser } from "../features/user/userSlice";
+import { fetchUserProgress } from "../features/userProgress/userProgressSlice";
+import Sidebar from "../components/home/SideBar";
+import SidebarRight from "../components/home/SideBarRight";
+import "../styles/home.css";
+import { Outlet } from "react-router-dom";
+import LoadingPage from "./LoadingPage";
 
 const Home = () => {
   const dispatch = useDispatch();
-  const [loading, setLoading] = useState(true);
-  const { page } = useSelector((state) => state.level || {});
+  const [loading, setLoading] = useState(false);
+  const { page, levels } = useSelector((state) => state.level || {});
 
   useEffect(() => {
+    if (levels && levels.length) {
+      return;
+    }
     const fetchData = async () => {
-      try{
+      try {
+        setLoading(true);
+
         const response = await dispatch(fetchUserProgress()).unwrap();
-        if(response.length > 0){
+        if (response.length > 0) {
           await Promise.all([
-            dispatch(fetchLevelInfo({ courseId: response[0].course, page, limit: 3 })),
-            dispatch(fetchAllLevels({ courseId: response[0].course }))
+            dispatch(
+              fetchLevelInfo({ courseId: response[0].course, page, limit: 3 })
+            ),
+            dispatch(fetchAllLevels({ courseId: response[0].course })),
           ]);
         }
-        dispatch(fetchUser())
+        dispatch(fetchUser());
         setLoading(false);
       } catch (error) {
-        console.log('Error loading data:', error);
-        setLoading(true)
+        console.log("Error loading data:", error);
+        setLoading(true);
       }
     };
     fetchData();
   }, [dispatch]);
 
   if (loading) {
-    return <LoadingPage/>;
+    return <LoadingPage />;
   }
 
   return (
     <div className="home-container">
       <Sidebar />
-      <div className='main-container'>
+      <div className="main-container">
         <Outlet />
       </div>
       <SidebarRight />
