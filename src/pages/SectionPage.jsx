@@ -1,52 +1,68 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchNextAction, advanceCourse } from '../features/userProgress/userProgressSlice';
+import { NEXT_CLASS, NEXT_EXERCISE, ADVANCE_SECTION, SUBMIT_FINAL_LEVEL_PROJECT, ADVANCE_LEVEL, COURSE_COMPLETED } from '../utils/constants';
 import SectionClass from '../components/section/Class';
 import Exercise from '../components/section/Exercice';
-import FinalWork
- from '../components/level/FinalWork';
+import FinalWork from '../components/level/FinalWork';
+import LoadingPage from '../pages/LoadingPage';
+import { fetchUserProgress } from '../features/userProgress/userProgressSlice';
+
 const SectionPage = () => {
+
   const navigate = useNavigate();
+  const { sectionId } = useParams();
+  const dispatch = useDispatch();
+  const { progress, nextAction, loading } = useSelector((state) => state.userProgress || {});
+  useEffect(() => {
+    const fetchProgress = async () => {
+      await dispatch(fetchUserProgress());
+    };
+    if (!progress) {
+      fetchProgress();
+    } else {
+      dispatch(fetchNextAction(progress.course));
+    }
+  }, [dispatch, sectionId, progress]);
   
-  // Lógica de datos harcodeados
-  const sectionsData = {
-    '1': { type: 'class', title: "¿Qué es BODY?", subtitle: "Conoce la etiqueta <BODY>", message: "El <body> es donde todo lo que ves en la página web aparece. Es el cuerpo que contiene los textos, imágenes y más." },
-    '2': { type: 'exercise', content: 'Contenido del ejercicio de ejemplo' },
-    '3': { 
-      type: 'finalWork', 
-      title: 'Trabajo Integrador Final de Nivel', 
-      description: 'Este es tu proyecto final para completar el nivel. Asegúrate de seguir todas las instrucciones y subir tu código.', 
-      dueDate: '10/30/2024', 
-      attemptsLeft: 2 
-    },    
-  };
 
-  const section = sectionsData[3];
+  const handleAdvance = () => {
+    dispatch(fetchNextAction(progress.course))
 
+  }
+
+  const handleAdvanceSection = async () => {
+    await dispatch(advanceCourse())
+    handleAdvance()
+  }
 
   return (
     <div>
-      {section.type === 'class' && (
-        <SectionClass message={section.message} title={section.title} subtitle={section.subtitle} />
+      {loading && (
+        <div className="loading">
+          <LoadingPage />
+        </div>
       )}
-      {section.type === 'exercise' && (
-        <Exercise 
-          question="¿Cuál es la función de la etiqueta <html> en un documento web?"
-          options={[
-            "A) Define el encabezado de la página web.",
-            "B) Contiene el contenido principal que se muestra en la página.",
-            "C) Es el contenedor principal que envuelve todo el contenido de la página.",
-            "D) Define el estilo de la página."
-          ]} 
-        />
-      )}
-      {section.type === 'finalWork' && (
-        <FinalWork 
-          title={section.title} 
-          description={section.description} 
-          dueDate={section.dueDate} 
-          attemptsLeft={section.attemptsLeft} 
-        />
-      )}
+      <div>
+        {nextAction?.message === NEXT_CLASS && (
+          <SectionClass  advance={handleAdvance}/>
+        )}
+        {nextAction?.message === NEXT_EXERCISE && (
+          <Exercise advance={handleAdvance}/>  
+        )}
+        {nextAction?.message === SUBMIT_FINAL_LEVEL_PROJECT && (
+          <FinalWork 
+          />
+        )}
+        {nextAction?.message === ADVANCE_SECTION && (
+          <div>
+            <h1>Section completed</h1>
+            <button onClick={() => handleAdvanceSection()}>Advance Section</button>
+          </div>
+          )}
+      </div>
     </div>
   );
 };

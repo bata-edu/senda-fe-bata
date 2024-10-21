@@ -15,20 +15,19 @@ const Home = () => {
   const { page, levels } = useSelector((state) => state.level || {});
 
   useEffect(() => {
-    if (levels && levels.length) {
+    if ((levels && levels.length)) {
       return;
     }
     const fetchData = async () => {
       try {
         setLoading(true);
-
-        const response = await dispatch(fetchUserProgress()).unwrap();
-        if (response.length > 0) {
+        const res = await dispatch(fetchUserProgress()).unwrap();
+        if (res.length > 0) {
           await Promise.all([
             dispatch(
-              fetchLevelInfo({ courseId: response[0].course, page, limit: 3 })
+              fetchLevelInfo({ courseId: res[0].course, page, limit: 3 })
             ),
-            dispatch(fetchAllLevels({ courseId: response[0].course })),
+            dispatch(fetchAllLevels({ courseId: res[0].course })),
           ]);
         }
         dispatch(fetchUser());
@@ -44,16 +43,17 @@ const Home = () => {
   if (loading) {
     return <LoadingPage />;
   }
-
-  return (
-    <div className="home-container">
-      <Sidebar />
-      <div className="main-container">
-        <Outlet />
+  else{
+    return (
+      <div className="home-container">
+        <Sidebar />
+        <div className="main-container">
+          <Outlet />
+        </div>
+        <SidebarRight />
       </div>
-      <SidebarRight />
-    </div>
-  );
+    );
+  }
 };
 
 export default Home;

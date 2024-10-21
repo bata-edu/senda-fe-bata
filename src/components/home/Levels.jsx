@@ -10,7 +10,7 @@ const Levels = () => {
 
   const { levels = [], module } = useSelector((state) => state.level || {});
   const { progress } = useSelector((state) => state.userProgress || {});
-  const currentLevelOrder = levels.find((level) => level.id === progress[0].currentLevel)?.order || 0;
+  const currentLevelOrder = levels?.find((level) => level.id === progress.currentLevel)?.order || 0;
 
   const navigateToLevel = (levelId) => {
     navigate(`/home#${levelId}`);
@@ -18,10 +18,10 @@ const Levels = () => {
 
   return (
     <div className="levels-page">
-      <h2>{module.name}</h2>
+      <h2>{module?.name}</h2>
       <div className="levels-container">
         <div className="levels-grid">
-          {levels.map((level) => (
+          {levels?.map((level) => (
             <div 
               key={level._id} 
               className={`level 
