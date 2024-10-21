@@ -11,12 +11,17 @@ import LoadingPage from "./LoadingPage";
 
 const Home = () => {
   const dispatch = useDispatch();
-  const [loading, setLoading] = useState(true);
-  const { page } = useSelector((state) => state.level || {});
+  const [loading, setLoading] = useState(false);
+  const { page, levels } = useSelector((state) => state.level || {});
 
   useEffect(() => {
+    if (levels && levels.length) {
+      return;
+    }
     const fetchData = async () => {
       try {
+        setLoading(true);
+
         const response = await dispatch(fetchUserProgress()).unwrap();
         if (response.length > 0) {
           await Promise.all([

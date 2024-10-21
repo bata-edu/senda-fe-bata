@@ -122,7 +122,6 @@ const userSlice = createSlice({
             state.loading = false;
             state.error = action.payload;
         })
-          // Manejar el caso RESET_STATE
         .addCase(RESET_STATE, (state) => {
         return {
             user: null,

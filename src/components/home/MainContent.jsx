@@ -1,29 +1,17 @@
-import React, { useState, useEffect, useRef } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import {
-  fetchLevelInfo,
-  fetchAllLevels,
-} from "../../features/level/levelSlice";
-import {
-  fetchUserProgress,
-  startCourse,
-} from "../../features/userProgress/userProgressSlice";
-import robot from "../../assets/robot.png";
-import "../../styles/mainContent.css";
-import LoadingPage from "../../pages/LoadingPage";
+import React, { useState, useEffect, useRef,  } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { fetchLevelInfo, fetchAllLevels } from '../../features/level/levelSlice';
+import { fetchUserProgress, startCourse } from '../../features/userProgress/userProgressSlice';
+import robot from '../../assets/robot.png';
+import '../../styles/mainContent.css';
+import LoadingPage from '../../pages/LoadingPage';
 
 const MainContent = () => {
   const dispatch = useDispatch();
-  const {
-    levelsInfo = [],
-    page,
-    loading: loadingLevel,
-  } = useSelector((state) => state.level || {});
-  const {
-    progress,
-    courseId,
-    loading: loadingProgress,
-  } = useSelector((state) => state.userProgress || {});
+  const navigate = useNavigate();
+  const { levelsInfo = [], page, loading : loadingLevel } = useSelector((state) => state.level || {});
+  const { progress, courseId, loading : loadingProgress } = useSelector((state) => state.userProgress || {});
   const [hoveredSection, setHoveredSection] = useState(null);
   const [hasMoreLevels, setHasMoreLevels] = useState(true);
   const [showNoMoreLevels, setShowNoMoreLevels] = useState(false);
@@ -179,6 +167,21 @@ const MainContent = () => {
       console.log("Error starting course:", error);
     }
   };
+
+  const isSectionEnabled = (levelIndex, sectionIndex) => {
+    if (levelIndex < userCurrentInfo.currentLevelIndex) {
+      return true;
+    } else if (levelIndex === userCurrentInfo.currentLevelIndex && sectionIndex <= userCurrentInfo.currentSectionIndex) {
+      return true;
+    }
+    return false;
+  }
+
+  const handleSectionClick = (sectionId) => {
+    navigate(`/section/${sectionId}`);
+  };
+  
+
   return (
     <div className="main-content">
       {loading && (
@@ -205,26 +208,21 @@ const MainContent = () => {
                 </div>
                 <div className="section-content">
                   <div className="snake-path">
-                    {level.sections.map((section, sectionIndex) => (
-                      <div
-                        key={section._id}
-                        className={`section-icon ${
-                          levelIndex < userCurrentInfo.currentLevelIndex ||
-                          (levelIndex === userCurrentInfo.currentLevelIndex &&
-                            sectionIndex <= userCurrentInfo.currentSectionIndex)
-                            ? "active"
-                            : "disabled"
-                        }`}
-                        style={getMarginStyle(sectionIndex)}
-                        onMouseEnter={() => setHoveredSection(section.name)}
-                        onMouseLeave={() => setHoveredSection(null)}
-                      >
-                        <img
-                          src={getImageSrc(sectionIndex)}
-                          alt={`Section ${sectionIndex + 1}`}
-                        />
-                      </div>
-                    ))}
+                    {level.sections.map((section, sectionIndex) => {
+                      const enabled = isSectionEnabled(levelIndex, sectionIndex);
+                      return (
+                        <div 
+                          key={section._id} 
+                          className={`section-icon ${enabled ? 'active' : 'disabled'}`}
+                          style={getMarginStyle(sectionIndex)}
+                          onMouseEnter={() => setHoveredSection(section.name)}
+                          onMouseLeave={() => setHoveredSection(null)}
+                          onClick={() => enabled && handleSectionClick(section._id)}
+                        >
+                          <img src={getImageSrc(sectionIndex)} alt={`Section ${sectionIndex + 1}`} />
+                        </div>
+                      )
+                    })}
                   </div>
                   <div className="robot">
                     <img src={robot} alt="Robot" />

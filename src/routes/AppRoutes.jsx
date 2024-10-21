@@ -8,8 +8,8 @@ import MainContent from "../components/home/MainContent";
 import Levels from "../components/home/Levels";
 import EditorPage from "../pages/EditorPage";
 import ResetPasswordPage from "../pages/ResetPasswordPage";
-import Profile from "../pages/ProfilePage";
 import RootRedirect from "../utils/guards/rootRedirect";
+import SectionPage from "../pages/SectionPage";
 
 const AppRoutes = () => {
   return (
@@ -53,6 +53,14 @@ const AppRoutes = () => {
           <Route path="levels" element={<Levels />} />
           <Route path="editor" element={<EditorPage />} />
         </Route>
+        <Route
+          path="/section/:id"
+          element={
+            <AuthGuard>
+              <SectionPage />
+            </AuthGuard>
+          }
+        ></Route>
       </Routes>
     </Router>
   );
