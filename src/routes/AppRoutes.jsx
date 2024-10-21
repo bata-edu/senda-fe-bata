@@ -1,62 +1,66 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import LoginPage from '../pages/LoginPage';
-import RegisterPage from '../pages/RegisterPage';
-import Home from '../pages/HomePage';
-import LoginGuard from '../utils/guards/loginGuard'
-import AuthGuard from '../utils/guards/authGuard';
-import MainContent from '../components/home/MainContent';
-import Levels from '../components/home/Levels';
-import EditorPage from '../pages/EditorPage';
-import ResetPasswordPage from '../pages/ResetPasswordPage';
-import RootRedirect from '../utils/guards/rootRedirect';
-import SectionPage from '../pages/SectionPage';
-
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import LoginPage from "../pages/LoginPage";
+import RegisterPage from "../pages/RegisterPage";
+import Home from "../pages/HomePage";
+import LoginGuard from "../utils/guards/loginGuard";
+import AuthGuard from "../utils/guards/authGuard";
+import MainContent from "../components/home/MainContent";
+import Levels from "../components/home/Levels";
+import EditorPage from "../pages/EditorPage";
+import ResetPasswordPage from "../pages/ResetPasswordPage";
+import RootRedirect from "../utils/guards/rootRedirect";
+import SectionPage from "../pages/SectionPage";
 
 const AppRoutes = () => {
   return (
     <Router>
       <Routes>
-      <Route path="/" element={<RootRedirect />} />
-      <Route 
-          path="/login" 
+        <Route path="/" element={<RootRedirect />} />
+        <Route
+          path="/login"
           element={
             <LoginGuard>
-              <LoginPage/>
+              <LoginPage />
             </LoginGuard>
           }
         />
-        <Route 
+        <Route
           path="/register"
           element={
             <LoginGuard>
-              <RegisterPage/>
+              <RegisterPage />
             </LoginGuard>
           }
-          />
-        <Route
-          path='/reset-password'
-          element={<ResetPasswordPage/>}
         />
-        <Route 
-          path="/home" 
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
+        <Route
+          path="/home"
           element={
             <AuthGuard>
               <Home />
             </AuthGuard>
           }
         >
+          <Route
+            path="/home/profile"
+            element={
+              <AuthGuard>
+                <Profile />
+              </AuthGuard>
+            }
+          ></Route>
           <Route index element={<MainContent />} />
           <Route path="levels" element={<Levels />} />
-          <Route path='editor' element={<EditorPage />}/>
+          <Route path="editor" element={<EditorPage />} />
         </Route>
         <Route
-          path='/section/:id'
+          path="/section/:id"
           element={
-          <AuthGuard>
-            <SectionPage />
-          </AuthGuard>
-          }>
-        </Route>
+            <AuthGuard>
+              <SectionPage />
+            </AuthGuard>
+          }
+        ></Route>
       </Routes>
     </Router>
   );
