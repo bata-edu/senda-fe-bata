@@ -27,21 +27,23 @@ const MainContent = () => {
   const setLevelInfo = async () => {
     if (courseId) {
       const currentLevel = levelsInfo.find(
-        (level) => level._id === progress[0].currentLevel
+        (level) => level._id === progress.currentLevel
       );
       const currentLevelIndex = levelsInfo.findIndex(
-        (level) => level._id === progress[0].currentLevel
+        (level) => level._id === progress.currentLevel
       );
       const currentSectionIndex =
         currentLevel?.sections.findIndex(
-          (section) => section._id === progress[0].currentSection
+          (section) => section._id === progress.currentSection
         ) || 0;
       setUserCurrentInfo({ currentLevelIndex, currentSectionIndex });
     }
   };
 
   useEffect(() => {
-    setLevelInfo();
+    if(levelsInfo && levelsInfo.length) {
+      setLevelInfo();
+    }
   }, []);
 
   const getImageSrc = (index) => {

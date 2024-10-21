@@ -15,6 +15,21 @@ export const GOOGLE_REGISTER_ENDPOINT = `${AUTH_ENDPOINT}/google-register`;
 
 export const USER_PROGRESS_ENDPOINT = `${API_BASE_URL}/v1/userCourseProgress`;
 export const START_COURSE_ENDPOINT = `${USER_PROGRESS_ENDPOINT}/start`;
+export const MY_NEXT_ACTION = `${USER_PROGRESS_ENDPOINT}/next-action`;
+export const MY_NEXT_CLASS = `${USER_PROGRESS_ENDPOINT}/next-class`;
+export const COMPLETE_CLASS_ENDPOINT = `${USER_PROGRESS_ENDPOINT}/complete-class`;
+export const MY_NEXT_EXERCISE = `${USER_PROGRESS_ENDPOINT}/next-exercise`;
+export const COMPLETE_EXERCISE_ENDPOINT = `${USER_PROGRESS_ENDPOINT}/complete-exercise`;
+export const ADVANCE_COURSE = `${USER_PROGRESS_ENDPOINT}/advance`;
+export const SKIP_CLASS = `${USER_PROGRESS_ENDPOINT}/skip-class`;
+export const SUBMIT_FINAL_LEVEL = `${USER_PROGRESS_ENDPOINT}/submit-final-level`;
+
+export const NEXT_CLASS='Proceed to the next class';
+export const NEXT_EXERCISE='Proceed to the next exercise';
+export const ADVANCE_SECTION='Advance to the next section';
+export const SUBMIT_FINAL_LEVEL_PROJECT='Complete the final level project';
+export const ADVANCE_LEVEL='Advance to the next level';
+export const COURSE_COMPLETED='Course completed';
 
 export const LEVEL_ENDPOINT = `${API_BASE_URL}/v1/level`;
 export const LEVEL_INFO_ENDPOINT = `${LEVEL_ENDPOINT}/info`;

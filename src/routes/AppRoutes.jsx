@@ -10,6 +10,7 @@ import EditorPage from "../pages/EditorPage";
 import ResetPasswordPage from "../pages/ResetPasswordPage";
 import RootRedirect from "../utils/guards/rootRedirect";
 import SectionPage from "../pages/SectionPage";
+import Profile from "../pages/ProfilePage";
 
 const AppRoutes = () => {
   return (
