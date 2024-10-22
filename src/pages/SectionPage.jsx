@@ -9,6 +9,9 @@ import Exercise from '../components/section/Exercice';
 import FinalWork from '../components/level/FinalWork';
 import LoadingPage from '../pages/LoadingPage';
 import { fetchUserProgress } from '../features/userProgress/userProgressSlice';
+import AdvanceSection from '../components/section/AdvanceSection';
+import AdvanceLevel from '../components/section/AdvanceLevel';
+import CompleteCourse from '../components/section/CompleteCourse';
 
 const SectionPage = () => {
 
@@ -33,11 +36,6 @@ const SectionPage = () => {
 
   }
 
-  const handleAdvanceSection = async () => {
-    await dispatch(advanceCourse())
-    handleAdvance()
-  }
-
   return (
     <div>
       {loading && (
@@ -53,15 +51,18 @@ const SectionPage = () => {
           <Exercise advance={handleAdvance}/>  
         )}
         {nextAction?.message === SUBMIT_FINAL_LEVEL_PROJECT && (
-          <FinalWork 
+          <FinalWork advance = {handleAdvance} progress = {progress}
           />
         )}
         {nextAction?.message === ADVANCE_SECTION && (
-          <div>
-            <h1>Section completed</h1>
-            <button onClick={() => handleAdvanceSection()}>Advance Section</button>
-          </div>
-          )}
+          <AdvanceSection advance={handleAdvance}/>
+        )}
+        {nextAction?.message === ADVANCE_LEVEL && (
+          <AdvanceLevel/>
+        )}
+        {nextAction?.message === COURSE_COMPLETED && (
+          <CompleteCourse/>
+        )}
       </div>
     </div>
   );

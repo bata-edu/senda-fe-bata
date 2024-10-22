@@ -4,7 +4,6 @@ import "../../styles/profile.css";
 
 const Streaks = () => {
   const { user } = useSelector((state) => state.user || {});
-  console.log(user);
   return (
     <div className="streaks-container">
       {user && (

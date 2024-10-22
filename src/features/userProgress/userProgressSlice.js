@@ -128,9 +128,9 @@ export const skipClass = createAsyncThunk(
 
 export const submitFinalLevel = createAsyncThunk(
   'userProgress/submitFinalLevel',
-  async (_, { rejectWithValue }) => {
+  async ({levelId, body}, { rejectWithValue }) => {
     try {
-      const response = await apiClient.post(`${SUBMIT_FINAL_LEVEL}`);
+      const response = await apiClient.post(`${SUBMIT_FINAL_LEVEL}/${levelId}`, body);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);

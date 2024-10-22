@@ -49,7 +49,7 @@ const SectionClass = ({advance}) => {
             <div className="speech-bubble">
               <p>{myClass?.content}</p>
             </div>
-            <div className="robot-image">
+            <div className="robot-image-class">
                 <img src={robotImage} alt="Robot"/>
             </div>
           </div>

@@ -57,14 +57,14 @@
     overflow-y: auto;
   }
   
-  .robot-container {
+  .robot-container-finalwork {
     display: flex;
     flex-direction: column;
     align-items: center;
     width: 20%; 
   }
   
-  .robot-image {
+  .robot-image-finalwork {
     width: 80px;
     margin-top: 10px;
   }

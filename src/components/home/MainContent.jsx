@@ -13,6 +13,7 @@ const MainContent = () => {
   const { levelsInfo = [], page, loading : loadingLevel } = useSelector((state) => state.level || {});
   const { progress, courseId, loading : loadingProgress } = useSelector((state) => state.userProgress || {});
   const [hoveredSection, setHoveredSection] = useState(null);
+  const [hoveredFinalProject, setHoveredFinalProject] = useState(false);
   const [hasMoreLevels, setHasMoreLevels] = useState(true);
   const [showNoMoreLevels, setShowNoMoreLevels] = useState(false);
   const sentinelRef = useRef(null);
@@ -182,6 +183,10 @@ const MainContent = () => {
   const handleSectionClick = (sectionId) => {
     navigate(`/section/${sectionId}`);
   };
+
+  const handleFinalProjectClick = (finalProjectId) => {
+    navigate(`/section/${finalProjectId}`);
+  }
   
 
   return (
@@ -230,17 +235,27 @@ const MainContent = () => {
                     <img src={robot} alt="Robot" />
                   </div>
                 </div>
-                <div className="robot-final-container">
-                  <div className="robot-final">
-                    <img src={robot} alt="Robot" />
+                <div
+                    className={`robot-final-container ${
+                      levelIndex <= userCurrentInfo.currentLevelIndex ? "active" : "disabled"
+                    }`}
+                    onMouseEnter={() => setHoveredFinalProject(level._id)}
+                    onMouseLeave={() => setHoveredFinalProject(null)}
+                    onClick={() =>
+                      levelIndex <= userCurrentInfo.currentLevelIndex &&
+                      handleFinalProjectClick(level.finalLevelProject[0]?._id)
+                    }
+                  >
+                    <div className="robot-final">
+                      <img src={robot} alt="Robot" />
+                    </div>
+                    {hoveredFinalProject === level._id && level.finalLevelProject[0]?.title && (
+                      <div className="final-project-title">
+                        <h3>{level.finalLevelProject[0].title}</h3>
+                      </div>
+                    )}
                   </div>
                 </div>
-                <div className="final-project-container">
-                  <div className="final-project-title">
-                    <h3>{level.finalLevelProject[0]?.title}</h3>
-                  </div>
-                </div>
-              </div>
             ))}
             <div ref={sentinelRef} className="sentinel"></div>
           </div>

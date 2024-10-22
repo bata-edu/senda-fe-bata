@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { ALL_LEVELS_ENDPOINT, LEVEL_ENDPOINT, LEVEL_INFO_ENDPOINT, RESET_STATE } from "../../utils/constants";
+import { ALL_LEVELS_ENDPOINT, LEVEL_ENDPOINT, LEVEL_INFO_ENDPOINT, RESET_STATE, FINAL_LEVEL_INFO } from "../../utils/constants";
 import apiClient from "../../utils/interceptors/authInterceptor";
 
 // Thunk para obtener la información de un nivel
@@ -13,7 +13,7 @@ export const fetchLevelInfo = createAsyncThunk(
         return rejectWithValue(error.response.data);
         }
     }
-    );
+);
 
 // Thunk para obtener todos los niveles de un módulo
 export const fetchAllLevels = createAsyncThunk(
@@ -26,8 +26,21 @@ export const fetchAllLevels = createAsyncThunk(
         return rejectWithValue(error.response.data);
         }
     }
-    );
+);
 
+// Thunk para obtener la informacion del proyecto final de un nivel
+
+export const fetchFinalLevelInfo = createAsyncThunk(
+    "level/fetchFinalLevelInfo",
+    async ({levelId}, { rejectWithValue }) => {
+        try {
+        const response = await apiClient.get(`${FINAL_LEVEL_INFO}/${levelId}`);
+        return response.data;
+        } catch (error) {
+        return rejectWithValue(error.response.data);
+        }
+    }
+);
 
 const levelSlice = createSlice({
     name: "level",
@@ -38,6 +51,7 @@ const levelSlice = createSlice({
         loading: false,
         error: null,
         page: 0,
+        finalLevelProyect: null,
     },
     reducers: {},
     extraReducers: (builder) => {
@@ -71,6 +85,20 @@ const levelSlice = createSlice({
         .addCase(fetchAllLevels.rejected, (state, action) => {
             state.loading = false;
             state.error = action.payload;
+        });
+
+        builder
+        .addCase(fetchFinalLevelInfo.pending, (state) => {
+            state.loading = true;
+            state.error = null;
+        })
+        .addCase(fetchFinalLevelInfo.fulfilled, (state, action) => {
+            state.loading = false;
+            state.finalLevelProyect = action.payload;
+        })
+        .addCase(fetchFinalLevelInfo.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload;
         })
         .addCase(RESET_STATE, (state) => {
             return {
@@ -80,6 +108,7 @@ const levelSlice = createSlice({
                 loading: false,
                 error: null,
                 page: 0,
+                finalLevelProyect: null,
             };
         });
     },
