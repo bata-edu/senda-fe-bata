@@ -1,19 +1,36 @@
-import React, { useState, useEffect, useRef,  } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { fetchLevelInfo, fetchAllLevels } from '../../features/level/levelSlice';
-import { fetchUserProgress, startCourse } from '../../features/userProgress/userProgressSlice';
-import robot from '../../assets/robot.png';
-import '../../styles/mainContent.css';
-import LoadingPage from '../../pages/LoadingPage';
+import React, { useState, useEffect, useRef } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import {
+  fetchLevelInfo,
+  fetchAllLevels,
+} from "../../features/level/levelSlice";
+import {
+  fetchUserProgress,
+  startCourse,
+} from "../../features/userProgress/userProgressSlice";
+import "../../styles/mainContent.css";
+import LoadingPage from "../../pages/LoadingPage";
+import Modules from "./CourseSelector";
+import robot from "../../assets/robot.png";
 
 const MainContent = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { levelsInfo = [], page, loading : loadingLevel } = useSelector((state) => state.level || {});
-  const { progress, courseId, loading : loadingProgress } = useSelector((state) => state.userProgress || {});
+  const {
+    levelsInfo = [],
+    page,
+    loading: loadingLevel,
+  } = useSelector((state) => state.level || {});
+  const {
+    progress,
+    courseId,
+    loading: loadingProgress,
+  } = useSelector((state) => state.userProgress || {});
+  const { selectedModule } = useSelector((state) => state.modules || {});
   const [hoveredSection, setHoveredSection] = useState(null);
   const [hoveredFinalProject, setHoveredFinalProject] = useState(false);
+
   const [hasMoreLevels, setHasMoreLevels] = useState(true);
   const [showNoMoreLevels, setShowNoMoreLevels] = useState(false);
   const sentinelRef = useRef(null);
@@ -42,7 +59,7 @@ const MainContent = () => {
   };
 
   useEffect(() => {
-    if(levelsInfo && levelsInfo.length) {
+    if (levelsInfo && levelsInfo.length) {
       setLevelInfo();
     }
   }, []);
@@ -68,7 +85,7 @@ const MainContent = () => {
             }
 
             const response = await dispatch(
-              fetchLevelInfo({ courseId, page, limit: 3 })
+              fetchLevelInfo({ courseId: selectedModule, page, limit: 3 })
             ).unwrap();
             if (response.levels.length === 0) {
               setHasMoreLevels(false);
@@ -156,9 +173,7 @@ const MainContent = () => {
   const handleStartCourse = async () => {
     try {
       setLoading(true);
-      const response = await dispatch(
-        startCourse(process.env.REACT_APP_COURSE_ID)
-      ).unwrap();
+      const response = await dispatch(startCourse(selectedModule)).unwrap();
       await Promise.all([
         dispatch(fetchUserProgress()),
         dispatch(fetchLevelInfo({ courseId: response.course, page, limit: 3 })),
@@ -174,11 +189,14 @@ const MainContent = () => {
   const isSectionEnabled = (levelIndex, sectionIndex) => {
     if (levelIndex < userCurrentInfo.currentLevelIndex) {
       return true;
-    } else if (levelIndex === userCurrentInfo.currentLevelIndex && sectionIndex <= userCurrentInfo.currentSectionIndex) {
+    } else if (
+      levelIndex === userCurrentInfo.currentLevelIndex &&
+      sectionIndex <= userCurrentInfo.currentSectionIndex
+    ) {
       return true;
     }
     return false;
-  }
+  };
 
   const handleSectionClick = (sectionId) => {
     navigate(`/section/${sectionId}`);
@@ -186,8 +204,7 @@ const MainContent = () => {
 
   const handleFinalProjectClick = (finalProjectId) => {
     navigate(`/section/${finalProjectId}`);
-  }
-  
+  };
 
   return (
     <div className="main-content">
@@ -196,7 +213,8 @@ const MainContent = () => {
           <LoadingPage />
         </div>
       )}
-      {levelsInfo?.length ? (
+      {!selectedModule && <Modules />}
+      {selectedModule && levelsInfo?.length ? (
         <div className="progress-path">
           <div className="level-container">
             {levelsInfo.map((level, levelIndex) => (
@@ -216,19 +234,29 @@ const MainContent = () => {
                 <div className="section-content">
                   <div className="snake-path">
                     {level.sections.map((section, sectionIndex) => {
-                      const enabled = isSectionEnabled(levelIndex, sectionIndex);
+                      const enabled = isSectionEnabled(
+                        levelIndex,
+                        sectionIndex
+                      );
                       return (
-                        <div 
-                          key={section._id} 
-                          className={`section-icon ${enabled ? 'active' : 'disabled'}`}
+                        <div
+                          key={section._id}
+                          className={`section-icon ${
+                            enabled ? "active" : "disabled"
+                          }`}
                           style={getMarginStyle(sectionIndex)}
                           onMouseEnter={() => setHoveredSection(section.name)}
                           onMouseLeave={() => setHoveredSection(null)}
-                          onClick={() => enabled && handleSectionClick(section._id)}
+                          onClick={() =>
+                            enabled && handleSectionClick(section._id)
+                          }
                         >
-                          <img src={getImageSrc(sectionIndex)} alt={`Section ${sectionIndex + 1}`} />
+                          <img
+                            src={getImageSrc(sectionIndex)}
+                            alt={`Section ${sectionIndex + 1}`}
+                          />
                         </div>
-                      )
+                      );
                     })}
                   </div>
                   <div className="robot">
@@ -236,42 +264,47 @@ const MainContent = () => {
                   </div>
                 </div>
                 <div
-                    className={`robot-final-container ${
-                      levelIndex <= userCurrentInfo.currentLevelIndex ? "active" : "disabled"
-                    }`}
-                    onMouseEnter={() => setHoveredFinalProject(level._id)}
-                    onMouseLeave={() => setHoveredFinalProject(null)}
-                    onClick={() =>
-                      levelIndex <= userCurrentInfo.currentLevelIndex &&
-                      handleFinalProjectClick(level.finalLevelProject[0]?._id)
-                    }
-                  >
-                    <div className="robot-final">
-                      <img src={robot} alt="Robot" />
-                    </div>
-                    {hoveredFinalProject === level._id && level.finalLevelProject[0]?.title && (
+                  className={`robot-final-container ${
+                    levelIndex <= userCurrentInfo.currentLevelIndex
+                      ? "active"
+                      : "disabled"
+                  }`}
+                  onMouseEnter={() => setHoveredFinalProject(level._id)}
+                  onMouseLeave={() => setHoveredFinalProject(null)}
+                  onClick={() =>
+                    levelIndex <= userCurrentInfo.currentLevelIndex &&
+                    handleFinalProjectClick(level.finalLevelProject[0]?._id)
+                  }
+                >
+                  <div className="robot-final">
+                    <img src={robot} alt="Robot" />
+                  </div>
+                  {hoveredFinalProject === level._id &&
+                    level.finalLevelProject[0]?.title && (
                       <div className="final-project-title">
                         <h3>{level.finalLevelProject[0].title}</h3>
                       </div>
                     )}
-                  </div>
                 </div>
+              </div>
             ))}
             <div ref={sentinelRef} className="sentinel"></div>
           </div>
         </div>
-      ) : (
+      ) : selectedModule ? (
         <div className="no-progress">
           <h2>No has comenzado ningun curso</h2>
           <button className="btn-start-course" onClick={handleStartCourse}>
             Empezar curso
           </button>
         </div>
+      ) : (
+        <></>
       )}
-      {showNoMoreLevels && (
+      {selectedModule && showNoMoreLevels && (
         <div className="no-more-levels">No hay más niveles disponibles.</div>
       )}
-      {hoveredSection && (
+      {selectedModule && hoveredSection && (
         <div className="section-tooltip">{hoveredSection}</div>
       )}
     </div>

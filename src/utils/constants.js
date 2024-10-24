@@ -1,6 +1,6 @@
 export const API_BASE_URL =
   process.env.REACT_APP_BACKEND_URL ?? "http://localhost:3002";
-export const RESET_STATE = 'RESET_STATE';
+export const RESET_STATE = "RESET_STATE";
 
 export const AUTH_ENDPOINT = `${API_BASE_URL}/v1/auth`;
 export const LOGIN_ENDPOINT = `${AUTH_ENDPOINT}/login`;
@@ -24,17 +24,19 @@ export const ADVANCE_COURSE = `${USER_PROGRESS_ENDPOINT}/advance`;
 export const SKIP_CLASS = `${USER_PROGRESS_ENDPOINT}/skip-class`;
 export const SUBMIT_FINAL_LEVEL = `${USER_PROGRESS_ENDPOINT}/submit-final-level`;
 
-export const NEXT_CLASS='Proceed to the next class';
-export const NEXT_EXERCISE='Proceed to the next exercise';
-export const ADVANCE_SECTION='Advance to the next section';
-export const SUBMIT_FINAL_LEVEL_PROJECT='Complete the final level project';
-export const ADVANCE_LEVEL='Advance to the next level';
-export const COURSE_COMPLETED='Course completed';
+export const NEXT_CLASS = "Proceed to the next class";
+export const NEXT_EXERCISE = "Proceed to the next exercise";
+export const ADVANCE_SECTION = "Advance to the next section";
+export const SUBMIT_FINAL_LEVEL_PROJECT = "Complete the final level project";
+export const ADVANCE_LEVEL = "Advance to the next level";
+export const COURSE_COMPLETED = "Course completed";
 
 export const LEVEL_ENDPOINT = `${API_BASE_URL}/v1/level`;
 export const LEVEL_INFO_ENDPOINT = `${LEVEL_ENDPOINT}/info`;
 export const ALL_LEVELS_ENDPOINT = `${LEVEL_ENDPOINT}/module`;
 export const FINAL_LEVEL_INFO = `${LEVEL_ENDPOINT}/finalProject`;
+
+export const MODULE_ENDPOINT = `${API_BASE_URL}/v1/module`;
 
 export const USER_ENDPOINT = `${API_BASE_URL}/v1/user`;
 export const USER_FREE_MODE = `${USER_ENDPOINT}/freeModeProgress`;

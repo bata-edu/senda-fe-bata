@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchAllLevels, fetchLevelInfo } from "../features/level/levelSlice";
 import { fetchUser } from "../features/user/userSlice";
-import { fetchUserProgress } from "../features/userProgress/userProgressSlice";
 import Sidebar from "../components/home/SideBar";
 import SidebarRight from "../components/home/SideBarRight";
 import "../styles/home.css";
@@ -13,23 +12,24 @@ const Home = () => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const { page, levels } = useSelector((state) => state.level || {});
+  const { selectedModule } = useSelector((state) => state.modules || {});
 
   useEffect(() => {
-    if ((levels && levels.length)) {
+    if (levels && levels.length) {
       return;
     }
     const fetchData = async () => {
       try {
+        if (!selectedModule) return;
         setLoading(true);
-        const res = await dispatch(fetchUserProgress()).unwrap();
-        if (res.length > 0) {
-          await Promise.all([
-            dispatch(
-              fetchLevelInfo({ courseId: res[0].course, page, limit: 3 })
-            ),
-            dispatch(fetchAllLevels({ courseId: res[0].course })),
-          ]);
-        }
+
+        await Promise.all([
+          dispatch(
+            fetchLevelInfo({ courseId: selectedModule, page, limit: 3 })
+          ),
+          dispatch(fetchAllLevels({ courseId: selectedModule })),
+        ]);
+
         dispatch(fetchUser());
         setLoading(false);
       } catch (error) {
@@ -38,12 +38,11 @@ const Home = () => {
       }
     };
     fetchData();
-  }, [dispatch]);
+  }, [dispatch, selectedModule]);
 
   if (loading) {
     return <LoadingPage />;
-  }
-  else{
+  } else {
     return (
       <div className="home-container">
         <Sidebar />
