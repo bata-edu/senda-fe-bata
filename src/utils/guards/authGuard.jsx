@@ -29,14 +29,14 @@ const AuthGuard = ({ children }) => {
             return; 
           } catch (error) {
             setLoading(false);
-            logoutUser();
+            await logoutUser();
             dispatch({ type: RESET_STATE });
             navigate('/login');
             return;
           }
         } else {
           setLoading(false);
-          logoutUser();
+          await logoutUser();
           dispatch({ type: RESET_STATE });
           navigate('/login');
         }
