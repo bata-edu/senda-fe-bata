@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchAllLevels, fetchLevelInfo } from "../features/level/levelSlice";
 import { fetchUser } from "../features/user/userSlice";
+import { fetchRank } from "../features/user/userSlice";
 import Sidebar from "../components/home/SideBar";
 import SidebarRight from "../components/home/SideBarRight";
 import "../styles/home.css";
@@ -20,6 +21,7 @@ const Home = () => {
     }
     const fetchData = async () => {
       try {
+        dispatch(fetchRank());
         if (!selectedModule) return;
         setLoading(true);
 
