@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchAllLevels, fetchLevelInfo } from "../features/level/levelSlice";
-import { fetchUser } from "../features/user/userSlice";
-import { fetchRank } from "../features/user/userSlice";
-import Sidebar from "../components/home/SideBar";
-import SidebarRight from "../components/home/SideBarRight";
-import "../styles/home.css";
+import { fetchAllLevels, fetchLevelInfo } from "../../features/level/levelSlice";
+import { fetchUser } from "../../features/user/userSlice";
+import { fetchRank } from "../../features/user/userSlice";
+import Sidebar from "../../components/home/SideBar";
+import SidebarRight from "../../components/home/SideBarRight";
+import "../../styles/home.css";
 import { Outlet } from "react-router-dom";
-import LoadingPage from "./LoadingPage";
+import LoadingPage from "../LoadingPage";
 
 const Home = () => {
   const dispatch = useDispatch();
@@ -35,7 +35,7 @@ const Home = () => {
         dispatch(fetchUser());
         setLoading(false);
       } catch (error) {
-        console.log("Error loading data:", error);
+        console.error("Error loading data:", error);
         setLoading(true);
       }
     };

@@ -5,6 +5,7 @@ import {
   forgotPassword,
   verifyEmail,
   googleLogin,
+  getAuthData,
 } from "../../features/auth/authService";
 import "../../styles/login.css";
 import logoImage from "../../assets/logo 3.png";
@@ -13,6 +14,7 @@ import withReactContent from "sweetalert2-react-content";
 import { toast } from "react-toastify";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 import "react-toastify/dist/ReactToastify.css";
+import useNavigateToDashboard from "../../utils/userRoles";
 
 const MySwal = withReactContent(Swal);
 
@@ -23,6 +25,8 @@ const LoginForm = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
+  const navigateToDashboard = useNavigateToDashboard();
+
 
   const validateEmailToken = async (token) => {
     try {
@@ -53,8 +57,10 @@ const LoginForm = () => {
     setIsLoading(true);
     try {
       await loginUser(email, password);
-      navigate("/home");
+      const {user} = getAuthData();
+      navigateToDashboard(user.role)
     } catch (err) {
+      console.error(err);
       setError(err.response?.data?.message || "Error al iniciar sesión");
     } finally {
       setIsLoading(false);

@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchAllLevels, fetchLevelInfo } from "../features/level/levelSlice";
-import { fetchUser } from "../features/user/userSlice";
-import { fetchUserProgress } from "../features/userProgress/userProgressSlice";
+import { fetchAllLevels, fetchLevelInfo } from "../../features/level/levelSlice";
+import { fetchUser } from "../../features/user/userSlice";
+import { fetchUserProgress } from "../../features/userProgress/userProgressSlice";
 
-import "../styles/profile.css";
-import LoadingPage from "./LoadingPage";
-import UserInfo from "../components/profile/UserInfo";
-import Streaks from "../components/profile/Streaks";
-import MyWebPage from "../components/profile/MyWebPage";
+import "../../styles/profile.css";
+import LoadingPage from "../LoadingPage";
+import UserInfo from "../../components/profile/UserInfo";
+import Streaks from "../../components/profile/Streaks";
+import MyWebPage from "../../components/profile/MyWebPage";
 
 const Profile = () => {
   const dispatch = useDispatch();
@@ -26,7 +26,7 @@ const Profile = () => {
         dispatch(fetchUser());
         setLoading(false);
       } catch (error) {
-        console.log("Error loading data:", error);
+        console.error("Error loading data:", error);
         setLoading(true);
       }
     };

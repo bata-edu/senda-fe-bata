@@ -182,7 +182,7 @@ const MainContent = () => {
       setLevelInfo();
       setLoading(false);
     } catch (error) {
-      console.log("Error starting course:", error);
+      console.error("Error starting course:", error);
     }
   };
 
