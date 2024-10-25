@@ -42,3 +42,8 @@ export const USER_ENDPOINT = `${API_BASE_URL}/v1/user`;
 export const USER_DETAIL = `${USER_ENDPOINT}/detail`;
 export const USER_FREE_MODE = `${USER_ENDPOINT}/freeModeProgress`;
 export const RANK = `${USER_ENDPOINT}/rank-list`;
+
+export const USER_STUDENT = 'student';
+export const USER_TEACHER = 'teacher';
+export const USER_ADMIN = 'admin';
+export const USER_SCHOOL_ADMIN = 'schoolAdmin';

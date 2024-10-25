@@ -1,11 +1,11 @@
 import React, { useEffect } from "react";
-import Preview from "../components/editor/Preview";
+import Preview from "../../components/editor/Preview";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import CodeTabs from "../components/editor/CodeTabs";
-import Editor from "../components/editor/Editor";
-import "../styles/editor.css";
-import { createUserFreeModeProgress, fetchUserFreeModeProgress, updateUserFreeModeProgress } from "../features/user/userSlice";
+import CodeTabs from "../../components/editor/CodeTabs";
+import Editor from "../../components/editor/Editor";
+import "../../styles/editor.css";
+import { createUserFreeModeProgress, fetchUserFreeModeProgress, updateUserFreeModeProgress } from "../../features/user/userSlice";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 

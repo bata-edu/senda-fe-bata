@@ -2,16 +2,16 @@ import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchNextAction, advanceCourse } from '../features/userProgress/userProgressSlice';
-import { NEXT_CLASS, NEXT_EXERCISE, ADVANCE_SECTION, SUBMIT_FINAL_LEVEL_PROJECT, ADVANCE_LEVEL, COURSE_COMPLETED } from '../utils/constants';
-import SectionClass from '../components/section/Class';
-import Exercise from '../components/section/Exercice';
-import FinalWork from '../components/level/FinalWork';
-import LoadingPage from '../pages/LoadingPage';
-import { fetchUserProgress } from '../features/userProgress/userProgressSlice';
-import AdvanceSection from '../components/section/AdvanceSection';
-import AdvanceLevel from '../components/section/AdvanceLevel';
-import CompleteCourse from '../components/section/CompleteCourse';
+import { fetchNextAction, advanceCourse } from '../../features/userProgress/userProgressSlice';
+import { NEXT_CLASS, NEXT_EXERCISE, ADVANCE_SECTION, SUBMIT_FINAL_LEVEL_PROJECT, ADVANCE_LEVEL, COURSE_COMPLETED } from '../../utils/constants';
+import SectionClass from '../../components/section/Class';
+import Exercise from '../../components/section/Exercice';
+import FinalWork from '../../components/level/FinalWork';
+import LoadingPage from '../LoadingPage';
+import { fetchUserProgress } from '../../features/userProgress/userProgressSlice';
+import AdvanceSection from '../../components/section/AdvanceSection';
+import AdvanceLevel from '../../components/section/AdvanceLevel';
+import CompleteCourse from '../../components/section/CompleteCourse';
 
 const SectionPage = () => {
 
