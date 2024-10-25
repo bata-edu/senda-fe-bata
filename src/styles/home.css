@@ -63,6 +63,19 @@
     font-size: 1.1rem;
     font-weight: 600; 
   }
+
+  .ranking-item.current-user {
+    background-color: #d1e7dd;
+    color: #0f5132;
+    border-radius: 5px;
+    padding: 5px 10px;
+    font-weight: 700;
+  }
+  
+  .ranking-item.first-place {
+    color: #ffc107;
+    font-weight: 800;
+  }
   
   /* SidebarRight - Derecha */
   .sidebar-right {

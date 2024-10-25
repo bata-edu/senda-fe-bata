@@ -1,14 +1,18 @@
 import React from 'react';
 import logoImage from '../../assets/logo 3.png'
 import logoutIcon from '../../assets/logOut.svg'
-import {logoutUser} from '../../features/auth/authService'
+import {getAuthData, logoutUser} from '../../features/auth/authService'
 import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RESET_STATE } from '../../utils/constants';
 
 const Sidebar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const {rank} = useSelector((state) => state.user || {});
+
+  const {user} = getAuthData();
 
   const handleLogout = async () => {
     await logoutUser()
@@ -40,12 +44,20 @@ const Sidebar = () => {
       <div className="league">
         <h2>LIGA</h2>
         <ul className="ranking">
-          <li>1º BRUNO <span>87 pts</span></li>
-          <li>2º LUCAS <span>75 pts</span></li>
-          <li>3º MARTIN <span>61 pts</span></li>
-          <li>4º TOMAS <span>50 pts</span></li>
-          <li>5º NICOLAS <span>34 pts</span></li>
-          <li>6º YO <span>0 pts</span></li>
+          {rank && rank.length
+            ? rank.map((rankUser, index) => (
+                <li
+                  key={rankUser.id}
+                  className={`ranking-item ${
+                    rankUser.id === user?.id ? 'current-user' : ''
+                  } ${index === 0 ? 'first-place' : ''}`}
+                >
+                  {index === 0 && '👑 '}
+                  {index + 1}º {rankUser.name.toUpperCase()}{' '}
+                  <span>{rankUser.points}</span>
+                </li>
+              ))
+            : null}
         </ul>
       </div>
     </div>

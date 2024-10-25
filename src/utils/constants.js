@@ -39,4 +39,6 @@ export const FINAL_LEVEL_INFO = `${LEVEL_ENDPOINT}/finalProject`;
 export const MODULE_ENDPOINT = `${API_BASE_URL}/v1/module`;
 
 export const USER_ENDPOINT = `${API_BASE_URL}/v1/user`;
+export const USER_DETAIL = `${USER_ENDPOINT}/detail`;
 export const USER_FREE_MODE = `${USER_ENDPOINT}/freeModeProgress`;
+export const RANK = `${USER_ENDPOINT}/rank-list`;
