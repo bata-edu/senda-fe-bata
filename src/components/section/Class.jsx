@@ -1,17 +1,22 @@
-import React, { useEffect } from 'react';
-import robotImage from '../../assets/robot.png';
-import booksImage from '../../assets/laptop.png';
-import '../../styles/class.css';
-import { useNavigate } from 'react-router-dom';
-import { fetchNextClass, completeClass, fetchNextAction } from '../../features/userProgress/userProgressSlice';
-import { useDispatch, useSelector } from 'react-redux';
-import LoadingPage from '../../pages/LoadingPage';
+import React, { useEffect } from "react";
+import robotImage from "../../assets/robot.png";
+import booksImage from "../../assets/laptop.png";
+import "../../styles/class.css";
+import { useNavigate } from "react-router-dom";
+import {
+  fetchNextClass,
+  completeClass,
+  fetchNextAction,
+} from "../../features/userProgress/userProgressSlice";
+import { useDispatch, useSelector } from "react-redux";
+import LoadingPage from "../../pages/LoadingPage";
 
-const SectionClass = ({advance}) => {
+const SectionClass = ({ advance }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { myClass, progress, loading,  nextAction} = useSelector((state) => state.userProgress || {});
-
+  const { myClass, progress, nextAction } = useSelector(
+    (state) => state.userProgress || {}
+  );
 
   useEffect(() => {
     dispatch(fetchNextClass(progress.course));
@@ -19,21 +24,25 @@ const SectionClass = ({advance}) => {
 
   const advanceClass = async () => {
     await dispatch(completeClass(myClass.id));
-    advance()
-  }
+    advance();
+  };
 
   return (
     <div className="clase-container">
-      {loading && (
+      {myClass && progress && (
         <div className="loading">
           <LoadingPage />
         </div>
       )}
       <div className="header">
-        <button className="close-button" onClick={() => navigate('/home')}>X</button>
-        <div className='header-buttons'>
-            <button className="skip-button">SALTAR</button>
-            <button className='advance-button' onClick={() => advanceClass()}>AVANZAR</button>
+        <button className="close-button" onClick={() => navigate("/home")}>
+          X
+        </button>
+        <div className="header-buttons">
+          <button className="skip-button">SALTAR</button>
+          <button className="advance-button" onClick={() => advanceClass()}>
+            AVANZAR
+          </button>
         </div>
       </div>
       <div className="progress-bar">
@@ -50,10 +59,10 @@ const SectionClass = ({advance}) => {
               <p>{myClass?.content}</p>
             </div>
             <div className="robot-image-class">
-                <img src={robotImage} alt="Robot"/>
+              <img src={robotImage} alt="Robot" />
             </div>
           </div>
-          <div className="books-image" >
+          <div className="books-image">
             <img src={booksImage} alt="Books" />
           </div>
         </div>

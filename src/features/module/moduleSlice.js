@@ -31,35 +31,28 @@ const moduleSlice = createSlice({
   initialState: {
     modules: null,
     selectedModule: null,
-    loading: false,
     error: null,
   },
   reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(fetchModulesInfo.pending, (state) => {
-        state.loading = true;
         state.error = null;
       })
       .addCase(fetchModulesInfo.fulfilled, (state, action) => {
-        state.loading = false;
         state.modules = action.payload.results;
       })
       .addCase(fetchModulesInfo.rejected, (state, action) => {
-        state.loading = false;
         state.error = action.payload;
       });
     builder
       .addCase(setSelectedModule.pending, (state) => {
-        state.loading = true;
         state.error = null;
       })
       .addCase(setSelectedModule.fulfilled, (state, action) => {
-        state.loading = false;
         state.selectedModule = action.payload;
       })
       .addCase(setSelectedModule.rejected, (state, action) => {
-        state.loading = false;
         state.error = action.payload;
       });
   },
