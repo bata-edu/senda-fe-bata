@@ -242,7 +242,7 @@ const userProgressSlice = createSlice({
       // Maneja la completación de un ejercicio
       builder
       .addCase(completeExercise.pending, (state) => {
-        state.loading = true;
+        //state.loading = true;
         state.error = null;
       })
       .addCase(completeExercise.fulfilled, (state, action) => {

@@ -7,20 +7,26 @@ import { fetchNextClass, completeClass, fetchNextAction } from '../../features/u
 import { useDispatch, useSelector } from 'react-redux';
 import LoadingPage from '../../pages/LoadingPage';
 
-const SectionClass = ({advance}) => {
+const SectionClass = ({advance, completedClass}) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { myClass, progress, loading,  nextAction} = useSelector((state) => state.userProgress || {});
 
 
   useEffect(() => {
-    dispatch(fetchNextClass(progress.course));
-  }, [dispatch, nextAction]);
+    if(!completedClass){
+      dispatch(fetchNextClass(progress.course));
+    }
+  }, [dispatch, completedClass, nextAction]);
 
   const advanceClass = async () => {
-    await dispatch(completeClass(myClass.id));
+    if(!completedClass){
+      await dispatch(completeClass(myClass.id));
+    }
     advance()
   }
+
+  const currentLesson = completedClass || myClass;
 
   return (
     <div className="clase-container">
@@ -41,13 +47,13 @@ const SectionClass = ({advance}) => {
       </div>
       <div className="content">
         <div className="text-container">
-          <h2>{myClass?.name}</h2>
-          <p>{myClass?.description}</p>
+          <h2>{currentLesson?.name}</h2>
+          <p>{currentLesson?.description}</p>
         </div>
         <div className="images-container">
           <div className="message-container">
             <div className="speech-bubble">
-              <p>{myClass?.content}</p>
+              <p>{currentLesson?.content}</p>
             </div>
             <div className="robot-image-class">
                 <img src={robotImage} alt="Robot"/>

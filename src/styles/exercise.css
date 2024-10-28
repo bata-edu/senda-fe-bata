@@ -97,6 +97,11 @@
     text-align: left;
     width: 100%;
   }
+
+  .option-button.correct-answer {
+    border: 2px solid green;
+  }
+  
   
   .option-button:hover {
     background-color: #1f2a4b;
