@@ -22,7 +22,7 @@ const ProgressPage = () => {
   const {section, loading: loadingSection} = useSelector((state) => state.section || {});
   const [searchParams] = useSearchParams();
   const sectionId = searchParams.get('section');
-  const finalProgress = searchParams.get('finalProgress');
+  const levelIndex = searchParams.get('level');
   const isCurrentSection = searchParams.get('current')
   const [completedClass, setCompletedClass] = useState(null);
   const [completedExercise, setCompletedExercise] = useState(null);
@@ -38,7 +38,9 @@ const ProgressPage = () => {
         dispatch(fetchNextAction(progress.course));
       }
       else {
-        getCompleteSection();
+        if(sectionId){
+          getCompleteSection();
+        }
       }
     }
   }, [dispatch, progress]);
@@ -102,9 +104,8 @@ const ProgressPage = () => {
         {(nextAction?.message === NEXT_EXERCISE || completedExercise) && (
           <Exercise advance={handleAdvance} completedExercise={completedExercise}/>  
         )}
-        {nextAction?.message === SUBMIT_FINAL_LEVEL_PROJECT && (
-          <FinalWork advance = {handleAdvance} progress = {progress}
-          />
+        {(nextAction?.message === SUBMIT_FINAL_LEVEL_PROJECT || levelIndex) && (
+          <FinalWork advance = {handleAdvance} progress = {progress} levelIndex={levelIndex}/>
         )}
         {nextAction?.message === ADVANCE_SECTION && (
           <AdvanceSection advance={handleAdvance}/>
