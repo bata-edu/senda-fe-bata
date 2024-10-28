@@ -9,7 +9,7 @@ import Levels from "../components/home/Levels";
 import EditorPage from "../pages/student/EditorPage";
 import ResetPasswordPage from "../pages/ResetPasswordPage";
 import RootRedirect from "../utils/guards/rootRedirect";
-import SectionPage from "../pages/student/SectionPage";
+import ProgressPage from "../pages/student/ProgressPage";
 import Profile from "../pages/student/ProfilePage";
 import AdminHomePage from "../pages/admin/AdminHomePage";
 import SchoolAdminHomePage from "../pages/school-admin/SchoolAdminHomePage";
@@ -57,11 +57,11 @@ const AppRoutes = () => {
           <Route path="profile" element={<Profile />} />
         </Route>
         <Route
-          path="/section/:id"
+          path="/progress"
           element={
             <AuthGuard>
               <StudentGuard>
-                <SectionPage />
+                <ProgressPage />
               </StudentGuard>
             </AuthGuard>
           }

@@ -47,3 +47,6 @@ export const USER_STUDENT = 'student';
 export const USER_TEACHER = 'teacher';
 export const USER_ADMIN = 'admin';
 export const USER_SCHOOL_ADMIN = 'schoolAdmin';
+
+export const SECTION_ENDPOINT = `${API_BASE_URL}/v1/section`;
+export const SECTION_INDIVIDUAL = `${SECTION_ENDPOINT}/individual`;

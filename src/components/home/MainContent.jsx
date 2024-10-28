@@ -198,12 +198,14 @@ const MainContent = () => {
     return false;
   };
 
-  const handleSectionClick = (sectionId) => {
-    navigate(`/section/${sectionId}`);
+  const handleSectionClick = (sectionId, levelIndex, sectionIndex) => {
+    const current = (levelIndex === userCurrentInfo.currentLevelIndex && sectionIndex === userCurrentInfo.currentSectionIndex);
+    navigate(`/progress?section=${sectionId}&current=${current}`);
   };
 
-  const handleFinalProjectClick = (finalProjectId) => {
-    navigate(`/section/${finalProjectId}`);
+  const handleFinalProjectClick = (finalProjectId, levelIndex) => {
+    const current = (levelIndex === userCurrentInfo.currentLevelIndex);
+    navigate(`/progress/?finalProject=${finalProjectId}?current=${current}`);
   };
 
   return (
@@ -248,7 +250,7 @@ const MainContent = () => {
                           onMouseEnter={() => setHoveredSection(section.name)}
                           onMouseLeave={() => setHoveredSection(null)}
                           onClick={() =>
-                            enabled && handleSectionClick(section._id)
+                            enabled && handleSectionClick(section._id, levelIndex ,sectionIndex)
                           }
                         >
                           <img
@@ -273,7 +275,7 @@ const MainContent = () => {
                   onMouseLeave={() => setHoveredFinalProject(null)}
                   onClick={() =>
                     levelIndex <= userCurrentInfo.currentLevelIndex &&
-                    handleFinalProjectClick(level.finalLevelProject[0]?._id)
+                    handleFinalProjectClick(level.finalLevelProject[0]?._id, levelIndex)
                   }
                 >
                   <div className="robot-final">

@@ -1,32 +1,48 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../../styles/exercise.css';
 import { useDispatch, useSelector } from 'react-redux';
-import { useEffect } from 'react';
 import { fetchNextExercise, completeExercise } from '../../features/userProgress/userProgressSlice';
 import LoadingPage from '../../pages/LoadingPage';
+import '../../styles/exercise.css';
 
-const Exercise = ({advance}) => {
+const Exercise = ({ advance, completedExercise }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { myExercise, progress, loading, nextAction } = useSelector((state) => state.userProgress || {});
 
   useEffect(() => {
-    dispatch(fetchNextExercise(progress.course));
+    if (!completedExercise) {
+      dispatch(fetchNextExercise(progress.course));
+    }
   }, [dispatch, nextAction]);
 
   const advanceExercise = async (option) => {
-   const body =  {
-    userAnswer: option,
-   }
-    const exerciseId = myExercise.id;
-    await dispatch(completeExercise({exerciseId, body}));
-    advance()
-  }
+    if (!completedExercise) {
+      const body = {
+        userAnswer: option,
+      };
+      const exerciseId = myExercise.id;
+      
+      try {
+        const response = await dispatch(completeExercise({ exerciseId, body }));
+        if (!response || response.error) {
+          return;
+        }
+        advance();
+      } catch (error) {
+        console.error('Error capturado:', error);
+      }
+    } else {
+      advance();
+    }
+  };
+
+  const currentExercise = completedExercise || myExercise;
+  const answer = currentExercise?.answer;
 
   return (
     <div className="exercise-container">
-    {loading && (
+      {loading && (
         <div className="loading">
           <LoadingPage />
         </div>
@@ -40,16 +56,20 @@ const Exercise = ({advance}) => {
       </div>
       <div className="laptop-container">
         <div className="laptop-screen">
-          <h2 className="question">{myExercise?.content}</h2>
+          <h2 className="question">{currentExercise?.content}</h2>
           <div className="options">
-            {myExercise?.options.map((option, index) => (
-              <button key={index} className="option-button" onClick={() => advanceExercise(option)}>
+            {currentExercise?.options.map((option, index) => (
+              <button
+                key={index}
+                className={`option-button ${option === answer ? 'correct-answer' : ''}`}
+                onClick={() => advanceExercise(option)}
+              >
                 {option}
               </button>
             ))}
           </div>
         </div>
-    </div>
+      </div>
     </div>
   );
 };
