@@ -46,7 +46,7 @@ const SectionPage = () => {
 
   return (
     <div>
-      {!progress && (
+      {!progress.id && (
         <div className="loading">
           <LoadingPage />
         </div>
