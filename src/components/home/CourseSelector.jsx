@@ -7,6 +7,7 @@ import {
   setSelectedModule,
 } from "../../features/module/moduleSlice";
 import { useDispatch, useSelector } from "react-redux";
+import { fetchUserProgress } from "../../features/userProgress/userProgressSlice";
 
 const Modules = () => {
   const dispatch = useDispatch();
@@ -21,6 +22,7 @@ const Modules = () => {
 
   const updateSelectedModule = async (moduleId) => {
     dispatch(setSelectedModule(moduleId));
+    dispatch(fetchUserProgress());
   };
 
   return (
