@@ -26,10 +26,9 @@ const SectionClass = ({ advance }) => {
     await dispatch(completeClass(myClass.id));
     advance();
   };
-
   return (
     <div className="clase-container">
-      {myClass && progress && (
+      {!myClass?.id && (
         <div className="loading">
           <LoadingPage />
         </div>
