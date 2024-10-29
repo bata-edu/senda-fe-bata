@@ -7,7 +7,7 @@
     background-color: #ffffff;
     position: relative;
     padding: 30px;
-    height: 100vh;
+    min-height: 100vh;
   }
   
   .register-container {
@@ -56,6 +56,7 @@
     text-align: center;
     margin-top: 0.5rem;
   }
+
   
   /* Botón de crear cuenta */
   .register-btn {
