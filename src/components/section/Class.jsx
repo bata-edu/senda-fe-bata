@@ -11,7 +11,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import LoadingPage from "../../pages/LoadingPage";
 
-const SectionClass = ({ advance }) => {
+const SectionClass = ({ advance, completedClass }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
@@ -20,15 +20,21 @@ const SectionClass = ({ advance }) => {
   );
 
   useEffect(() => {
-    dispatch(fetchNextClass(progress.course, setLoading));
-  }, [dispatch, nextAction]);
+    if (!completedClass) {
+      dispatch(fetchNextClass(progress.course));
+    }
+  }, [dispatch, completedClass, nextAction]);
 
   const advanceClass = async () => {
-    setLoading(true);
-    await dispatch(completeClass(myClass.id));
-    setLoading(false);
+    if (!completedClass) {
+      setLoading(true);
+      await dispatch(completeClass(myClass.id));
+      setLoading(false);
+    }
     advance();
   };
+
+  const currentLesson = completedClass || myClass;
 
   return (
     <div className="clase-container">
@@ -53,13 +59,13 @@ const SectionClass = ({ advance }) => {
       </div>
       <div className="content">
         <div className="text-container">
-          <h2>{myClass?.name}</h2>
-          <p>{myClass?.description}</p>
+          <h2>{currentLesson?.name}</h2>
+          <p>{currentLesson?.description}</p>
         </div>
         <div className="images-container">
           <div className="message-container">
             <div className="speech-bubble">
-              <p>{myClass?.content}</p>
+              <p>{currentLesson?.content}</p>
             </div>
             <div className="robot-image-class">
               <img src={robotImage} alt="Robot" />

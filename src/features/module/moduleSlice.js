@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { MODULE_ENDPOINT } from "../../utils/constants";
+import { MODULE_ENDPOINT, RESET_STATE } from "../../utils/constants";
 import apiClient from "../../utils/interceptors/authInterceptor";
 
 // Thunk para obtener la información de un nivel
@@ -54,6 +54,12 @@ const moduleSlice = createSlice({
       })
       .addCase(setSelectedModule.rejected, (state, action) => {
         state.error = action.payload;
+      })
+      .addCase(RESET_STATE, (state) => {
+        state.modules = null;
+        state.selectedModule = null;
+        state.loading = false;
+        state.error = null;
       });
   },
 });

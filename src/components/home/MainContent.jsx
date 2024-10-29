@@ -34,6 +34,7 @@ const MainContent = () => {
   const [userCurrentInfo, setUserCurrentInfo] = useState({
     currentLevelIndex: 0,
     currentSectionIndex: 0,
+    lastSectionIndex: 0,
   });
 
   const setLevelInfo = async () => {
@@ -48,7 +49,8 @@ const MainContent = () => {
         currentLevel?.sections.findIndex(
           (section) => section._id === progress.currentSection
         ) || 0;
-      setUserCurrentInfo({ currentLevelIndex, currentSectionIndex });
+
+      setUserCurrentInfo({ currentLevelIndex, currentSectionIndex});
     }
   };
 
@@ -192,12 +194,14 @@ const MainContent = () => {
     return false;
   };
 
-  const handleSectionClick = (sectionId) => {
-    navigate(`/section/${sectionId}`);
+  const handleSectionClick = (sectionId, levelIndex, sectionIndex) => {
+    const current = (levelIndex === userCurrentInfo.currentLevelIndex && sectionIndex === userCurrentInfo.currentSectionIndex);
+    navigate(`/progress?section=${sectionId}&current=${current}`);
   };
 
-  const handleFinalProjectClick = (finalProjectId) => {
-    navigate(`/section/${finalProjectId}`);
+  const handleFinalProjectClick = (levelIndex, levelId) => {
+    const current = (levelIndex === userCurrentInfo.currentLevelIndex);
+    navigate(`/progress?level=${levelId}&index=${levelIndex}&current=${current}`);
   };
 
   return (
@@ -216,7 +220,7 @@ const MainContent = () => {
                 key={level._id}
                 className={`level-info
                 ${
-                  levelIndex <= userCurrentInfo.currentLevelIndex
+                  (levelIndex <= userCurrentInfo.currentLevelIndex)
                     ? "active"
                     : "disabled"
                 }`}
@@ -242,7 +246,7 @@ const MainContent = () => {
                           onMouseEnter={() => setHoveredSection(section.name)}
                           onMouseLeave={() => setHoveredSection(null)}
                           onClick={() =>
-                            enabled && handleSectionClick(section._id)
+                            enabled && handleSectionClick(section._id, levelIndex ,sectionIndex)
                           }
                         >
                           <img
@@ -259,15 +263,16 @@ const MainContent = () => {
                 </div>
                 <div
                   className={`robot-final-container ${
-                    levelIndex <= userCurrentInfo.currentLevelIndex
+                    (levelIndex <= userCurrentInfo.currentLevelIndex)
                       ? "active"
                       : "disabled"
                   }`}
                   onMouseEnter={() => setHoveredFinalProject(level._id)}
                   onMouseLeave={() => setHoveredFinalProject(null)}
                   onClick={() =>
-                    levelIndex <= userCurrentInfo.currentLevelIndex &&
-                    handleFinalProjectClick(level.finalLevelProject[0]?._id)
+                    (levelIndex <= userCurrentInfo.currentLevelIndex)
+                    &&
+                    handleFinalProjectClick(levelIndex,level._id)
                   }
                 >
                   <div className="robot-final">
