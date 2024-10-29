@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import robotImage from "../../assets/robot.png";
 import booksImage from "../../assets/laptop.png";
 import "../../styles/class.css";
@@ -14,21 +14,25 @@ import LoadingPage from "../../pages/LoadingPage";
 const SectionClass = ({ advance }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
   const { myClass, progress, nextAction } = useSelector(
     (state) => state.userProgress || {}
   );
 
   useEffect(() => {
-    dispatch(fetchNextClass(progress.course));
+    dispatch(fetchNextClass(progress.course, setLoading));
   }, [dispatch, nextAction]);
 
   const advanceClass = async () => {
+    setLoading(true);
     await dispatch(completeClass(myClass.id));
+    setLoading(false);
     advance();
   };
+
   return (
     <div className="clase-container">
-      {!myClass?.id && (
+      {(loading || !myClass?.id) && (
         <div className="loading">
           <LoadingPage />
         </div>
