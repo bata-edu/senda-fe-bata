@@ -1,5 +1,5 @@
 import apiClient from '../../utils/interceptors/authInterceptor';
-import { LOGIN_ENDPOINT,REGISTER_ENDPOINT, LOGOUT_ENDPOINT, REFRESH_TOKEN_ENDPOINT, RESET_PASSWORD_ENDPOINT, FORGOT_PASSWORD_ENDPOINT, VERIFY_EMAIL_ENDPOINT, GOOGLE_LOGIN_ENDPOINT, GOOGLE_REGISTER_ENDPOINT } from '../../utils/constants';
+import { LOGIN_ENDPOINT,REGISTER_ENDPOINT, LOGOUT_ENDPOINT, REFRESH_TOKEN_ENDPOINT, RESET_PASSWORD_ENDPOINT, FORGOT_PASSWORD_ENDPOINT, VERIFY_EMAIL_ENDPOINT, GOOGLE_LOGIN_ENDPOINT, GOOGLE_REGISTER_ENDPOINT, SCHOOL_TEACHER_ENDPOINT } from '../../utils/constants';
 
 // Guardar los tokens y la información del usuario en localStorage
 const setAuthData = ({ tokens, user }) => {
@@ -104,6 +104,13 @@ const googleRegister = async (token) => {
   return response.data;
 };
 
+// Registro de profesor
+
+const registerTeacher = async ({name, lastName, email, password, confirmPassword, code}) => {
+  const response = await apiClient.post(SCHOOL_TEACHER_ENDPOINT, { name, lastName, email, password, confirmPassword, code });
+  return response.data;
+};
+
 export {
   loginUser,
   logoutUser,
@@ -116,5 +123,6 @@ export {
   resetPassword,
   verifyEmail,
   googleLogin,
-  googleRegister
+  googleRegister,
+  registerTeacher
 };

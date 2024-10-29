@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { registerUser, googleRegister } from "../../features/auth/authService";
+import { registerUser, googleRegister, registerTeacher } from "../../features/auth/authService";
 import "../../styles/register.css";
 import logoImage from "../../assets/logo 3.png";
 import { useNavigate } from "react-router-dom";
@@ -16,21 +16,35 @@ const RegisterForm = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [name, setName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [isTeacher, setIsTeacher] = useState(false);
+  const [code, setCode] = useState("");
   const [error, setError] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      await registerUser({ email, password, name, lastName, confirmPassword });
-      MySwal.fire({
-        icon: "success",
-        title: "Registro exitoso",
-        text: "Ve tu correo electrónico para terminar el proceso",
-        confirmButtonText: "Ok",
-      }).then(() => {
-        navigate("/login");
-      });
+      if (isTeacher) {
+        await registerTeacher({ name, lastName, email, password, confirmPassword, code });
+        MySwal.fire({
+          icon: "success",
+          title: "Registro exitoso",
+          text: "Tu cuenta de maestro ha sido creada exitosamente.",
+          confirmButtonText: "Ok",
+        }).then(() => {
+          navigate("/login");
+        });
+      } else {
+        await registerUser({ email, password, name, lastName, confirmPassword });
+        MySwal.fire({
+          icon: "success",
+          title: "Registro exitoso",
+          text: "Ve tu correo electrónico para terminar el proceso",
+          confirmButtonText: "Ok",
+        }).then(() => {
+          navigate("/login");
+        });
+      }
     } catch (err) {
       setError(err.response?.data?.message || "Error al registrar");
     }
@@ -56,7 +70,7 @@ const RegisterForm = () => {
     <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
       <div className="register-page">
         <div className="logo">
-          <img src={logoImage} />
+          <img src={logoImage} alt="Logo" />
         </div>
         <div className="register-container">
           <h1 className="create-profile">Crea tu perfil</h1>
@@ -111,11 +125,43 @@ const RegisterForm = () => {
                 required
               />
             </div>
+
+            <div className="form-group teacher-checkbox">
+              <label className="teacher-label">
+                <input
+                  type="checkbox"
+                  className="custom-checkbox"
+                  checked={isTeacher}
+                  onChange={(e) => setIsTeacher(e.target.checked)}
+                />
+                <span className="checkmark"></span>
+                Soy maestro
+              </label>
+            </div>
+
+            {isTeacher && (
+              <div className="form-group">
+                <input
+                  type="text"
+                  className="form-control input-field"
+                  placeholder="Código de Escuela"
+                  value={code}
+                  onChange={(e) => setCode(e.target.value)}
+                  required
+                />
+              </div>
+            )}
+
             <button
               type="submit"
               className="register-btn"
               disabled={
-                !email || !password || !confirmPassword || !name || !lastName
+                !email ||
+                !password ||
+                !confirmPassword ||
+                !name ||
+                !lastName ||
+                (isTeacher && !code)
               }
             >
               {"Crear cuenta"}
