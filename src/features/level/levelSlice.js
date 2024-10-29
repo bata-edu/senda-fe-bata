@@ -32,9 +32,9 @@ export const fetchAllLevels = createAsyncThunk(
 
 export const fetchFinalLevelInfo = createAsyncThunk(
     "level/fetchFinalLevelInfo",
-    async ({levelId}, { rejectWithValue }) => {
+    async ({id}, { rejectWithValue }) => {
         try {
-        const response = await apiClient.get(`${FINAL_LEVEL_INFO}/${levelId}`);
+        const response = await apiClient.get(`${FINAL_LEVEL_INFO}/${id}`);
         return response.data;
         } catch (error) {
         return rejectWithValue(error.response.data);

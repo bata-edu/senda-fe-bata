@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchFinalLevelInfo } from '../../features/level/levelSlice';
 import { submitFinalLevel } from '../../features/userProgress/userProgressSlice';
 
-const FinalWork = ({ advance, progress, levelIndex }) => {
+const FinalWork = ({ advance, progress, levelId, index }) => {
   const [htmlCode, setHtmlCode] = useState('');
   const [cssCode, setCssCode] = useState('');
   const [activeTab, setActiveTab] = useState('HTML');
@@ -20,11 +20,9 @@ const FinalWork = ({ advance, progress, levelIndex }) => {
 
   useEffect(() => {
     if (progress) {
-      if(!levelIndex){
-        const levelId = progress.currentLevel;
-        dispatch(fetchFinalLevelInfo({levelId}));
-      }
-      const response = levelIndex ? progress.finalProjectLevel.previousResponses[levelIndex] : progress.finalProjectLevel.previousResponses.at(-1);
+      const id = levelId || progress.currentLevel;
+      dispatch(fetchFinalLevelInfo({id}));
+      const response = levelId ? progress.finalProjectLevel.previousResponses[index] : progress.finalProjectLevel.previousResponses.at(-1);
       parseFinalResponse(response);
     }
   }, [progress]);
@@ -48,7 +46,7 @@ const FinalWork = ({ advance, progress, levelIndex }) => {
   };
 
   const handleSubmitFinalProject = async () => {
-    if(levelIndex){
+    if(levelId){
       navigate('/home');
       return;
     }
@@ -73,8 +71,8 @@ const FinalWork = ({ advance, progress, levelIndex }) => {
       <div className="header">
         <h1 className="title">{finalLevelProyect?.title}</h1>
         <div className="header-info">
-          <span className="due-date">Fecha de Vencimiento: {progress.finalProjectLevel?.expirationDate}</span>
-          <span className="attempts-left">Intentos Restantes: {progress.finalProjectLevel.attemptsLeft}</span>
+          <span className="due-date">Fecha de Vencimiento: {progress?.finalProjectLevel?.expirationDate}</span>
+          <span className="attempts-left">Intentos Restantes: {progress?.finalProjectLevel.attemptsLeft}</span>
         </div>
         <button className="close-button" onClick={() => navigate('/home')}>X</button>
       </div>

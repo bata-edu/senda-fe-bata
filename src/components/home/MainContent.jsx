@@ -55,8 +55,8 @@ const MainContent = () => {
         currentLevel?.sections.findIndex(
           (section) => section._id === progress.currentSection
         ) || 0;
-      
-      setUserCurrentInfo({ currentLevelIndex, currentSectionIndex, lastSectionIndex: currentLevel.sections.length - 1 });
+
+      setUserCurrentInfo({ currentLevelIndex, currentSectionIndex});
     }
   };
 
@@ -205,9 +205,9 @@ const MainContent = () => {
     navigate(`/progress?section=${sectionId}&current=${current}`);
   };
 
-  const handleFinalProjectClick = (levelIndex) => {
+  const handleFinalProjectClick = (levelIndex, levelId) => {
     const current = (levelIndex === userCurrentInfo.currentLevelIndex);
-    navigate(`/progress?level=${levelIndex}&current=${current}`);
+    navigate(`/progress?level=${levelId}&index=${levelIndex}&current=${current}`);
   };
 
   return (
@@ -269,16 +269,16 @@ const MainContent = () => {
                 </div>
                 <div
                   className={`robot-final-container ${
-                    (levelIndex <= userCurrentInfo.currentLevelIndex && userCurrentInfo.currentSectionIndex === userCurrentInfo.lastSectionIndex)
+                    (levelIndex <= userCurrentInfo.currentLevelIndex)
                       ? "active"
                       : "disabled"
                   }`}
                   onMouseEnter={() => setHoveredFinalProject(level._id)}
                   onMouseLeave={() => setHoveredFinalProject(null)}
                   onClick={() =>
-                    (levelIndex <= userCurrentInfo.currentLevelIndex && userCurrentInfo.currentSectionIndex === userCurrentInfo.lastSectionIndex)
+                    (levelIndex <= userCurrentInfo.currentLevelIndex)
                     &&
-                    handleFinalProjectClick(levelIndex)
+                    handleFinalProjectClick(levelIndex,level._id)
                   }
                 >
                   <div className="robot-final">
