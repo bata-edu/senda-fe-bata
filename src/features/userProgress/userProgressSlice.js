@@ -14,7 +14,7 @@ import {
 } from "../../utils/constants";
 import apiClient from "../../utils/interceptors/authInterceptor";
 
-// Thunk para obtener el progreso del curso del usuario
+// Thunk para obtener todos los progresos de un usuario
 export const fetchUserProgress = createAsyncThunk(
   "userProgress/fetchUserProgress",
   async (_, { rejectWithValue }) => {
@@ -27,12 +27,14 @@ export const fetchUserProgress = createAsyncThunk(
   }
 );
 
+// Thunk para obtener el progreso de un usuario por id
+
 export const fetchUserProgressById = createAsyncThunk(
   "userProgress/fetchUserProgressById",
-  async (progressId, { rejectWithValue }) => {
+  async (moduleId, { rejectWithValue }) => {
     try {
       const response = await apiClient.get(
-        `${USER_PROGRESS_ENDPOINT}/${progressId}`
+        `${USER_PROGRESS_ENDPOINT}/${moduleId}`
       );
       return response.data;
     } catch (error) {
@@ -169,6 +171,15 @@ export const submitFinalLevel = createAsyncThunk(
   }
 );
 
+// Thunk para limpiar el estado nextAction
+
+export const resetNextAction = createAsyncThunk(
+  "userProgress/resetNextAction",
+  async () => {
+    return null;
+  }
+);
+
 const userProgressSlice = createSlice({
   name: "userProgress",
   initialState: {
@@ -293,6 +304,17 @@ const userProgressSlice = createSlice({
         state.progress = action.payload;
       })
       .addCase(submitFinalLevel.rejected, (state, action) => {
+        state.error = action.payload;
+      });
+    // Maneja la limpieza del estado nextAction
+    builder
+      .addCase(resetNextAction.pending, (state) => {
+        state.error = null;
+      })
+      .addCase(resetNextAction.fulfilled, (state) => {
+        state.nextAction = null;
+      })
+      .addCase(resetNextAction.rejected, (state, action) => {
         state.error = action.payload;
       })
       .addCase(RESET_STATE, (state) => {

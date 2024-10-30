@@ -11,7 +11,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import LoadingPage from "../../pages/LoadingPage";
 
-const SectionClass = ({ advance, completedClass }) => {
+const SectionClass = ({ advance, completedClass, loadingNextAction }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
@@ -20,7 +20,7 @@ const SectionClass = ({ advance, completedClass }) => {
   );
 
   useEffect(() => {
-    if (!completedClass) {
+    if (!completedClass || !loadingNextAction) {
       dispatch(fetchNextClass(progress.course));
     }
   }, [dispatch, completedClass, nextAction]);
@@ -36,9 +36,10 @@ const SectionClass = ({ advance, completedClass }) => {
 
   const currentLesson = completedClass || myClass;
 
+
   return (
     <div className="clase-container">
-      {(loading || !myClass?.id) && (
+      {(loading) && (
         <div className="loading">
           <LoadingPage />
         </div>
