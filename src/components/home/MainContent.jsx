@@ -50,7 +50,7 @@ const MainContent = () => {
           (section) => section._id === progress.currentSection
         ) || 0;
 
-      setUserCurrentInfo({ currentLevelIndex, currentSectionIndex});
+      setUserCurrentInfo({ currentLevelIndex, currentSectionIndex });
     }
   };
 
@@ -166,6 +166,14 @@ const MainContent = () => {
     }
   }, [showNoMoreLevels]);
 
+  console.log(loading);
+  useEffect(() => {
+    if (loading) return;
+    if (selectedModule && !levelsInfo?.length) {
+      handleStartCourse();
+    }
+  }, [selectedModule, levelsInfo]);
+
   const handleStartCourse = async () => {
     try {
       setLoading(true);
@@ -195,13 +203,17 @@ const MainContent = () => {
   };
 
   const handleSectionClick = (sectionId, levelIndex, sectionIndex) => {
-    const current = (levelIndex === userCurrentInfo.currentLevelIndex && sectionIndex === userCurrentInfo.currentSectionIndex);
+    const current =
+      levelIndex === userCurrentInfo.currentLevelIndex &&
+      sectionIndex === userCurrentInfo.currentSectionIndex;
     navigate(`/progress?section=${sectionId}&current=${current}`);
   };
 
   const handleFinalProjectClick = (levelIndex, levelId) => {
-    const current = (levelIndex === userCurrentInfo.currentLevelIndex);
-    navigate(`/progress?level=${levelId}&index=${levelIndex}&current=${current}`);
+    const current = levelIndex === userCurrentInfo.currentLevelIndex;
+    navigate(
+      `/progress?level=${levelId}&index=${levelIndex}&current=${current}`
+    );
   };
 
   return (
@@ -211,7 +223,7 @@ const MainContent = () => {
           <LoadingPage />
         </div>
       )}
-      {!selectedModule && <Modules />}
+      {!selectedModule && <Modules setLoading={setLoading} />}
       {selectedModule && levelsInfo?.length ? (
         <div className="progress-path">
           <div className="level-container">
@@ -220,7 +232,7 @@ const MainContent = () => {
                 key={level._id}
                 className={`level-info
                 ${
-                  (levelIndex <= userCurrentInfo.currentLevelIndex)
+                  levelIndex <= userCurrentInfo.currentLevelIndex
                     ? "active"
                     : "disabled"
                 }`}
@@ -246,7 +258,12 @@ const MainContent = () => {
                           onMouseEnter={() => setHoveredSection(section.name)}
                           onMouseLeave={() => setHoveredSection(null)}
                           onClick={() =>
-                            enabled && handleSectionClick(section._id, levelIndex ,sectionIndex)
+                            enabled &&
+                            handleSectionClick(
+                              section._id,
+                              levelIndex,
+                              sectionIndex
+                            )
                           }
                         >
                           <img
@@ -263,16 +280,15 @@ const MainContent = () => {
                 </div>
                 <div
                   className={`robot-final-container ${
-                    (levelIndex <= userCurrentInfo.currentLevelIndex)
+                    levelIndex <= userCurrentInfo.currentLevelIndex
                       ? "active"
                       : "disabled"
                   }`}
                   onMouseEnter={() => setHoveredFinalProject(level._id)}
                   onMouseLeave={() => setHoveredFinalProject(null)}
                   onClick={() =>
-                    (levelIndex <= userCurrentInfo.currentLevelIndex)
-                    &&
-                    handleFinalProjectClick(levelIndex,level._id)
+                    levelIndex <= userCurrentInfo.currentLevelIndex &&
+                    handleFinalProjectClick(levelIndex, level._id)
                   }
                 >
                   <div className="robot-final">
@@ -289,13 +305,6 @@ const MainContent = () => {
             ))}
             <div ref={sentinelRef} className="sentinel"></div>
           </div>
-        </div>
-      ) : selectedModule ? (
-        <div className="no-progress">
-          <h2>No has comenzado ningun curso</h2>
-          <button className="btn-start-course" onClick={handleStartCourse}>
-            Empezar curso
-          </button>
         </div>
       ) : (
         <></>

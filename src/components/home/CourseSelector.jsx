@@ -9,7 +9,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUserProgress } from "../../features/userProgress/userProgressSlice";
 
-const Modules = () => {
+const Modules = ({ setLoading }) => {
   const dispatch = useDispatch();
   const { modules } = useSelector((state) => state.modules);
 
@@ -21,8 +21,10 @@ const Modules = () => {
   }, [dispatch]);
 
   const updateSelectedModule = async (moduleId) => {
-    dispatch(setSelectedModule(moduleId));
-    dispatch(fetchUserProgress());
+    setLoading(true);
+    await dispatch(setSelectedModule(moduleId));
+    await dispatch(fetchUserProgress());
+    setLoading(false);
   };
 
   return (
