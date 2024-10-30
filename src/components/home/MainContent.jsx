@@ -17,16 +17,10 @@ import robot from "../../assets/robot.png";
 const MainContent = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const {
-    levelsInfo = [],
-    page,
-    loading: loadingLevel,
-  } = useSelector((state) => state.level || {});
-  const {
-    progress,
-    courseId,
-    loading: loadingProgress,
-  } = useSelector((state) => state.userProgress || {});
+  const { levelsInfo = [], page } = useSelector((state) => state.level || {});
+  const { progress, courseId } = useSelector(
+    (state) => state.userProgress || {}
+  );
   const { selectedModule } = useSelector((state) => state.modules || {});
   const [hoveredSection, setHoveredSection] = useState(null);
   const [hoveredFinalProject, setHoveredFinalProject] = useState(false);
@@ -80,7 +74,7 @@ const MainContent = () => {
   useEffect(() => {
     const observer = new IntersectionObserver(
       async ([entry]) => {
-        if (entry.isIntersecting && hasMoreLevels && !loadingLevel) {
+        if (entry.isIntersecting && hasMoreLevels) {
           try {
             if (window.location.hash) {
               window.history.replaceState(null, null, window.location.pathname);
@@ -123,7 +117,7 @@ const MainContent = () => {
       if (levelId) {
         let targetLevel = levelsInfo.find((level) => level._id === levelId);
         let levelPage = 0;
-        while (!targetLevel && hasMoreLevels && !loadingLevel) {
+        while (!targetLevel && hasMoreLevels) {
           try {
             const response = await dispatch(
               fetchLevelInfo({ courseId, page: levelPage, limit: 3 })

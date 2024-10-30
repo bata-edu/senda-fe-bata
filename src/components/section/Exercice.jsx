@@ -1,14 +1,19 @@
-import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchNextExercise, completeExercise } from '../../features/userProgress/userProgressSlice';
-import LoadingPage from '../../pages/LoadingPage';
-import '../../styles/exercise.css';
+import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  fetchNextExercise,
+  completeExercise,
+} from "../../features/userProgress/userProgressSlice";
+import LoadingPage from "../../pages/LoadingPage";
+import "../../styles/exercise.css";
 
 const Exercise = ({ advance, completedExercise }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { myExercise, progress, loading, nextAction } = useSelector((state) => state.userProgress || {});
+  const { myExercise, progress, nextAction } = useSelector(
+    (state) => state.userProgress || {}
+  );
 
   useEffect(() => {
     if (!completedExercise) {
@@ -22,7 +27,7 @@ const Exercise = ({ advance, completedExercise }) => {
         userAnswer: option,
       };
       const exerciseId = myExercise.id;
-      
+
       try {
         const response = await dispatch(completeExercise({ exerciseId, body }));
         if (!response || response.error) {
@@ -30,7 +35,7 @@ const Exercise = ({ advance, completedExercise }) => {
         }
         advance();
       } catch (error) {
-        console.error('Error capturado:', error);
+        console.error("Error capturado:", error);
       }
     } else {
       advance();
@@ -42,13 +47,15 @@ const Exercise = ({ advance, completedExercise }) => {
 
   return (
     <div className="exercise-container">
-      {loading && (
+      {!myExercise && !progress && (
         <div className="loading">
           <LoadingPage />
         </div>
       )}
       <div className="header">
-        <button className="close-button" onClick={() => navigate('/home')}>X</button>
+        <button className="close-button" onClick={() => navigate("/home")}>
+          X
+        </button>
         <div className="progress-bar">
           <div className="progress"></div>
         </div>
@@ -61,7 +68,9 @@ const Exercise = ({ advance, completedExercise }) => {
             {currentExercise?.options.map((option, index) => (
               <button
                 key={index}
-                className={`option-button ${option === answer ? 'correct-answer' : ''}`}
+                className={`option-button ${
+                  option === answer ? "correct-answer" : ""
+                }`}
                 onClick={() => advanceExercise(option)}
               >
                 {option}
