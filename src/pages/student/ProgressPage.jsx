@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchNextAction, advanceCourse } from '../../features/userProgress/userProgressSlice';
+import { fetchNextAction, resetNextAction } from '../../features/userProgress/userProgressSlice';
 import { NEXT_CLASS, NEXT_EXERCISE, ADVANCE_SECTION, SUBMIT_FINAL_LEVEL_PROJECT, ADVANCE_LEVEL, COURSE_COMPLETED } from '../../utils/constants';
 import SectionClass from '../../components/section/Class';
 import Exercise from '../../components/section/Exercice';
@@ -21,12 +21,13 @@ const ProgressPage = () => {
   const { progress, nextAction, loading } = useSelector((state) => state.userProgress || {});
   const {section, loading: loadingSection} = useSelector((state) => state.section || {});
   const [searchParams] = useSearchParams();
-  const sectionId = searchParams.get('section');
-  const levelId = searchParams.get('level');
-  const levelIndex = searchParams.get('index');
+  let sectionId = searchParams.get('section');
+  let levelId = searchParams.get('level');
+  let levelIndex = searchParams.get('index');
   const isCurrentSection = searchParams.get('current')
   const [completedClass, setCompletedClass] = useState(null);
   const [completedExercise, setCompletedExercise] = useState(null);
+  const [loadingNextAction, setLoadingNextAction] = useState(false);
 
   useEffect(() => {
     const fetchProgress = async () => {
@@ -36,9 +37,12 @@ const ProgressPage = () => {
       fetchProgress();
     } else {
       if(isCurrentSection === 'true'){
+        setLoadingNextAction(true);
         dispatch(fetchNextAction(progress.course));
+        setLoadingNextAction(false);
       }
       else {
+        dispatch(resetNextAction());
         if(sectionId){
           getCompleteSection();
         }
@@ -57,7 +61,9 @@ const ProgressPage = () => {
   
   const handleAdvance = () => {
     if(isCurrentSection === 'true'){
+      setLoadingNextAction(true);
       dispatch(fetchNextAction(progress.course))
+      setLoadingNextAction(false);
     }
     else{
       advanceCompletedSection();
@@ -94,26 +100,27 @@ const ProgressPage = () => {
       }
     }
   };
-  
+
+
   return (
     <div>
-      {(loading || loadingSection) && (
+      {(loading || loadingSection || loadingNextAction) && (
         <div className="loading">
           <LoadingPage />
         </div>
       )}
       <div>
         {(nextAction?.message === NEXT_CLASS || completedClass) && (
-          <SectionClass advance={handleAdvance} completedClass={completedClass}/>
+          <SectionClass advance={handleAdvance} completedClass={completedClass} loadingNextAction={loadingNextAction}/>
         )}
         {(nextAction?.message === NEXT_EXERCISE || completedExercise) && (
-          <Exercise advance={handleAdvance} completedExercise={completedExercise}/>  
+          <Exercise advance={handleAdvance} completedExercise={completedExercise} loadingNextAction={loadingNextAction}/>  
         )}
         {(nextAction?.message === SUBMIT_FINAL_LEVEL_PROJECT || levelId) && (
-          <FinalWork advance = {handleAdvance} progress = {progress} levelId={levelId} index={levelIndex}/>
+          <FinalWork advance = {handleAdvance} progress = {progress} levelId={levelId} index={levelIndex} loadingNextAction={loadingNextAction}/>
         )}
         {nextAction?.message === ADVANCE_SECTION && (
-          <AdvanceSection advance={handleAdvance}/>
+          <AdvanceSection advance={handleAdvance} loadingNextAction={loadingNextAction}/>
         )}
         {nextAction?.message === ADVANCE_LEVEL && (
           <AdvanceLevel/>

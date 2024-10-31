@@ -8,7 +8,7 @@ import {
 import LoadingPage from "../../pages/LoadingPage";
 import "../../styles/exercise.css";
 
-const Exercise = ({ advance, completedExercise }) => {
+const Exercise = ({ advance, completedExercise, loadingNextAction }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { myExercise, progress, nextAction } = useSelector(
@@ -16,7 +16,7 @@ const Exercise = ({ advance, completedExercise }) => {
   );
 
   useEffect(() => {
-    if (!completedExercise) {
+    if (!completedExercise || !loadingNextAction) {
       dispatch(fetchNextExercise(progress.course));
     }
   }, [dispatch, nextAction]);

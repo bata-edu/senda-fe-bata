@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchAllLevels, fetchLevelInfo } from "../../features/level/levelSlice";
 import { fetchUser } from "../../features/user/userSlice";
-import { fetchUserProgress } from "../../features/userProgress/userProgressSlice";
 
 import "../../styles/profile.css";
 import LoadingPage from "../LoadingPage";

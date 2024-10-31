@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchFinalLevelInfo } from '../../features/level/levelSlice';
 import { submitFinalLevel } from '../../features/userProgress/userProgressSlice';
 
-const FinalWork = ({ advance, progress, levelId, index }) => {
+const FinalWork = ({ advance, progress, levelId, index, loadingNextAction }) => {
   const [htmlCode, setHtmlCode] = useState('');
   const [cssCode, setCssCode] = useState('');
   const [activeTab, setActiveTab] = useState('HTML');
@@ -19,13 +19,13 @@ const FinalWork = ({ advance, progress, levelId, index }) => {
   const finalLevelProyect = useSelector((state) => state.level.finalLevelProyect);
 
   useEffect(() => {
-    if (progress) {
+    if (progress && !loadingNextAction) {
       const id = levelId || progress.currentLevel;
       dispatch(fetchFinalLevelInfo({id}));
       const response = levelId ? progress.finalProjectLevel.previousResponses[index] : progress.finalProjectLevel.previousResponses.at(-1);
       parseFinalResponse(response);
     }
-  }, [progress]);
+  }, []);
 
   const decodeHTML = (str) => {
     const parser = new DOMParser();

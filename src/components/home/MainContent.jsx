@@ -220,15 +220,21 @@ const MainContent = () => {
   const handleSectionClick = (sectionId, levelIndex, sectionIndex) => {
     const current =
       levelIndex === userCurrentInfo.currentLevelIndex &&
-      sectionIndex === userCurrentInfo.currentSectionIndex;
+      sectionIndex === userCurrentInfo.currentSectionIndex &&
+      progress.courseCompleted === false;
+
     navigate(`/progress?section=${sectionId}&current=${current}`);
   };
 
   const handleFinalProjectClick = (levelIndex, levelId) => {
-    const current = levelIndex === userCurrentInfo.currentLevelIndex;
-    navigate(
-      `/progress?level=${levelId}&index=${levelIndex}&current=${current}`
-    );
+    const current =
+      levelIndex === userCurrentInfo.currentLevelIndex &&
+      progress.courseCompleted === false;
+    if (current) {
+      navigate(`/progress?current=true`);
+    } else {
+      navigate(`/progress?level=${levelId}&index=${levelIndex}&current=false`);
+    }
   };
 
   return (
