@@ -30,12 +30,12 @@ const Home = () => {
         if (!selectedModule) return;
         setLoading(true);
 
-        await Promise.all([
-          dispatch(
-            fetchLevelInfo({ courseId: selectedModule, page, limit: 3 })
-          ),
-          dispatch(fetchAllLevels({ courseId: selectedModule })),
-        ]);
+        // await Promise.all([
+        //   dispatch(
+        //     fetchLevelInfo({ courseId: selectedModule, page, limit: 3 })
+        //   ),
+        //   dispatch(fetchAllLevels({ courseId: selectedModule })),
+        // ]);
 
         dispatch(fetchUser());
         setLoading(false);

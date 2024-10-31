@@ -39,10 +39,10 @@ const MainContent = () => {
 
   const setLevelInfo = async () => {
     if (courseId) {
-      const currentLevel = levelsInfo.find(
+      const currentLevel = levelsInfo?.find(
         (level) => level._id === progress.currentLevel
       );
-      const currentLevelIndex = levelsInfo.findIndex(
+      const currentLevelIndex = levelsInfo?.findIndex(
         (level) => level._id === progress.currentLevel
       );
       const currentSectionIndex =
@@ -166,23 +166,43 @@ const MainContent = () => {
     }
   }, [showNoMoreLevels]);
 
-  console.log(loading);
+  const fetchData = async () => {
+    await Promise.all([
+      dispatch(fetchLevelInfo({ courseId: selectedModule, page, limit: 3 })),
+      dispatch(fetchAllLevels({ courseId: selectedModule })),
+    ]);
+  };
+
   useEffect(() => {
     if (loading) return;
-    if (selectedModule && !levelsInfo?.length) {
+    console.log(
+      selectedModule,
+      levelsInfo?.length,
+      progress?.course,
+      selectedModule
+    );
+    if (
+      selectedModule &&
+      !levelsInfo?.length &&
+      progress?.course !== selectedModule
+    ) {
       handleStartCourse();
+      // setLevelInfo();
     }
-  }, [selectedModule, levelsInfo]);
+    if (selectedModule && progress?.course === selectedModule) {
+      fetchData();
+    }
+  }, [loading]);
 
   const handleStartCourse = async () => {
     try {
       setLoading(true);
       const response = await dispatch(startCourse(selectedModule)).unwrap();
-      await Promise.all([
-        dispatch(fetchUserProgress()),
-        dispatch(fetchLevelInfo({ courseId: response.course, page, limit: 3 })),
-        dispatch(fetchAllLevels({ courseId: response.course })),
-      ]);
+      await dispatch(fetchUserProgress());
+      await dispatch(
+        fetchLevelInfo({ courseId: response.course, page, limit: 3 })
+      );
+      await dispatch(fetchAllLevels({ courseId: response.course }));
       setLevelInfo();
       setLoading(false);
     } catch (error) {
