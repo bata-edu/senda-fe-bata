@@ -15,7 +15,9 @@ const Modules = ({ setLoading }) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      dispatch(fetchModulesInfo());
+      if (localStorage.getItem("accessToken")) {
+        dispatch(fetchModulesInfo());
+      }
     };
     fetchData();
   }, [dispatch]);

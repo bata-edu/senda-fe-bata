@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchAllLevels, fetchLevelInfo } from "../../features/level/levelSlice";
+import {
+  fetchAllLevels,
+  fetchLevelInfo,
+} from "../../features/level/levelSlice";
 import { fetchUser } from "../../features/user/userSlice";
 import { fetchRank } from "../../features/user/userSlice";
 import Sidebar from "../../components/home/SideBar";
@@ -21,7 +24,9 @@ const Home = () => {
     }
     const fetchData = async () => {
       try {
-        dispatch(fetchRank());
+        if (localStorage.getItem("accessToken")) {
+          dispatch(fetchRank());
+        }
         if (!selectedModule) return;
         setLoading(true);
 
