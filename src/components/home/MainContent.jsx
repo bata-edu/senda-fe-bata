@@ -6,7 +6,7 @@ import {
   fetchAllLevels,
 } from "../../features/level/levelSlice";
 import {
-  fetchUserProgress,
+  fetchUserProgressById,
   startCourse,
 } from "../../features/userProgress/userProgressSlice";
 import "../../styles/mainContent.css";
@@ -18,7 +18,7 @@ const MainContent = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { levelsInfo = [], page } = useSelector((state) => state.level || {});
-  const { progress, courseId } = useSelector(
+  const { progresses, currentProgress, courseId } = useSelector(
     (state) => state.userProgress || {}
   );
   const { selectedModule } = useSelector((state) => state.modules || {});
@@ -40,14 +40,14 @@ const MainContent = () => {
   const setLevelInfo = async () => {
     if (courseId) {
       const currentLevel = levelsInfo?.find(
-        (level) => level._id === progress.currentLevel
+        (level) => level._id === currentProgress.currentLevel
       );
       const currentLevelIndex = levelsInfo?.findIndex(
-        (level) => level._id === progress.currentLevel
+        (level) => level._id === currentProgress.currentLevel
       );
       const currentSectionIndex =
         currentLevel?.sections.findIndex(
-          (section) => section._id === progress.currentSection
+          (section) => section._id === currentProgress.currentSection
         ) || 0;
 
       setUserCurrentInfo({ currentLevelIndex, currentSectionIndex });
@@ -175,21 +175,16 @@ const MainContent = () => {
 
   useEffect(() => {
     if (loading) return;
-    console.log(
-      selectedModule,
-      levelsInfo?.length,
-      progress?.course,
-      selectedModule
-    );
+    console.log(currentProgress?.course);
     if (
       selectedModule &&
-      !levelsInfo?.length &&
-      progress?.course !== selectedModule
+      currentProgress?.course !== selectedModule &&
+      !progresses?.find((progress) => progress.course === selectedModule)
     ) {
       handleStartCourse();
-      // setLevelInfo();
     }
-    if (selectedModule && progress?.course === selectedModule) {
+    console.log();
+    if (progresses?.find((progress) => progress.course === selectedModule)) {
       fetchData();
     }
   }, [loading]);
@@ -198,7 +193,7 @@ const MainContent = () => {
     try {
       setLoading(true);
       const response = await dispatch(startCourse(selectedModule)).unwrap();
-      await dispatch(fetchUserProgress());
+      await dispatch(fetchUserProgressById(selectedModule));
       await dispatch(
         fetchLevelInfo({ courseId: response.course, page, limit: 3 })
       );
