@@ -11,13 +11,13 @@ import "../../styles/exercise.css";
 const Exercise = ({ advance, completedExercise, loadingNextAction }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { myExercise, progress, nextAction } = useSelector(
+  const { myExercise, currentProgress, nextAction } = useSelector(
     (state) => state.userProgress || {}
   );
 
   useEffect(() => {
     if (!completedExercise || !loadingNextAction) {
-      dispatch(fetchNextExercise(progress.course));
+      dispatch(fetchNextExercise(currentProgress.course));
     }
   }, [dispatch, nextAction]);
 
@@ -47,7 +47,7 @@ const Exercise = ({ advance, completedExercise, loadingNextAction }) => {
 
   return (
     <div className="exercise-container">
-      {!myExercise && !progress && (
+      {!myExercise && !currentProgress && (
         <div className="loading">
           <LoadingPage />
         </div>
