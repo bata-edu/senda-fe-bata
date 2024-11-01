@@ -42,7 +42,6 @@ const MainContent = () => {
 
   const setLevelInfo = async () => {
     if (courseId) {
-      console.log(levelsInfo, currentProgress)
       const currentLevel = levelsInfo?.find(
         (level) => level._id === currentProgress.currentLevel
       );
@@ -211,16 +210,15 @@ const MainContent = () => {
   const handleSectionClick = (sectionId, levelIndex, sectionIndex) => {
     let current =
       levelIndex === userCurrentInfo.currentLevelIndex &&
-      sectionIndex === userCurrentInfo.currentSectionIndex
-    
+      sectionIndex === userCurrentInfo.currentSectionIndex 
+    if (current && currentProgress.finalProjectLevel.isReady) current = false;
     if(!current && currentProgress.courseCompleted) current = false;  
     navigate(`/progress?section=${sectionId}&current=${current}`);
   };
 
   const handleFinalProjectClick = (levelIndex, levelId) => {
     let current =
-      levelIndex === userCurrentInfo.currentLevelIndex &&
-      currentProgress.courseCompleted === false;
+      levelIndex === userCurrentInfo.currentLevelIndex
     if(!current && currentProgress.courseCompleted) current = false;  
     if (current) {
       navigate(`/progress?current=true`);
