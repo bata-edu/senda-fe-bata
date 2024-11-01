@@ -18,7 +18,7 @@ const MainContent = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { levelsInfo = [], page } = useSelector((state) => state.level || {});
-  const { progresses, currentProgress, courseId } = useSelector(
+  const { progress, currentProgress, courseId } = useSelector(
     (state) => state.userProgress || {}
   );
   const { selectedModule } = useSelector((state) => state.modules || {});
@@ -168,6 +168,7 @@ const MainContent = () => {
 
   const fetchData = async () => {
     await Promise.all([
+      dispatch(fetchUserProgressById(selectedModule)),
       dispatch(fetchLevelInfo({ courseId: selectedModule, page, limit: 3 })),
       dispatch(fetchAllLevels({ courseId: selectedModule })),
     ]);
@@ -175,16 +176,17 @@ const MainContent = () => {
 
   useEffect(() => {
     if (loading) return;
-    console.log(currentProgress?.course);
     if (
       selectedModule &&
       currentProgress?.course !== selectedModule &&
-      !progresses?.find((progress) => progress.course === selectedModule)
+      !progress?.find((progress) => progress.course === selectedModule)
     ) {
       handleStartCourse();
     }
-    console.log();
-    if (progresses?.find((progress) => progress.course === selectedModule)) {
+    if (
+      progress &&
+      progress?.find((progress) => progress.course === selectedModule)
+    ) {
       fetchData();
     }
   }, [loading]);
