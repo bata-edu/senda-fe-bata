@@ -183,7 +183,7 @@ export const resetNextAction = createAsyncThunk(
 const userProgressSlice = createSlice({
   name: "userProgress",
   initialState: {
-    progresses: null,
+    progress: null,
     error: null,
     courseId: null,
     nextAction: null,
@@ -199,7 +199,7 @@ const userProgressSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchUserProgress.fulfilled, (state, action) => {
-        state.progresses = action.payload;
+        state.progress = action.payload;
       })
       .addCase(fetchUserProgress.rejected, (state, action) => {
         state.error = action.payload;

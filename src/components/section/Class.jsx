@@ -15,13 +15,13 @@ const SectionClass = ({ advance, completedClass, loadingNextAction }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
-  const { myClass, progress, nextAction } = useSelector(
+  const { myClass, currentProgress, nextAction } = useSelector(
     (state) => state.userProgress || {}
   );
 
   useEffect(() => {
     if (!completedClass || !loadingNextAction) {
-      dispatch(fetchNextClass(progress.course));
+      dispatch(fetchNextClass(currentProgress.course));
     }
   }, [dispatch, completedClass, nextAction]);
 
@@ -36,10 +36,9 @@ const SectionClass = ({ advance, completedClass, loadingNextAction }) => {
 
   const currentLesson = completedClass || myClass;
 
-
   return (
     <div className="clase-container">
-      {(loading) && (
+      {loading && (
         <div className="loading">
           <LoadingPage />
         </div>
