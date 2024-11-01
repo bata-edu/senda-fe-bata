@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchNextAction,
+  fetchUserProgressById,
   resetNextAction,
 } from "../../features/userProgress/userProgressSlice";
 import {
@@ -18,7 +19,6 @@ import SectionClass from "../../components/section/Class";
 import Exercise from "../../components/section/Exercice";
 import FinalWork from "../../components/level/FinalWork";
 import LoadingPage from "../LoadingPage";
-import { fetchUserProgress } from "../../features/userProgress/userProgressSlice";
 import AdvanceSection from "../../components/section/AdvanceSection";
 import AdvanceLevel from "../../components/section/AdvanceLevel";
 import CompleteCourse from "../../components/section/CompleteCourse";
@@ -27,7 +27,7 @@ import { fetchSection } from "../../features/section/sectionSlice";
 const ProgressPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { progress, nextAction, loading } = useSelector(
+  const { currentProgress, nextAction, loading } = useSelector(
     (state) => state.userProgress || {}
   );
   const { section, loading: loadingSection } = useSelector(
@@ -44,14 +44,15 @@ const ProgressPage = () => {
 
   useEffect(() => {
     const fetchProgress = async () => {
-      await dispatch(fetchUserProgress());
+      const moduleId = localStorage.getItem("selectedModule");
+      await dispatch(fetchUserProgressById(moduleId));
     };
-    if (!progress) {
+    if (!currentProgress) {
       fetchProgress();
     } else {
       if (isCurrentSection === "true") {
         setLoadingNextAction(true);
-        dispatch(fetchNextAction(progress.course));
+        dispatch(fetchNextAction(currentProgress.course));
         setLoadingNextAction(false);
       } else {
         dispatch(resetNextAction());
@@ -64,10 +65,9 @@ const ProgressPage = () => {
         }
       }
     }
-  }, [dispatch, progress]);
+  }, [dispatch, currentProgress]);
 
   const getCompleteSection = async () => {
-    console.log(sectionId);
     const response = await dispatch(fetchSection(sectionId)).unwrap();
     setCompletedClass(response.sectionClasses[0]);
   };
@@ -75,7 +75,7 @@ const ProgressPage = () => {
   const handleAdvance = () => {
     if (isCurrentSection === "true") {
       setLoadingNextAction(true);
-      dispatch(fetchNextAction(progress.course));
+      dispatch(fetchNextAction(currentProgress.course));
       setLoadingNextAction(false);
     } else {
       advanceCompletedSection();
@@ -136,7 +136,7 @@ const ProgressPage = () => {
         {(nextAction?.message === SUBMIT_FINAL_LEVEL_PROJECT || levelId) && (
           <FinalWork
             advance={handleAdvance}
-            progress={progress}
+            progress={currentProgress}
             levelId={levelId}
             index={levelIndex}
             loadingNextAction={loadingNextAction}

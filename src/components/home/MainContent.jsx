@@ -13,15 +13,15 @@ import "../../styles/mainContent.css";
 import LoadingPage from "../../pages/LoadingPage";
 import Modules from "./CourseSelector";
 import robot from "../../assets/robot.png";
+import { setSelectedModule } from "../../features/module/moduleSlice";
 
 const MainContent = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { levelsInfo = [], page } = useSelector((state) => state.level || {});
-  const { progress, currentProgress, courseId } = useSelector(
+  const { currentProgress, courseId } = useSelector(
     (state) => state.userProgress || {}
   );
-  const { selectedModule } = useSelector((state) => state.modules || {});
   const [hoveredSection, setHoveredSection] = useState(null);
   const [hoveredFinalProject, setHoveredFinalProject] = useState(false);
 
@@ -37,8 +37,12 @@ const MainContent = () => {
     lastSectionIndex: 0,
   });
 
+  const selectedModule = localStorage.getItem("selectedModule");
+
+
   const setLevelInfo = async () => {
     if (courseId) {
+      console.log(levelsInfo, currentProgress)
       const currentLevel = levelsInfo?.find(
         (level) => level._id === currentProgress.currentLevel
       );
@@ -55,10 +59,16 @@ const MainContent = () => {
   };
 
   useEffect(() => {
-    if (levelsInfo && levelsInfo.length) {
-      setLevelInfo();
+    if(selectedModule){
+      fetchData(selectedModule);
     }
   }, []);
+
+  useEffect(() => {
+    if(levelsInfo && levelsInfo.length){
+      setLevelInfo();
+    }
+  }, [levelsInfo]);
 
   const getImageSrc = (index) => {
     const sectionNumber = (index % 6) + 1;
@@ -166,40 +176,19 @@ const MainContent = () => {
     }
   }, [showNoMoreLevels]);
 
-  const fetchData = async () => {
+  const fetchData = async (moduleId) => {
     await Promise.all([
-      dispatch(fetchUserProgressById(selectedModule)),
-      dispatch(fetchLevelInfo({ courseId: selectedModule, page, limit: 3 })),
-      dispatch(fetchAllLevels({ courseId: selectedModule })),
+      dispatch(fetchUserProgressById(moduleId)),
+      dispatch(fetchLevelInfo({ courseId: moduleId, page, limit: 3 })),
+      dispatch(fetchAllLevels({ courseId: moduleId })),
     ]);
   };
 
-  useEffect(() => {
-    if (loading) return;
-    if (
-      selectedModule &&
-      currentProgress?.course !== selectedModule &&
-      !progress?.find((progress) => progress.course === selectedModule)
-    ) {
-      handleStartCourse();
-    }
-    if (
-      progress &&
-      progress?.find((progress) => progress.course === selectedModule)
-    ) {
-      fetchData();
-    }
-  }, [loading]);
-
-  const handleStartCourse = async () => {
+  const handleStartCourse = async (moduleId) => {
     try {
       setLoading(true);
-      const response = await dispatch(startCourse(selectedModule)).unwrap();
-      await dispatch(fetchUserProgressById(selectedModule));
-      await dispatch(
-        fetchLevelInfo({ courseId: response.course, page, limit: 3 })
-      );
-      await dispatch(fetchAllLevels({ courseId: response.course }));
+      const response = await dispatch(startCourse(moduleId)).unwrap();
+      await fetchData(moduleId);
       setLevelInfo();
       setLoading(false);
     } catch (error) {
@@ -220,18 +209,19 @@ const MainContent = () => {
   };
 
   const handleSectionClick = (sectionId, levelIndex, sectionIndex) => {
-    const current =
+    let current =
       levelIndex === userCurrentInfo.currentLevelIndex &&
-      sectionIndex === userCurrentInfo.currentSectionIndex &&
-      progress.courseCompleted === false;
-
+      sectionIndex === userCurrentInfo.currentSectionIndex
+    
+    if(!current && currentProgress.courseCompleted) current = false;  
     navigate(`/progress?section=${sectionId}&current=${current}`);
   };
 
   const handleFinalProjectClick = (levelIndex, levelId) => {
-    const current =
+    let current =
       levelIndex === userCurrentInfo.currentLevelIndex &&
-      progress.courseCompleted === false;
+      currentProgress.courseCompleted === false;
+    if(!current && currentProgress.courseCompleted) current = false;  
     if (current) {
       navigate(`/progress?current=true`);
     } else {
@@ -246,7 +236,7 @@ const MainContent = () => {
           <LoadingPage />
         </div>
       )}
-      {!selectedModule && <Modules setLoading={setLoading} />}
+      {!selectedModule && <Modules setLoading={setLoading}  fetchModuleInfo={handleStartCourse}/>}
       {selectedModule && levelsInfo?.length ? (
         <div className="progress-path">
           <div className="level-container">

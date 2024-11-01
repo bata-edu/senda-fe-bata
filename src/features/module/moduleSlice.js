@@ -15,17 +15,6 @@ export const fetchModulesInfo = createAsyncThunk(
   }
 );
 
-export const setSelectedModule = createAsyncThunk(
-  "modules/setSelectedModule",
-  async (moduleId, { rejectWithValue }) => {
-    try {
-      return moduleId;
-    } catch (error) {
-      return rejectWithValue(error.response.data);
-    }
-  }
-);
-
 const moduleSlice = createSlice({
   name: "modules",
   initialState: {
@@ -43,16 +32,6 @@ const moduleSlice = createSlice({
         state.modules = action.payload.results;
       })
       .addCase(fetchModulesInfo.rejected, (state, action) => {
-        state.error = action.payload;
-      });
-    builder
-      .addCase(setSelectedModule.pending, (state) => {
-        state.error = null;
-      })
-      .addCase(setSelectedModule.fulfilled, (state, action) => {
-        state.selectedModule = action.payload;
-      })
-      .addCase(setSelectedModule.rejected, (state, action) => {
         state.error = action.payload;
       })
       .addCase(RESET_STATE, (state) => {

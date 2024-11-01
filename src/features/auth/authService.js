@@ -17,6 +17,7 @@ const clearAuthData = () => {
   localStorage.removeItem('accessExpires');
   localStorage.removeItem('refreshExpires');
   localStorage.removeItem('user');
+  localStorage.removeItem('selectedModule');
 };
 
 // Obtener los tokens desde localStorage
