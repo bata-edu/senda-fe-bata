@@ -183,12 +183,13 @@ export const resetNextAction = createAsyncThunk(
 const userProgressSlice = createSlice({
   name: "userProgress",
   initialState: {
-    progress: null,
+    progresses: null,
     error: null,
     courseId: null,
     nextAction: null,
     myClass: null,
     myExercise: null,
+    currentProgress: null,
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -198,12 +199,22 @@ const userProgressSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchUserProgress.fulfilled, (state, action) => {
-        state.progress = action.payload[0];
-        if (action.payload.length > 0) {
-          state.courseId = action.payload[0].course;
-        }
+        state.progresses = action.payload;
       })
       .addCase(fetchUserProgress.rejected, (state, action) => {
+        state.error = action.payload;
+      });
+    // Maneja la obtención del progreso de un curso particular del usuario
+
+    builder
+      .addCase(fetchUserProgressById.pending, (state) => {
+        state.error = null;
+      })
+      .addCase(fetchUserProgressById.fulfilled, (state, action) => {
+        state.currentProgress = action.payload;
+        state.courseId = action.payload.course;
+      })
+      .addCase(fetchUserProgressById.rejected, (state, action) => {
         state.error = action.payload;
       });
 
