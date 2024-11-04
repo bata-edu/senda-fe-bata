@@ -51,4 +51,10 @@ export const USER_SCHOOL_ADMIN = 'schoolAdmin';
 export const SECTION_ENDPOINT = `${API_BASE_URL}/v1/section`;
 export const SECTION_INDIVIDUAL = `${SECTION_ENDPOINT}/individual`;
 
-export const SCHOOL_TEACHER_ENDPOINT = `${API_BASE_URL}/v1/schoolTeacher`; 
+export const SCHOOL_TEACHER_ENDPOINT = `${API_BASE_URL}/v1/schoolTeacher`;
+export const SCHOOL_TEACHER_INTOSCHOOL = `${SCHOOL_TEACHER_ENDPOINT}/get-into-school`;
+
+export const SCHOOL_ENDPOINT = `${API_BASE_URL}/v1/school`;
+
+export const COURSE_ENDPOINT = `${API_BASE_URL}/v1/course`;
+export const GET_INTO_COURSE = `${COURSE_ENDPOINT}/getIntoCourse`;

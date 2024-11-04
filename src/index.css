@@ -96,3 +96,11 @@ img {
   margin-top: 1.5rem;
   color: white;
 }
+
+.close-button, .skip-button, .advance-button {
+  background: none;
+  border: none;
+  color: #7f7f7f;
+  font-size: 28px;
+  cursor: pointer;
+}
