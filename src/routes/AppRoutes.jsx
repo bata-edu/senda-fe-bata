@@ -18,6 +18,9 @@ import StudentGuard from "../utils/guards/studentGuard";
 import AdminGuard from "../utils/guards/adminGuard";
 import AdminSchoolGuard from "../utils/guards/adminSchoolGuard";
 import TeacherGuard from "../utils/guards/teacherGuard";
+import TeacherNewSchool from "../pages/teacher/TeacherNewSchool";
+import CoursesPage from "../pages/courses/CoursesPage";
+import CreateCourseForm from "../components/courses/CourseForm";
 
 const AppRoutes = () => {
   return (
@@ -93,6 +96,36 @@ const AppRoutes = () => {
             <AuthGuard>
               <TeacherGuard>
                 <TeacherHomePage />
+              </TeacherGuard>
+            </AuthGuard>
+          }
+        />
+        <Route
+          path="/teacher/new-school"
+          element={
+            <AuthGuard>
+              <TeacherGuard>
+                <TeacherNewSchool />
+              </TeacherGuard>
+            </AuthGuard>
+          }
+        />
+        <Route 
+          path="/courses/:schoolId"
+          element={
+            <AuthGuard>
+              <TeacherGuard>
+                <CoursesPage/>
+              </TeacherGuard>
+            </AuthGuard>
+          }
+        />
+        <Route
+          path= "/courses/:schoolId/new"
+          element={
+            <AuthGuard>
+              <TeacherGuard>
+                <CreateCourseForm/>
               </TeacherGuard>
             </AuthGuard>
           }

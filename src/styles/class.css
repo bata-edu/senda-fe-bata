@@ -22,14 +22,6 @@
     gap: 15px;
   }
   
-  .close-button, .skip-button, .advance-button {
-    background: none;
-    border: none;
-    color: #7f7f7f;
-    font-size: 28px;
-    cursor: pointer;
-  }
-  
   .progress-bar {
     width: 80%;
     height: 8px;
