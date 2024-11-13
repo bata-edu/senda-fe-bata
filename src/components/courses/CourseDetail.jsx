@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getStudentsInCourse, getCourseById } from '../../features/school/schoolSlice';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import LoadingPage from '../../pages/LoadingPage';
+import {getUser} from '../../features/auth/authService'
 
 const CourseDashboard = () => {
     const location = useLocation();
@@ -12,6 +13,8 @@ const CourseDashboard = () => {
     let { courseInfo } = location.state || {};
     const {courseId} = useParams();
     const {course, students} = useSelector((state) => state.school);
+    const user = getUser();
+
     useEffect(() => {
         dispatch(getStudentsInCourse(courseId));
         if(!courseInfo){
@@ -51,10 +54,20 @@ const CourseDashboard = () => {
                         ))}
                 </ul>
             </div>
-
-            <div className="d-flex justify-content-around mt-2">
-                <button className="btn btn-primary" onClick={() => handleLoadExam()}>Crear nuevo examen</button>
-                <button className="btn btn-secondary" onClick={() => handleExamList()}>Exámenes creados</button>
+            <div>
+                {user.role === 'teacher' && (
+                <div className="d-flex justify-content-around mt-2">
+                    <button className="btn btn-primary" onClick={() => handleLoadExam()}>Crear nuevo examen</button>
+                    <button className="btn btn-secondary" onClick={() => handleExamList()}>Exámenes creados</button>
+                </div>
+                )}
+            </div>
+            <div>
+                {user.role === 'schoolAdmin' && (
+                    <div className="d-flex justify-content-around mt-2">
+                    <span>{courseData.teacher_id}</span>
+                    </div>
+                )}
             </div>
         </div>
     );

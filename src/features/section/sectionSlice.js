@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { RESET_STATE, SECTION_INDIVIDUAL } from "../../utils/constants";
+import { RESET_STATE, SECTION_ENDPOINT, SECTION_INDIVIDUAL } from "../../utils/constants";
 import apiClient from "../../utils/interceptors/authInterceptor";
 
 // Thunk para obtener la información de una sección
@@ -16,26 +16,44 @@ export const fetchSection = createAsyncThunk(
   }
 );
 
+// Thunk para obtener un ejercicio de una sección
+
+export const fetchExercise = createAsyncThunk(
+  "section/fetchExercise",
+  async (exerciseId, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.get(`${SECTION_ENDPOINT}/exercise/${exerciseId}`);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 const sectionSlice = createSlice({
     name: "section",
     initialState: {
         section: {},
-        loading: false,
         error: null,
+        exercise: null,
     },
     reducers: {},
     extraReducers: (builder) => {
         builder
-            .addCase(fetchSection.pending, (state) => {
-                state.loading = true;
-            })
             .addCase(fetchSection.fulfilled, (state, action) => {
                 state.section = action.payload;
-                state.loading = false;
                 state.error = null;
             })
             .addCase(fetchSection.rejected, (state, action) => {
                 state.loading = false;
+                state.error = action.payload;
+            });
+        builder
+            .addCase(fetchExercise.fulfilled, (state, action) => {
+                state.exercise = action.payload;
+                state.error = null;
+            })
+            .addCase(fetchExercise.rejected, (state, action) => {
                 state.error = action.payload;
             })
             .addCase(RESET_STATE, (state) => {

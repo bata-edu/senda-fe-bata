@@ -15,6 +15,12 @@ const CodeTabs = ({ activeTab, setActiveTab }) => {
           >
             CSS
           </div>
+          <div
+            className={`code-tab ${activeTab === 'javascript' ? 'active' : ''}`}
+            onClick={() => setActiveTab('javascript')}
+          >
+            JS
+          </div>  
         </div>
       );
 };

@@ -37,10 +37,15 @@ const CoursesPage = () => {
             <li key={course.id} onClick={() => handleNavigateToCourse(course)}>{course.name}</li>
             ))}
         </ul>
-        <div onClick={() => handleAddCourse()}>
-          <span>+</span>
-          <span>agrega un nuevo curso</span>
-        </div>
+        {(user.role === 'teacher') &&
+            <div>
+                <div onClick={() => handleAddCourse()}>
+                <span>+</span>
+                <span>agrega un nuevo curso</span>
+                </div>
+
+            </div>
+        }
       </div>
     );
 }

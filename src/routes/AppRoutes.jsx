@@ -24,6 +24,8 @@ import CreateCourseForm from "../components/courses/CourseForm";
 import CourseDashboard from "../components/courses/CourseDetail";
 import ExamForm from "../components/exam/ExamForm";
 import ExamList from "../components/exam/ExamList";
+import CombineGuard from "../utils/guards/combineGuard";
+import Teachers from "../components/teachers/Teachers";
 
 const AppRoutes = () => {
   return (
@@ -117,9 +119,9 @@ const AppRoutes = () => {
           path="/courses/:schoolId"
           element={
             <AuthGuard>
-              <TeacherGuard>
+              <CombineGuard>
                 <CoursesPage/>
-              </TeacherGuard>
+              </CombineGuard>
             </AuthGuard>
           }
         />
@@ -137,9 +139,9 @@ const AppRoutes = () => {
           path="/teacher/course/:courseId"
           element={
             <AuthGuard>
-              <TeacherGuard>
+              <CombineGuard>
                 <CourseDashboard />
-              </TeacherGuard>
+              </CombineGuard>
             </AuthGuard>
           }
         />
@@ -160,6 +162,16 @@ const AppRoutes = () => {
               <TeacherGuard>
                 <ExamList />
               </TeacherGuard>
+            </AuthGuard>
+          }
+        />
+        <Route
+          path= "/professors/:schoolId"
+          element={
+            <AuthGuard>
+              <AdminSchoolGuard>
+                <Teachers />
+              </AdminSchoolGuard>
             </AuthGuard>
           }
         />

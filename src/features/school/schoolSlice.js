@@ -67,6 +67,31 @@ export const getStudentsInCourse = createAsyncThunk(
     }
 );
 
+export const getTeachers = createAsyncThunk(
+    "school/getTeachers",
+    async ( {schoolId, query} , { rejectWithValue }) => {
+      try {
+        const queryString = query ? `?${buildQueryString(query)}` : '';
+        const response = await apiClient.get(`${SCHOOL_ENDPOINT}/${schoolId}/teachers${queryString}`);
+        return response.data;
+      } catch (error) {
+        return rejectWithValue(error.response.data);
+      }
+    }
+)
+
+export const getSchoolById = createAsyncThunk(
+    "school/getSchoolById",
+    async ( schoolId , { rejectWithValue }) => {
+      try {
+        const response = await apiClient.get(`${SCHOOL_ENDPOINT}/${schoolId}`);
+        return response.data;
+      } catch (error) {
+        return rejectWithValue(error.response.data);
+      }
+    }
+);
+
 
 // Creación del slice para la escuela
 
@@ -77,6 +102,8 @@ const schoolSlice = createSlice({
         error: null,
         students: [],
         course: null,
+        teachers: [],
+        school: null
     },
     reducers: {},
     extraReducers: (builder) => {
@@ -109,6 +136,20 @@ const schoolSlice = createSlice({
             state.error = action.payload;
         });
         builder
+        .addCase(getSchoolById.fulfilled, (state, action) => {
+            state.school = action.payload;
+        })
+        .addCase(getSchoolById.rejected, (state, action) => {
+            state.error = action.payload;
+        });
+        builder
+        .addCase(getTeachers.fulfilled, (state, action) => {
+            state.teachers = action.payload.results;
+        })
+        .addCase(getTeachers.rejected, (state, action) => {
+            state.error = action.payload;
+        });
+        builder
         .addCase(getCourseById.fulfilled, (state, action) => {
             state.course = action.payload;
         })
@@ -121,6 +162,8 @@ const schoolSlice = createSlice({
               error: null,
               students: [],
               course: null,
+              teachers: [],
+              school: null
             };
         });
     }

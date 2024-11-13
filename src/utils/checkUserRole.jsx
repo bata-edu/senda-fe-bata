@@ -3,11 +3,11 @@ import { logoutUser } from "../features/auth/authService";
 import { useDispatch } from "react-redux";
 import { RESET_STATE } from "./constants";
 
-const useCheckUserRole = (role) => {
+const useCheckUserRole = (roles) => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const checkRole = async (user) => {
-        if (user?.role !== role) {
+        if (!roles.includes(user?.role)) {
             await logoutUser();
             dispatch({ type: RESET_STATE });
             navigate("/login");
