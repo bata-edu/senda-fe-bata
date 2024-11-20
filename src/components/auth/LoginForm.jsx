@@ -27,7 +27,6 @@ const LoginForm = () => {
   const location = useLocation();
   const navigateToDashboard = useNavigateToDashboard();
 
-
   const validateEmailToken = async (token) => {
     try {
       await verifyEmail(token);
@@ -57,8 +56,8 @@ const LoginForm = () => {
     setIsLoading(true);
     try {
       await loginUser(email, password);
-      const {user} = getAuthData();
-      navigateToDashboard(user.role)
+      const { user } = getAuthData();
+      navigateToDashboard(user.role);
     } catch (err) {
       console.error(err);
       setError(err.response?.data?.message || "Error al iniciar sesión");
@@ -117,8 +116,8 @@ const LoginForm = () => {
           <img src={logoImage} alt="" />
         </div>
         <div className="login-container">
-          <form className="login-form" onSubmit={handleSubmit}>
-            <h2 className="form-title">Iniciar sesión</h2>
+          <form className="text-red-500" onSubmit={handleSubmit}>
+            <h2 className="text-red-500">Iniciar sesión</h2>
             <div className="form-group">
               <input
                 type="text"

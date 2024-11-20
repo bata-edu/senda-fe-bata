@@ -1,3 +1,6 @@
+import AOS from "aos";
+import "aos/dist/aos.css";
+
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LoginPage from "../pages/LoginPage";
 import RegisterPage from "../pages/RegisterPage";
@@ -8,7 +11,7 @@ import MainContent from "../components/home/MainContent";
 import Levels from "../components/home/Levels";
 import EditorPage from "../pages/student/EditorPage";
 import ResetPasswordPage from "../pages/ResetPasswordPage";
-import RootRedirect from "../utils/guards/rootRedirect";
+import LandingPage from "../pages/landing/LandingPage";
 import ProgressPage from "../pages/student/ProgressPage";
 import Profile from "../pages/student/ProfilePage";
 import AdminHomePage from "../pages/admin/AdminHomePage";
@@ -26,12 +29,23 @@ import ExamForm from "../components/exam/ExamForm";
 import ExamList from "../components/exam/ExamList";
 import CombineGuard from "../utils/guards/combineGuard";
 import Teachers from "../components/teachers/Teachers";
+import { useEffect } from "react";
 
 const AppRoutes = () => {
+  useEffect(() => {
+    AOS.init({
+      once: true,
+      disable: "phone",
+      duration: 700,
+      easing: "ease-out-cubic",
+    });
+  });
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<RootRedirect />} />
+        <Route path="/" element={<LandingPage />} />
+
+        {/* <Route path="/" element={<RootRedirect />} /> */}
         <Route
           path="/login"
           element={
@@ -80,7 +94,7 @@ const AppRoutes = () => {
           element={
             <AuthGuard>
               <AdminGuard>
-              <AdminHomePage />
+                <AdminHomePage />
               </AdminGuard>
             </AuthGuard>
           }
@@ -115,22 +129,22 @@ const AppRoutes = () => {
             </AuthGuard>
           }
         />
-        <Route 
+        <Route
           path="/courses/:schoolId"
           element={
             <AuthGuard>
               <CombineGuard>
-                <CoursesPage/>
+                <CoursesPage />
               </CombineGuard>
             </AuthGuard>
           }
         />
         <Route
-          path= "/courses/:schoolId/new"
+          path="/courses/:schoolId/new"
           element={
             <AuthGuard>
               <TeacherGuard>
-                <CreateCourseForm/>
+                <CreateCourseForm />
               </TeacherGuard>
             </AuthGuard>
           }
@@ -145,8 +159,8 @@ const AppRoutes = () => {
             </AuthGuard>
           }
         />
-        <Route 
-          path= "/exam/create/:courseId"
+        <Route
+          path="/exam/create/:courseId"
           element={
             <AuthGuard>
               <TeacherGuard>
@@ -156,7 +170,7 @@ const AppRoutes = () => {
           }
         />
         <Route
-          path= "/exam/list/:courseId"
+          path="/exam/list/:courseId"
           element={
             <AuthGuard>
               <TeacherGuard>
@@ -166,7 +180,7 @@ const AppRoutes = () => {
           }
         />
         <Route
-          path= "/professors/:schoolId"
+          path="/professors/:schoolId"
           element={
             <AuthGuard>
               <AdminSchoolGuard>
