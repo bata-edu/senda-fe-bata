@@ -21,12 +21,25 @@ import TeacherGuard from "../utils/guards/teacherGuard";
 import TeacherNewSchool from "../pages/teacher/TeacherNewSchool";
 import CoursesPage from "../pages/courses/CoursesPage";
 import CreateCourseForm from "../components/courses/CourseForm";
-
+import LandingPage from "../pages/landing/LandingPage";
+import { useEffect } from "react";
+import AOS from "aos";
+import "aos/dist/aos.css";
 const AppRoutes = () => {
+  useEffect(() => {
+    AOS.init({
+      once: true,
+      disable: "phone",
+      duration: 700,
+      easing: "ease-out-cubic",
+    });
+  });
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<RootRedirect />} />
+        <Route path="/" element={<LandingPage />} />
+
+        {/* <Route path="/" element={<RootRedirect />} /> */}
         <Route
           path="/login"
           element={
@@ -75,7 +88,7 @@ const AppRoutes = () => {
           element={
             <AuthGuard>
               <AdminGuard>
-              <AdminHomePage />
+                <AdminHomePage />
               </AdminGuard>
             </AuthGuard>
           }
@@ -110,22 +123,22 @@ const AppRoutes = () => {
             </AuthGuard>
           }
         />
-        <Route 
+        <Route
           path="/courses/:schoolId"
           element={
             <AuthGuard>
               <TeacherGuard>
-                <CoursesPage/>
+                <CoursesPage />
               </TeacherGuard>
             </AuthGuard>
           }
         />
         <Route
-          path= "/courses/:schoolId/new"
+          path="/courses/:schoolId/new"
           element={
             <AuthGuard>
               <TeacherGuard>
-                <CreateCourseForm/>
+                <CreateCourseForm />
               </TeacherGuard>
             </AuthGuard>
           }

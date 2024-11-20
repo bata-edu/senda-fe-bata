@@ -7,10 +7,11 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./index.css";
+import { MantineProvider } from "@mantine/core";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <Provider store={store}>
-    <>
+    <MantineProvider>
       <AppRoutes />
       <ToastContainer
         position="top-right"
@@ -23,6 +24,6 @@ root.render(
         draggable
         pauseOnHover
       />
-    </>
+    </MantineProvider>
   </Provider>
 );
