@@ -1,3 +1,6 @@
+import AOS from "aos";
+import "aos/dist/aos.css";
+
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LoginPage from "../pages/LoginPage";
 import RegisterPage from "../pages/RegisterPage";
@@ -8,7 +11,7 @@ import MainContent from "../components/home/MainContent";
 import Levels from "../components/home/Levels";
 import EditorPage from "../pages/student/EditorPage";
 import ResetPasswordPage from "../pages/ResetPasswordPage";
-import RootRedirect from "../utils/guards/rootRedirect";
+import LandingPage from "../pages/landing/LandingPage";
 import ProgressPage from "../pages/student/ProgressPage";
 import Profile from "../pages/student/ProfilePage";
 import AdminHomePage from "../pages/admin/AdminHomePage";
@@ -21,10 +24,13 @@ import TeacherGuard from "../utils/guards/teacherGuard";
 import TeacherNewSchool from "../pages/teacher/TeacherNewSchool";
 import CoursesPage from "../pages/courses/CoursesPage";
 import CreateCourseForm from "../components/courses/CourseForm";
-import LandingPage from "../pages/landing/LandingPage";
+import CourseDashboard from "../components/courses/CourseDetail";
+import ExamForm from "../components/exam/ExamForm";
+import ExamList from "../components/exam/ExamList";
+import CombineGuard from "../utils/guards/combineGuard";
+import Teachers from "../components/teachers/Teachers";
 import { useEffect } from "react";
-import AOS from "aos";
-import "aos/dist/aos.css";
+
 const AppRoutes = () => {
   useEffect(() => {
     AOS.init({
@@ -127,9 +133,9 @@ const AppRoutes = () => {
           path="/courses/:schoolId"
           element={
             <AuthGuard>
-              <TeacherGuard>
+              <CombineGuard>
                 <CoursesPage />
-              </TeacherGuard>
+              </CombineGuard>
             </AuthGuard>
           }
         />
@@ -140,6 +146,46 @@ const AppRoutes = () => {
               <TeacherGuard>
                 <CreateCourseForm />
               </TeacherGuard>
+            </AuthGuard>
+          }
+        />
+        <Route
+          path="/teacher/course/:courseId"
+          element={
+            <AuthGuard>
+              <CombineGuard>
+                <CourseDashboard />
+              </CombineGuard>
+            </AuthGuard>
+          }
+        />
+        <Route
+          path="/exam/create/:courseId"
+          element={
+            <AuthGuard>
+              <TeacherGuard>
+                <ExamForm />
+              </TeacherGuard>
+            </AuthGuard>
+          }
+        />
+        <Route
+          path="/exam/list/:courseId"
+          element={
+            <AuthGuard>
+              <TeacherGuard>
+                <ExamList />
+              </TeacherGuard>
+            </AuthGuard>
+          }
+        />
+        <Route
+          path="/professors/:schoolId"
+          element={
+            <AuthGuard>
+              <AdminSchoolGuard>
+                <Teachers />
+              </AdminSchoolGuard>
             </AuthGuard>
           }
         />

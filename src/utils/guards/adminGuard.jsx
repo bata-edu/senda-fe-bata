@@ -6,7 +6,7 @@ import useCheckUserRole from "../checkUserRole";
 
 const AdminGuard = ({ children }) => {
     const navigate = useNavigate();
-    const checkUserRole = useCheckUserRole(USER_ADMIN);
+    const checkUserRole = useCheckUserRole([USER_ADMIN]);
     const { user } = getAuthData();
     useEffect(() => {
         const checkUser = async () => {

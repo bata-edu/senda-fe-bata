@@ -25,18 +25,27 @@ const CoursesPage = () => {
         navigate(`/courses/${schoolId}/new`);
     };
 
+    const handleNavigateToCourse = (course) => {
+        navigate('/teacher/course/' + course.id, { state: { courseInfo: course } });
+    }
+
     return (
         <div>
         <h1>Courses</h1>
         <ul>
             {courses.map((course) => (
-            <li key={course.id}>{course.name}</li>
+            <li key={course.id} onClick={() => handleNavigateToCourse(course)}>{course.name}</li>
             ))}
         </ul>
-        <div onClick={() => handleAddCourse()}>
-          <span>+</span>
-          <span>agrega un nuevo curso</span>
-        </div>
+        {(user.role === 'teacher') &&
+            <div>
+                <div onClick={() => handleAddCourse()}>
+                <span>+</span>
+                <span>agrega un nuevo curso</span>
+                </div>
+
+            </div>
+        }
       </div>
     );
 }

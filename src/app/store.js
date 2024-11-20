@@ -7,6 +7,7 @@ import moduleSlice from "../features/module/moduleSlice";
 import sectionSlice from "../features/section/sectionSlice";
 import teacherSlice from "../features/teacher/teacherSlice";
 import schoolSlice from "../features/school/schoolSlice";
+import examSlice from "../features/exam/examSlice";
 
 const store = configureStore({
   reducer: {
@@ -17,6 +18,7 @@ const store = configureStore({
     section: sectionSlice,
     teacher: teacherSlice,
     school: schoolSlice,
+    exam: examSlice,
     rootReducer,
   },
 });

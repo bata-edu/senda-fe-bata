@@ -11,6 +11,7 @@ import { submitFinalLevel } from '../../features/userProgress/userProgressSlice'
 const FinalWork = ({ advance, progress, levelId, index, loadingNextAction }) => {
   const [htmlCode, setHtmlCode] = useState('');
   const [cssCode, setCssCode] = useState('');
+  const [jsCode, setJsCode] = useState('');
   const [activeTab, setActiveTab] = useState('HTML');
   const [play, setPlay] = useState(false);
   const navigate = useNavigate();
@@ -43,6 +44,7 @@ const FinalWork = ({ advance, progress, levelId, index, loadingNextAction }) => 
   
     setHtmlCode(htmlCode);
     setCssCode(cssCode);
+    setJsCode('');
   };
 
   const handleSubmitFinalProject = async () => {
@@ -96,13 +98,15 @@ const FinalWork = ({ advance, progress, levelId, index, loadingNextAction }) => 
             setHtmlCode={setHtmlCode}
             cssCode={cssCode}
             setCssCode={setCssCode}
+            jsCode={jsCode}
+            setJsCode={setJsCode}
           />
 
           <button onClick={() => setPlay(!play)} className="play-button">
             Jugar
           </button>
 
-          <Preview htmlCode={htmlCode} cssCode={cssCode} play={play} />
+          <Preview htmlCode={htmlCode} cssCode={cssCode} play={play} jsCode={jsCode} />
           <button onClick={handleSubmitFinalProject} className="submit-button">
             Enviar
           </button>

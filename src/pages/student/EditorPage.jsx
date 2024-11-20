@@ -13,6 +13,7 @@ const EditorPage = () => {
     const dispatch = useDispatch();
     const [htmlCode, setHtmlCode] = useState('');
     const [cssCode, setCssCode] = useState('');
+    const [jsCode, setJsCode] = useState('');
     const [activeTab, setActiveTab] = useState('html');
     const [play, setPlay] = useState(false);
     const {freeModeProgress} = useSelector((state) => state.user);
@@ -20,6 +21,7 @@ const EditorPage = () => {
     const handleClear = () => {
       setHtmlCode('');
       setCssCode('');
+      setJsCode('');
       setPlay(false);
     };
 
@@ -52,6 +54,10 @@ const EditorPage = () => {
         const cssDecoded = decodeHTML(parsedCode.css);
         setCssCode(cssDecoded);
       }
+      if(parsedCode.javascript){
+        const jsDecoded = decodeHTML(parsedCode.javascript);
+        setJsCode(jsDecoded);
+      }
     }
 
     const handleSave = async () => {
@@ -59,6 +65,7 @@ const EditorPage = () => {
         const code = {
           html: htmlCode,
           css: cssCode,
+          javascript: jsCode
         };
         if(freeModeProgress){
           await dispatch(updateUserFreeModeProgress({code}));
@@ -89,11 +96,13 @@ const EditorPage = () => {
           setHtmlCode={setHtmlCode}
           cssCode={cssCode}
           setCssCode={setCssCode}
+          jsCode={jsCode}
+          setJsCode={setJsCode}
         />
         <button onClick={() => setPlay(!play)} className="play-button">
           Jugar
         </button>
-        <Preview htmlCode={htmlCode} cssCode={cssCode} play={play} />
+        <Preview htmlCode={htmlCode} cssCode={cssCode} jsCode={jsCode} play={play} />
         <div className="action-buttons">
         <button onClick={handleClear} className="clear-button">
           Borrar

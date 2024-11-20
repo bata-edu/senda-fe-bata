@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { SCHOOL_ENDPOINT, RESET_STATE, COURSE_ENDPOINT, GET_INTO_COURSE } from "../../utils/constants";
+import { SCHOOL_ENDPOINT, RESET_STATE, COURSE_ENDPOINT, GET_INTO_COURSE, GET_STUDENTS_IN_COURSE } from "../../utils/constants";
 import apiClient from "../../utils/interceptors/authInterceptor";
 import { buildQueryString } from "../../utils/buildQueryString";
 
@@ -31,11 +31,60 @@ export const createCourse = createAsyncThunk(
     }
 );
 
+export const getCourseById = createAsyncThunk(
+    "school/getCourseById",
+    async ( courseId , { rejectWithValue }) => {
+      try {
+        const response = await apiClient.get(`${COURSE_ENDPOINT}/${courseId}`);
+        return response.data;
+      } catch (error) {
+        return rejectWithValue(error.response.data);
+      }
+    }
+);
+
 export const getIntoCourse = createAsyncThunk(
     "school/getIntoCourse",
     async ( code , { rejectWithValue }) => {
       try {
         const response = await apiClient.post(`${GET_INTO_COURSE}`, code);
+        return response.data;
+      } catch (error) {
+        return rejectWithValue(error.response.data);
+      }
+    }
+);
+
+export const getStudentsInCourse = createAsyncThunk(
+    "school/getStudentsInCourse",
+    async ( courseId , { rejectWithValue }) => {
+      try {
+        const response = await apiClient.get(`${GET_STUDENTS_IN_COURSE}/${courseId}`);
+        return response.data;
+      } catch (error) {
+        return rejectWithValue(error.response.data);
+      }
+    }
+);
+
+export const getTeachers = createAsyncThunk(
+    "school/getTeachers",
+    async ( {schoolId, query} , { rejectWithValue }) => {
+      try {
+        const queryString = query ? `?${buildQueryString(query)}` : '';
+        const response = await apiClient.get(`${SCHOOL_ENDPOINT}/${schoolId}/teachers${queryString}`);
+        return response.data;
+      } catch (error) {
+        return rejectWithValue(error.response.data);
+      }
+    }
+)
+
+export const getSchoolById = createAsyncThunk(
+    "school/getSchoolById",
+    async ( schoolId , { rejectWithValue }) => {
+      try {
+        const response = await apiClient.get(`${SCHOOL_ENDPOINT}/${schoolId}`);
         return response.data;
       } catch (error) {
         return rejectWithValue(error.response.data);
@@ -50,7 +99,11 @@ const schoolSlice = createSlice({
     name: "school",
     initialState: {
         courses: [],
-        error: null
+        error: null,
+        students: [],
+        course: null,
+        teachers: [],
+        school: null
     },
     reducers: {},
     extraReducers: (builder) => {
@@ -67,11 +120,50 @@ const schoolSlice = createSlice({
         })
         .addCase(createCourse.rejected, (state, action) => {
             state.error = action.payload;
+        });
+        builder
+        .addCase(getIntoCourse.fulfilled, (state, action) => {
+            state.courses.push(action.payload);
+        })
+        .addCase(getIntoCourse.rejected, (state, action) => {
+            state.error = action.payload;
+        })
+        builder
+        .addCase(getStudentsInCourse.fulfilled, (state, action) => {
+            state.students = action.payload.results;
+        })
+        .addCase(getStudentsInCourse.rejected, (state, action) => {
+            state.error = action.payload;
+        });
+        builder
+        .addCase(getSchoolById.fulfilled, (state, action) => {
+            state.school = action.payload;
+        })
+        .addCase(getSchoolById.rejected, (state, action) => {
+            state.error = action.payload;
+        });
+        builder
+        .addCase(getTeachers.fulfilled, (state, action) => {
+            state.teachers = action.payload.results;
+        })
+        .addCase(getTeachers.rejected, (state, action) => {
+            state.error = action.payload;
+        });
+        builder
+        .addCase(getCourseById.fulfilled, (state, action) => {
+            state.course = action.payload;
+        })
+        .addCase(getCourseById.rejected, (state, action) => {
+            state.error = action.payload;
         })
         .addCase(RESET_STATE, (state) => {
             return {
               courses: [],
               error: null,
+              students: [],
+              course: null,
+              teachers: [],
+              school: null
             };
         });
     }

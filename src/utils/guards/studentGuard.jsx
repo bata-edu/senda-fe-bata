@@ -6,7 +6,7 @@ import useCheckUserRole from "../checkUserRole";
 
 const StudentGuard = ({ children }) => {
     const navigate = useNavigate();
-    const checkUserRole = useCheckUserRole(USER_STUDENT);
+    const checkUserRole = useCheckUserRole([USER_STUDENT]);
     const { user } = getAuthData();
     useEffect(() => {
         const checkUser = async () => {

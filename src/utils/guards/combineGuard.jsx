@@ -1,12 +1,12 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAuthData, logoutUser } from "../../features/auth/authService";
-import { USER_TEACHER } from "../constants";
+import { USER_SCHOOL_ADMIN, USER_STUDENT, USER_TEACHER } from "../constants";
 import useCheckUserRole from "../checkUserRole";
 
-const TeacherGuard = ({ children }) => {
+const CombineGuard = ({ children }) => {
     const navigate = useNavigate();
-    const checkUserRole = useCheckUserRole([USER_TEACHER]);
+    const checkUserRole = useCheckUserRole([USER_SCHOOL_ADMIN, USER_TEACHER]);
     const { user } = getAuthData();
     useEffect(() => {
         const checkUser = async () => {
@@ -18,4 +18,4 @@ const TeacherGuard = ({ children }) => {
     return children;
 };
 
-export default TeacherGuard;
+export default CombineGuard;
