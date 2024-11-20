@@ -7,14 +7,15 @@ import {
   googleLogin,
   getAuthData,
 } from "../../features/auth/authService";
-import "../../styles/login.css";
-import logoImage from "../../assets/logo 3.png";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
-import { toast } from "react-toastify";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import logoImage from "../../assets/logo.svg";
+import simpleLogo from "../../assets/simple-logo.svg"
 import useNavigateToDashboard from "../../utils/userRoles";
+
 
 const MySwal = withReactContent(Swal);
 
@@ -25,6 +26,7 @@ const LoginForm = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
+
   const navigateToDashboard = useNavigateToDashboard();
 
   const validateEmailToken = async (token) => {
@@ -66,39 +68,6 @@ const LoginForm = () => {
     }
   };
 
-  const handleForgotPassword = async () => {
-    const { value: emailForReset } = await MySwal.fire({
-      title: "Recuperar Contraseña",
-      input: "email",
-      inputPlaceholder: "Ingresa tu correo electrónico",
-      showCancelButton: true,
-      confirmButtonText: "Enviar",
-      cancelButtonText: "Cancelar",
-      inputValidator: (value) => {
-        if (!value) {
-          return "Necesitas ingresar un correo electrónico";
-        }
-      },
-    });
-
-    if (emailForReset) {
-      try {
-        await forgotPassword(emailForReset);
-        MySwal.fire(
-          "¡Éxito!",
-          "Se ha enviado un enlace para restablecer tu contraseña a tu correo.",
-          "success"
-        );
-      } catch (err) {
-        MySwal.fire(
-          "Error",
-          "Hubo un problema al enviar el correo. Inténtalo nuevamente.",
-          "error"
-        );
-      }
-    }
-  };
-
   const handleGoogleLogin = async (response) => {
     try {
       await googleLogin(response.credential);
@@ -109,62 +78,112 @@ const LoginForm = () => {
     }
   };
 
+  const handleForgotPassword = async () => {
+    const { value: emailForReset } = await MySwal.fire({
+      title: "Recuperar Contraseña",
+      input: "email",
+      inputPlaceholder: "Ingresa tu correo electrónico",
+      showCancelButton: true,
+      confirmButtonText: "Enviar",
+      cancelButtonText: "Cancelar",
+      inputValidator: (value) => (!value ? "Necesitas ingresar un correo electrónico" : null),
+    });
+
+    if (emailForReset) {
+      try {
+        await forgotPassword(emailForReset);
+        MySwal.fire("¡Éxito!", "Se ha enviado un enlace para restablecer tu contraseña.", "success");
+      } catch (err) {
+        MySwal.fire("Error", "No se pudo enviar el correo, inténtalo nuevamente.", "error");
+      }
+    }
+  };
+
   return (
     <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
-      <div className="login-page">
-        <div className="logo">
-          <img src={logoImage} alt="" />
-        </div>
-        <div className="login-container">
-          <form className="text-red-500" onSubmit={handleSubmit}>
-            <h2 className="text-red-500">Iniciar sesión</h2>
-            <div className="form-group">
-              <input
-                type="text"
-                className="form-control input-field"
-                placeholder="Usuario"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
+      <div className="min-h-screen flex flex-col bg-white">
+        <header className="w-full bg-white shadow-sm">
+          <div className="max-w-6xl p-4 flex items-center">
+            <img src={logoImage} alt="Logo Bata" className="h-8" />
+          </div>
+        </header>
+
+        <div className="flex flex-1 items-center justify-center bg-grayBg">
+          <div className="w-full max-w-sm bg-grayBg rounded-lg p-6">
+            <img src={simpleLogo} alt="Logo Bata" className="h-16 mx-auto my-3" />
+            <h2 className="text-xl font-bold text-center text-gray-800">Inicia sesión en Bata</h2>
+            <p className="text-sm text-center text-gray-500 mb-6">
+              ¡Bienvenido! Por favor, ingresa tus datos.
+            </p>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                  Email
+                </label>
+                <input
+                  id="email"
+                  type="email"
+                  placeholder="Ingresar email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full mt-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-500"
+                  required
+                />
+              </div>
+              <div>
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                  Contraseña
+                </label>
+                <input
+                  id="password"
+                  type="password"
+                  placeholder="Ingresar contraseña"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full mt-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-500"
+                  required
+                />
+              </div>
+              {error && <p className="text-sm text-red-500">{error}</p>}
+              <button
+                type="submit"
+                className={`w-full py-2 text-white font-bold rounded-lg ${
+                  isLoading ? "bg-gray-400" : "bg-strongBlue hover:strongBlue-600"
+                }`}
+                disabled={isLoading}
+              >
+                {isLoading ? "Cargando..." : "Iniciar sesión"}
+              </button>
+            </form>
+            <div className="mt-4 text-end">
+              <button
+                onClick={handleForgotPassword}
+                className="text-sm text-strongBlue hover:underline"
+              >
+                ¿Olvidaste tu contraseña?
+              </button>
             </div>
-            <div className="form-group">
-              <input
-                type="password"
-                className="form-control input-field"
-                placeholder="Contraseña"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
-            <button
-              type="submit"
-              className="login-btn"
-              disabled={isLoading || !email || !password}
-            >
-              {isLoading ? "Cargando..." : "Iniciar sesión"}
-            </button>
-            <div className="social-login">
-              <GoogleLogin
+            <div className="mt-6 flex flex-col space-y-2">
+            <GoogleLogin
                 onSuccess={handleGoogleLogin}
                 onError={() => setError("Error al autenticar con Google")}
               />
-            </div>
-            <div className="forgot-password-link">
-              <button
-                type="button"
-                className="link-button"
-                onClick={handleForgotPassword}
+{/*                <button
+                className="flex items-center justify-center w-full py-2 border border-gray-300 rounded-lg hover:bg-gray-100"
               >
-                Olvidé mi contraseña
-              </button>
+                <img src="/assets/facebook-icon.svg" alt="Facebook" className="h-5 mr-2" />
+                Regístrate con Facebook
+              </button>  */}
             </div>
-            {error && <p className="error-auth">{error}</p>}
-            <div className="signup-link">
-              ¿No tienes cuenta? <a href="/register">Crear cuenta</a>
+            <div className="mt-6 text-center">
+              <p className="text-sm text-gray-500">
+                ¿No tienes cuenta?{" "}
+                <a href="/register" className="text-strongBlue hover:underline">
+                  Regístrate
+                </a>
+              </p>
             </div>
-          </form>
+          </div>
         </div>
       </div>
     </GoogleOAuthProvider>

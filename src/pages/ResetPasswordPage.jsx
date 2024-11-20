@@ -9,9 +9,7 @@ const ResetPasswordPage = () => {
     const token = new URLSearchParams(location.search).get('token');
 
     return (
-        <div className="reset-password-page">
         <ResetPasswordForm token={token} />
-        </div>
     );
 }
 

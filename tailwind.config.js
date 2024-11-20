@@ -63,7 +63,11 @@ module.exports = {
         sans: ["DM Sans", "sans-serif"], // Fuente principal para textos
         mono: ["DM Mono", "monospace"], // Fuente para código o elementos monoespaciados
       },
+      colors:{
+        strongBlue : 'rgba(69, 88, 200, 1)',
+        grayBg: '#FAFAFA'
     },
+  }
   },
   plugins: [],
 };

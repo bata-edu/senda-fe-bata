@@ -30,6 +30,7 @@ import ExamList from "../components/exam/ExamList";
 import CombineGuard from "../utils/guards/combineGuard";
 import Teachers from "../components/teachers/Teachers";
 import { useEffect } from "react";
+import ClassRoom from "../components/classRoom/classRoom";
 
 const AppRoutes = () => {
   useEffect(() => {
@@ -88,7 +89,16 @@ const AppRoutes = () => {
             </AuthGuard>
           }
         ></Route>
-
+        <Route
+          path="/classroom"
+          element={
+            <AuthGuard>
+              <StudentGuard>
+                <ClassRoom /> {/* Crear componente page */}
+              </StudentGuard>
+            </AuthGuard>
+          }
+        />
         <Route
           path="/admin"
           element={
