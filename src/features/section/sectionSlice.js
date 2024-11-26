@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { RESET_STATE, SECTION_ENDPOINT, SECTION_INDIVIDUAL } from "../../utils/constants";
 import apiClient from "../../utils/interceptors/authInterceptor";
+import { decrypt } from "../../utils/decryptData";
 
 // Thunk para obtener la información de una sección
 
@@ -23,7 +24,8 @@ export const fetchExercise = createAsyncThunk(
   async (exerciseId, { rejectWithValue }) => {
     try {
       const response = await apiClient.get(`${SECTION_ENDPOINT}/exercise/${exerciseId}`);
-      return response.data;
+      const decryptedData =  await decrypt(response.data.encryptedData, response.data.iv);
+      return JSON.parse(decryptedData);
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
