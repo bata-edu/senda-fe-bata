@@ -69,6 +69,8 @@
     "@storybook/addon-essentials": "^8.4.2",
     "@storybook/addon-interactions": "^8.4.2",
     "@storybook/addon-onboarding": "^8.4.2",
+    "@storybook/addon-postcss": "^2.0.0",
+    "@storybook/addon-styling-webpack": "^1.0.1",
     "@storybook/blocks": "^8.4.2",
     "@storybook/preset-create-react-app": "^8.4.2",
     "@storybook/react": "^8.4.2",

@@ -86,8 +86,79 @@ export default function Footer({ border = false }) {
         </div>
       </div>
 
-      <div className="relative -mt-16 h-60 w-full -z-10" aria-hidden="true">
-        <div className="pointer-events-none absolute left-1/2 -z-10 -translate-x-1/2 text-center text-[348px] font-bold leading-none before:bg-gradient-to-b before:from-gray-200 before:to-gray-100/30 before:to-80% before:bg-clip-text before:text-transparent before:content-['Bata'] after:absolute after:inset-0 after:bg-gray-300/70 after:bg-clip-text after:text-transparent after:mix-blend-darken after:content-['Bata'] after:[text-shadow:0_1px_0_white]"></div>
+      <div className="relative -mt-8 h-48 w-full -z-10" aria-hidden="true">
+        <div className="pointer-events-none absolute left-1/2 -z-10 -translate-x-1/2 text-center  ">
+          <svg
+            width="680"
+            height="192"
+            viewBox="0 0 680 192"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <g filter="url(#filter0_i_321_7360)">
+              <path
+                d="M0.835562 233V0.535985H88.1836C131.336 0.535985 179.36 21.068 179.36 66.308C179.36 87.884 168.572 103.892 152.564 115.028C173.792 127.556 184.58 146.696 184.58 165.488C184.58 198.896 153.26 233 88.1836 233H0.835562ZM80.8756 43.688H61.7356V99.368H80.8756C105.932 99.368 118.808 85.1 118.808 71.528C118.808 57.608 106.28 43.688 80.8756 43.688ZM80.8756 189.848C110.456 189.848 124.724 174.884 124.028 160.268C123.332 146.348 108.716 132.776 80.8756 132.776H61.7356V189.848H80.8756ZM196.602 177.668C196.602 140.432 229.662 121.64 262.374 121.64C278.034 121.64 293.694 126.164 305.526 134.864V131.732C305.526 110.156 287.43 101.456 267.594 101.456C249.846 101.456 230.358 108.416 220.266 118.856L197.646 71.528C217.482 61.436 243.582 55.52 268.986 55.52C318.402 55.52 366.426 78.14 366.426 137.3V233H322.23L311.442 216.992C299.262 229.868 280.818 236.48 262.374 236.48C229.662 236.48 196.602 216.992 196.602 177.668ZM280.818 189.152C292.65 189.152 301.698 181.496 301.698 173.84C301.698 166.88 292.302 159.572 280.818 159.572C266.55 159.572 257.85 166.88 257.85 174.536C257.85 181.844 266.898 189.152 280.818 189.152ZM497.185 233C492.313 234.392 482.221 236.48 471.085 236.48C433.153 236.48 398.701 213.164 398.701 160.964V105.98H381.997V59H404.965C430.021 56.216 423.409 34.64 437.329 15.152H459.601V59H491.965V105.98H459.601V162.356C459.601 176.624 470.041 180.8 480.829 180.8C483.961 180.8 487.093 180.452 490.225 179.756L497.185 233ZM509.278 177.668C509.278 140.432 542.338 121.64 575.05 121.64C590.71 121.64 606.37 126.164 618.202 134.864V131.732C618.202 110.156 600.106 101.456 580.27 101.456C562.522 101.456 543.034 108.416 532.942 118.856L510.322 71.528C530.158 61.436 556.258 55.52 581.662 55.52C631.078 55.52 679.102 78.14 679.102 137.3V233H634.906L624.118 216.992C611.938 229.868 593.494 236.48 575.05 236.48C542.338 236.48 509.278 216.992 509.278 177.668ZM593.494 189.152C605.326 189.152 614.374 181.496 614.374 173.84C614.374 166.88 604.978 159.572 593.494 159.572C579.226 159.572 570.526 166.88 570.526 174.536C570.526 181.844 579.574 189.152 593.494 189.152Z"
+                fill="url(#paint0_linear_321_7360)"
+              />
+            </g>
+            <defs>
+              <filter
+                id="filter0_i_321_7360"
+                x="0.835449"
+                y="0.536011"
+                width="678.267"
+                height="235.944"
+                filterUnits="userSpaceOnUse"
+                color-interpolation-filters="sRGB"
+              >
+                <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                <feBlend
+                  mode="normal"
+                  in="SourceGraphic"
+                  in2="BackgroundImageFix"
+                  result="shape"
+                />
+                <feColorMatrix
+                  in="SourceAlpha"
+                  type="matrix"
+                  values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+                  result="hardAlpha"
+                />
+                <feOffset dy="1" />
+                <feComposite
+                  in2="hardAlpha"
+                  operator="arithmetic"
+                  k2="-1"
+                  k3="1"
+                />
+                <feColorMatrix
+                  type="matrix"
+                  values="0 0 0 0 0.0117647 0 0 0 0 0.027451 0 0 0 0 0.0705882 0 0 0 0.08 0"
+                />
+                <feBlend
+                  mode="normal"
+                  in2="shape"
+                  result="effect1_innerShadow_321_7360"
+                />
+              </filter>
+              <linearGradient
+                id="paint0_linear_321_7360"
+                x1="369.224"
+                y1="54"
+                x2="370.243"
+                y2="218.994"
+                gradientUnits="userSpaceOnUse"
+              >
+                <stop stop-color="#E5E7EB" />
+                <stop
+                  offset="0.965"
+                  stop-color="#F3F4F6"
+                  stop-opacity="0.309804"
+                />
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
         <div
           className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-2/3"
           aria-hidden="true"

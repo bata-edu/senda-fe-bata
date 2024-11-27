@@ -7,7 +7,7 @@ import PlanetTagImg04 from "../../assets/landing/tag-04.png";
 
 export default function Features() {
   return (
-    <section className="relative before:absolute before:inset-0 before:-z-20 before:bg-gray-900">
+    <section className="relative before:absolute before:inset-0 before:-z-20 before:bg-gray-900 overflow-x-hidden">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="py-12 md:py-20">
           <div className="mx-auto max-w-3xl pb-16 text-center md:pb-20">
@@ -82,9 +82,9 @@ export default function Features() {
                 <span className="text-base">Aprendizaje interactivo</span>
               </h3>
               <p className="text-[15px] text-gray-400">
-                Collect essential insights about how visitors are using your
-                site with in-depth page view metrics like pages, referring
-                sites, and more.
+                Sumergite en una experiencia de aprendizaje práctico y dinámico,
+                donde cada ejercicio te acerca más al dominio de la
+                programación.
               </p>
             </article>
             <article>
@@ -100,9 +100,8 @@ export default function Features() {
                 <span className="text-base">Codeo libre</span>
               </h3>
               <p className="text-[15px] text-gray-400">
-                Collect essential insights about how visitors are using your
-                site with in-depth page view metrics like pages, referring
-                sites, and more.
+                Experimentá y escribí tu código sin restricciones, con la ayuda
+                de una IA que te guía y potencia tu aprendizaje.
               </p>
             </article>
             <article>
@@ -122,9 +121,8 @@ export default function Features() {
                 <span className="text-base">Flexibilidad</span>
               </h3>
               <p className="text-[15px] text-gray-400">
-                Collect essential insights about how visitors are using your
-                site with in-depth page view metrics like pages, referring
-                sites, and more.
+                Adaptá tu aprendizaje a tu ritmo y necesidades, con acceso desde
+                cualquier lugar y en cualquier momento.
               </p>
             </article>
             <article>
@@ -137,12 +135,12 @@ export default function Features() {
                 >
                   <path d="M8 0a1 1 0 0 1 1 1v14a1 1 0 1 1-2 0V1a1 1 0 0 1 1-1Zm6 3a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h1a1 1 0 1 1 0 2h-1a3 3 0 0 1-3-3V4a3 3 0 0 1 3-3h1a1 1 0 1 1 0 2h-1ZM1 1a1 1 0 0 0 0 2h1a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H1a1 1 0 1 0 0 2h1a3 3 0 0 0 3-3V4a3 3 0 0 0-3-3H1Z" />
                 </svg>
-                <span className="text-base">Compatibilidad</span>
+                <span className="text-base">Pantalla Dividida</span>
               </h3>
               <p className="text-[15px] text-gray-400">
-                Collect essential insights about how visitors are using your
-                site with in-depth page view metrics like pages, referring
-                sites, and more.
+                Programá y visualizá en tiempo real cómo toma forma tu página,
+                con una experiencia de pantalla dividida que te permite aprender
+                mientras ves los resultados.
               </p>
             </article>
             <article>
@@ -155,12 +153,11 @@ export default function Features() {
                 >
                   <path d="M10.284.33a1 1 0 1 0-.574 1.917 6.049 6.049 0 0 1 2.417 1.395A1 1 0 0 0 13.5 2.188 8.034 8.034 0 0 0 10.284.33ZM6.288 2.248A1 1 0 0 0 5.718.33 8.036 8.036 0 0 0 2.5 2.187a1 1 0 0 0 1.372 1.455 6.036 6.036 0 0 1 2.415-1.395ZM1.42 5.401a1 1 0 0 1 .742 1.204 6.025 6.025 0 0 0 0 2.79 1 1 0 0 1-1.946.462 8.026 8.026 0 0 1 0-3.714A1 1 0 0 1 1.421 5.4Zm2.452 6.957A1 1 0 0 0 2.5 13.812a8.036 8.036 0 0 0 3.216 1.857 1 1 0 0 0 .574-1.916 6.044 6.044 0 0 1-2.417-1.395Zm9.668.04a1 1 0 0 1-.041 1.414 8.033 8.033 0 0 1-3.217 1.857 1 1 0 1 1-.571-1.917 6.035 6.035 0 0 0 2.415-1.395 1 1 0 0 1 1.414.042Zm2.242-6.255a1 1 0 1 0-1.946.462 6.03 6.03 0 0 1 0 2.79 1 1 0 1 0 1.946.462 8.022 8.022 0 0 0 0-3.714Z" />
                 </svg>
-                <span className="text-base">Localization</span>
+                <span className="text-base">Logros y Recompensas</span>
               </h3>
               <p className="text-[15px] text-gray-400">
-                Collect essential insights about how visitors are using your
-                site with in-depth page view metrics like pages, referring
-                sites, and more.
+                Superá desafíos y desbloqueá insignias, certificados y
+                recompensas que marcan tu progreso en el aprendizaje.
               </p>
             </article>
             <article>
@@ -173,12 +170,12 @@ export default function Features() {
                 >
                   <path d="M9 1a1 1 0 1 0-2 0v6a1 1 0 0 0 2 0V1ZM4.572 3.08a1 1 0 0 0-1.144-1.64A7.987 7.987 0 0 0 0 8a8 8 0 0 0 16 0c0-2.72-1.36-5.117-3.428-6.56a1 1 0 1 0-1.144 1.64A5.987 5.987 0 0 1 14 8 6 6 0 1 1 2 8a5.987 5.987 0 0 1 2.572-4.92Z" />
                 </svg>
-                <span className="text-base">Canonical URL</span>
+                <span className="text-base">Comunidad</span>
               </h3>
               <p className="text-[15px] text-gray-400">
-                Collect essential insights about how visitors are using your
-                site with in-depth page view metrics like pages, referring
-                sites, and more.
+                Formá parte de una comunidad vibrante de programadores, compartí
+                tus logros, resolvé dudas y crecé junto a otros apasionados por
+                la tecnología.
               </p>
             </article>
           </div>
