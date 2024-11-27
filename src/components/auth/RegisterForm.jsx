@@ -6,6 +6,7 @@ import withReactContent from "sweetalert2-react-content";
 import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
 import logoImage from "../../assets/logo.svg";
 import simpleLogo from "../../assets/simple-logo.svg";
+import SuccessDialog from "../common/dialog/successDialog";
 
 const MySwal = withReactContent(Swal);
 
@@ -19,6 +20,7 @@ const RegisterForm = () => {
   const [isTeacher, setIsTeacher] = useState(false);
   const [code, setCode] = useState("");
   const [error, setError] = useState(null);
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,24 +28,10 @@ const RegisterForm = () => {
     try {
       if (isTeacher) {
         await registerTeacher({ name, lastName, email, password, confirmPassword, code });
-        MySwal.fire({
-          icon: "success",
-          title: "Registro exitoso",
-          text: "Tu cuenta de maestro ha sido creada exitosamente.",
-          confirmButtonText: "Ok",
-        }).then(() => {
-          navigate("/login");
-        });
+        setShowSuccessDialog(true);
       } else {
         await registerUser({ email, password, name, lastName, confirmPassword });
-        MySwal.fire({
-          icon: "success",
-          title: "Registro exitoso",
-          text: "Ve tu correo electrónico para terminar el proceso",
-          confirmButtonText: "Ok",
-        }).then(() => {
-          navigate("/login");
-        });
+        setShowSuccessDialog(true);
       }
     } catch (err) {
       setError(err.response?.data?.message || "Error al registrar");
@@ -53,14 +41,7 @@ const RegisterForm = () => {
   const handleGoogleRegister = async (response) => {
     try {
       await googleRegister(response.credential);
-      MySwal.fire({
-        icon: "success",
-        title: "Registro con Google exitoso",
-        text: "Ve tu correo electrónico para terminar el proceso",
-        confirmButtonText: "Ok",
-      }).then(() => {
-        navigate("/login");
-      });
+      setShowSuccessDialog(true);
     } catch (err) {
       setError(err.response?.data?.message || "Error al registrar con Google");
     }
@@ -220,6 +201,16 @@ const RegisterForm = () => {
               </p>
             </div>
           </div>
+        </div>
+        <div>
+          {showSuccessDialog && (
+            <SuccessDialog
+              title="Cuenta registrada con éxito"
+              description="Comenzá tu camino en Bata"
+              buttonText="Ok"
+              onConfirm={() => navigate("/login")}
+            />
+          )}
         </div>
       </div>
     </GoogleOAuthProvider>

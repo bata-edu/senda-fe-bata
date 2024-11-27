@@ -15,9 +15,7 @@ import "react-toastify/dist/ReactToastify.css";
 import logoImage from "../../assets/logo.svg";
 import simpleLogo from "../../assets/simple-logo.svg"
 import useNavigateToDashboard from "../../utils/userRoles";
-
-
-const MySwal = withReactContent(Swal);
+import GenericDialog from "../common/dialog/dialog";
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
@@ -26,6 +24,9 @@ const LoginForm = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
+  const [showDialog, setShowDialog] = useState(false);
+  const [emailForReset, setEmailForReset] = useState("");
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
   const navigateToDashboard = useNavigateToDashboard();
 
@@ -79,25 +80,24 @@ const LoginForm = () => {
   };
 
   const handleForgotPassword = async () => {
-    const { value: emailForReset } = await MySwal.fire({
-      title: "Recuperar Contraseña",
-      input: "email",
-      inputPlaceholder: "Ingresa tu correo electrónico",
-      showCancelButton: true,
-      confirmButtonText: "Enviar",
-      cancelButtonText: "Cancelar",
-      inputValidator: (value) => (!value ? "Necesitas ingresar un correo electrónico" : null),
-    });
-
-    if (emailForReset) {
       try {
         await forgotPassword(emailForReset);
-        MySwal.fire("¡Éxito!", "Se ha enviado un enlace para restablecer tu contraseña.", "success");
+        setShowDialog(false);
+        toast.success("¡Correo enviado exitosamente!", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+
       } catch (err) {
-        MySwal.fire("Error", "No se pudo enviar el correo, inténtalo nuevamente.", "error");
+        console.error(err);
       }
-    }
   };
+
 
   return (
     <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
@@ -157,7 +157,7 @@ const LoginForm = () => {
             </form>
             <div className="mt-4 text-end">
               <button
-                onClick={handleForgotPassword}
+                onClick={() => setShowDialog(true)}
                 className="text-sm text-strongBlue hover:underline"
               >
                 ¿Olvidaste tu contraseña?
@@ -174,6 +174,20 @@ const LoginForm = () => {
                 <img src="/assets/facebook-icon.svg" alt="Facebook" className="h-5 mr-2" />
                 Regístrate con Facebook
               </button>  */}
+            </div>
+            <div>
+              {showDialog &&
+                <GenericDialog 
+                type="form"
+                title={"Recuperar Contraseña"}
+                description={"Ingresa tu correo electrónico para recuperar tu contraseña"}
+                inputs={[{ placeholder: "Correo electrónico", type: "email", value: emailForReset, onChange: (e) => setEmailForReset(e.target.value) }] }
+                confirmButtonText={"Enviar"}
+                cancelButtonText={"Cancelar"} 
+                onCancel={() => setShowDialog(false)} 
+                onConfirm={handleForgotPassword}
+                />
+            }
             </div>
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-500">
