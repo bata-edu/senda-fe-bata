@@ -18,26 +18,25 @@ const meta = {
   },
   // Use `fn` to spy on the onClick arg, which will appear in the actions panel once invoked: https://storybook.js.org/docs/essentials/actions#action-args
   args: { onClick: fn() },
-} satisfies Meta<typeof Button>;
+};
 
 export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const PurpleButton: Story = {
+export const PurpleButton = {
   args: {
     variant: "purple",
     label: "Inciar sesión",
   },
 };
 
-export const Green: Story = {
+export const Green = {
   args: {
     variant: "green",
     label: "Button",
   },
 };
 
-export const White: Story = {
+export const White = {
   args: {
     // icon: <Metamask />,
     variant: "white",
@@ -45,14 +44,14 @@ export const White: Story = {
   },
 };
 
-export const Black: Story = {
+export const Black = {
   args: {
     variant: "black",
     label: "Wallet",
   },
 };
 
-export const Icon: Story = {
+export const Icon = {
   args: {
     variant: "white",
     // icon: <View />,
@@ -60,28 +59,28 @@ export const Icon: Story = {
   },
 };
 
-export const GreenWithBorder: Story = {
+export const GreenWithBorder = {
   args: {
     variant: "greenWithBorder",
     label: "Button",
   },
 };
 
-export const Disabled: Story = {
+export const Disabled = {
   args: {
     disabled: true,
     label: "Vista",
   },
 };
 
-export const Back: Story = {
+export const Back = {
   args: {
     variant: "back",
     // icon: <BackArrow />,
   },
 };
 
-export const transparent: Story = {
+export const transparent = {
   args: {
     variant: "transparent",
     // icon: <Trash />,

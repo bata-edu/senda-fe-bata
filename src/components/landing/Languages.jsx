@@ -13,13 +13,13 @@ export default function Languages() {
 
   return (
     <section>
-      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 overflow-x-hidden">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <div className="py-12 md:py-20">
             <div className="mx-auto max-w-3xl pb-16 text-center md:pb-20">
               <h2 className="text-3xl font-bold  md:text-4xl font-sans">
-                Domina la programación,
-                <br /> aprende todo lo que necesitas.
+                Dominá la programación y <br />
+                llevá tus habilidades al siguiente nivel.
               </h2>
             </div>
             <div className="relative flex h-[324px] items-center justify-center">
@@ -228,7 +228,7 @@ export default function Languages() {
                         </div>
                       </div>
                     </div>
-                    <div className="absolute -translate-x-[216px] -translate-y-[82px]">
+                    <div className="absolute -translate-x-[216px] -translate-y-[82px] md:block hidden">
                       <div className="animate-[breath_6s_ease-in-out_3.5s_infinite_both]">
                         <div className="flex h-20 w-20 items-center justify-center rounded-full bg-white shadow-lg shadow-black/[0.03] before:absolute before:inset-0 before:m-[8.334%] before:rounded-[inherit] before:border before:border-gray-700/5 before:bg-gray-200/60 before:[mask-image:linear-gradient(to_bottom,black,transparent)]">
                           <img
@@ -241,7 +241,7 @@ export default function Languages() {
                         </div>
                       </div>
                     </div>
-                    <div className="absolute -translate-y-[82px] translate-x-[216px]">
+                    <div className="absolute -translate-y-[82px] translate-x-[216px] md:block hidden">
                       <div className="animate-[breath_6s_ease-in-out_1.5s_infinite_both]">
                         <div className="flex h-20 w-20 items-center justify-center rounded-full bg-white shadow-lg shadow-black/[0.03] before:absolute before:inset-0 before:m-[8.334%] before:rounded-[inherit] before:border before:border-gray-700/5 before:bg-gray-200/60 before:[mask-image:linear-gradient(to_bottom,black,transparent)]">
                           <img
@@ -254,7 +254,7 @@ export default function Languages() {
                         </div>
                       </div>
                     </div>
-                    <div className="absolute translate-x-[216px] translate-y-[82px]">
+                    <div className="absolute translate-x-[216px] translate-y-[82px] md:block hidden">
                       <div className="animate-[breath_6s_ease-in-out_2s_infinite_both]">
                         <div className="flex h-20 w-20 items-center justify-center rounded-full bg-white shadow-lg shadow-black/[0.03] before:absolute before:inset-0 before:m-[8.334%] before:rounded-[inherit] before:border before:border-gray-700/5 before:bg-gray-200/60 before:[mask-image:linear-gradient(to_bottom,black,transparent)]">
                           <img
@@ -267,7 +267,7 @@ export default function Languages() {
                         </div>
                       </div>
                     </div>
-                    <div className="absolute -translate-x-[216px] translate-y-[82px]">
+                    <div className="absolute -translate-x-[216px] translate-y-[82px] md:block hidden">
                       <div className="animate-[breath_6s_ease-in-out_2.5s_infinite_both]">
                         <div className="flex h-20 w-20 items-center justify-center rounded-full bg-white shadow-lg shadow-black/[0.03] before:absolute before:inset-0 before:m-[8.334%] before:rounded-[inherit] before:border before:border-gray-700/5 before:bg-gray-200/60 before:[mask-image:linear-gradient(to_bottom,black,transparent)]">
                           <img
@@ -280,7 +280,7 @@ export default function Languages() {
                         </div>
                       </div>
                     </div>
-                    <div className="absolute -translate-x-[292px] opacity-40">
+                    <div className="absolute -translate-x-[292px] opacity-40 md:block hidden">
                       <div className="animate-[breath_6s_ease-in-out_2s_infinite_both]">
                         <div className="flex h-12 w-12 items-center justify-center rounded-full border border-gray-200/60 bg-white shadow-lg">
                           <img
@@ -293,7 +293,7 @@ export default function Languages() {
                         </div>
                       </div>
                     </div>
-                    <div className="absolute translate-x-[292px] opacity-40">
+                    <div className="absolute translate-x-[292px] opacity-40 md:block hidden">
                       <div className="animate-[breath_6s_ease-in-out_4s_infinite_both]">
                         <div className="flex h-12 w-12 items-center justify-center rounded-full border border-gray-200/60 bg-white shadow-lg">
                           <img
