@@ -1,6 +1,6 @@
 import { UnstyledButton } from "@mantine/core";
 import React from "react";
-
+import "../../../index.css";
 export const Button = ({
   variant = "blue",
   backgroundColor,
@@ -9,6 +9,7 @@ export const Button = ({
   icon,
   full,
   iconPosition = "right",
+  thin,
   ...props
 }) => {
   const colorClasses = {
@@ -21,7 +22,9 @@ export const Button = ({
       type="button"
       className={`${colorClasses[disabled ? "disabled" : variant]} ${
         full ? "w-full" : ""
-      } text-nowrap px-4 py-2.5 h-11  flex items-center justify-center `}
+      } text-nowrap px-4 py-2.5 ${
+        thin ? "h-8" : "h-11"
+      }  flex items-center justify-center `}
       {...props}
     >
       {icon && iconPosition === "left" && (

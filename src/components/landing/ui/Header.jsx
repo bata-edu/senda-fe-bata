@@ -21,17 +21,17 @@ export default function Header() {
   return (
     <header className="fixed top-2 z-30 w-full md:top-6">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <div className="relative flex h-14 items-center justify-between gap-3 rounded-2xl bg-white/90 px-3 shadow-lg shadow-black/[0.03] backdrop-blur-sm before:pointer-events-none before:absolute before:inset-0 before:rounded-[inherit] before:border before:border-transparent before:[background:linear-gradient(theme(colors.gray.100),theme(colors.gray.200))_border-box] before:[mask-composite:exclude_!important] before:[mask:linear-gradient(white_0_0)_padding-box,_linear-gradient(white_0_0)]">
+        <div className="relative flex h-16 items-center justify-between gap-3 rounded-2xl bg-white/90 px-3 shadow-lg shadow-black/[0.03] backdrop-blur-sm before:pointer-events-none before:absolute before:inset-0 before:rounded-[inherit] before:border before:border-transparent before:[background:linear-gradient(theme(colors.gray.100),theme(colors.gray.200))_border-box] before:[mask-composite:exclude_!important] before:[mask:linear-gradient(white_0_0)_padding-box,_linear-gradient(white_0_0)]">
           <div className="flex flex-1 items-center">
             <Logo />
           </div>
 
           <nav className="hidden md:flex md:grow">
-            <ul className="flex grow flex-wrap items-center justify-center gap-4 text-sm lg:gap-8">
+            <ul className="flex grow items-center justify-center gap-4 text-sm lg:gap-8 mb-0 ">
               <li className="px-3 py-1">
                 <Link
                   to="/pricing"
-                  className="flex items-center text-gray-700 transition hover:text-gray-900"
+                  className="flex items-center text-gray-700 transition hover:text-gray-900 no-underline"
                 >
                   Beneficios
                 </Link>
@@ -39,7 +39,7 @@ export default function Header() {
               <li className="px-3 py-1">
                 <Link
                   to="/customers"
-                  className="flex items-center text-gray-700 transition hover:text-gray-900"
+                  className="flex items-center text-gray-700 transition hover:text-gray-900 no-underline"
                 >
                   Planes
                 </Link>
@@ -47,7 +47,7 @@ export default function Header() {
               <li className="px-3 py-1">
                 <Link
                   to="/blog"
-                  className="flex items-center text-gray-700 transition hover:text-gray-900"
+                  className="flex items-center text-gray-700 transition hover:text-gray-900 no-underline"
                 >
                   FAQ
                 </Link>
@@ -55,9 +55,9 @@ export default function Header() {
             </ul>
           </nav>
 
-          <ul className="flex flex-1 items-center justify-end gap-3">
+          <ul className="hidden md:flex flex-1 flex-col items-end justify-center gap-3 mb-0">
             <li>
-              <Button label="Mas info" />
+              <Button thin label="Mas info" />
             </li>
           </ul>
 
