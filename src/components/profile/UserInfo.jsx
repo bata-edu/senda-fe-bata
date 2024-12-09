@@ -2,8 +2,6 @@ import React from "react";
 import { useSelector } from "react-redux";
 import userImage from "../../assets/profile.png";
 import "../../styles/profile.css";
-import EditIcon from "../../assets/icons/edit";
-import SettingsIcon from "../../assets/icons/settings";
 
 const UserInfo = () => {
   const { user } = useSelector((state) => state.user || {});
@@ -15,8 +13,8 @@ const UserInfo = () => {
             <img className="profile-img" src={userImage} alt="User profile" />
 
             <div>
-              <EditIcon width="30px" height="30px" />
-              <SettingsIcon width="30px" height="30px" />
+              {/* <EditIcon width="30px" height="30px" />
+              <SettingsIcon width="30px" height="30px" /> */}
             </div>
           </div>
           <div className="name-created-div">

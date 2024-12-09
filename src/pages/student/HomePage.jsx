@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  fetchAllLevels,
-  fetchLevelInfo,
-} from "../../features/level/levelSlice";
+
 import { fetchUser } from "../../features/user/userSlice";
 import { fetchRank } from "../../features/user/userSlice";
 import Sidebar from "../../components/home/SideBar";
@@ -11,6 +8,7 @@ import SidebarRight from "../../components/home/SideBarRight";
 import "../../styles/home.css";
 import { Outlet } from "react-router-dom";
 import LoadingPage from "../LoadingPage";
+import Header from "../../components/common/header/Header";
 
 const Home = () => {
   const dispatch = useDispatch();
@@ -51,13 +49,15 @@ const Home = () => {
     return <LoadingPage />;
   } else {
     return (
-      <div className="home-container">
-        <Sidebar />
-        <div className="main-container">
-          <Outlet />
+      <>
+        <Header />
+        <div className="home-container">
+          <Sidebar />
+          <div className="main-container">
+            <Outlet />
+          </div>
         </div>
-        <SidebarRight />
-      </div>
+      </>
     );
   }
 };

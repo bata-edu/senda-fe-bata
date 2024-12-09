@@ -1,6 +1,10 @@
 import { useNavigate } from "react-router-dom";
-import { USER_ADMIN, USER_STUDENT, USER_TEACHER, USER_SCHOOL_ADMIN } from "./constants";
-import { getAuthData } from "../features/auth/authService";
+import {
+  USER_ADMIN,
+  USER_STUDENT,
+  USER_TEACHER,
+  USER_SCHOOL_ADMIN,
+} from "./constants";
 
 const useNavigateToDashboard = () => {
   const navigate = useNavigate();

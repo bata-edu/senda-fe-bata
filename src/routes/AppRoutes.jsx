@@ -31,6 +31,8 @@ import CombineGuard from "../utils/guards/combineGuard";
 import Teachers from "../components/teachers/Teachers";
 import { useEffect } from "react";
 import ClassRoom from "../components/classRoom/classRoom";
+import Modules from "../components/home/CourseSelector";
+import Sections from "../components/home/Sections";
 
 const AppRoutes = () => {
   useEffect(() => {
@@ -64,8 +66,9 @@ const AppRoutes = () => {
           }
         />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
+
         <Route
-          path="/home"
+          path="/learn"
           element={
             <AuthGuard>
               <StudentGuard>
@@ -74,7 +77,9 @@ const AppRoutes = () => {
             </AuthGuard>
           }
         >
-          <Route index element={<MainContent />} />
+          <Route path="levels" element={<MainContent />} />
+          <Route path="modules" element={<Modules />} />
+          <Route path="sections" element={<Sections />} />
           <Route path="levels" element={<Levels />} />
           <Route path="editor" element={<EditorPage />} />
           <Route path="profile" element={<Profile />} />

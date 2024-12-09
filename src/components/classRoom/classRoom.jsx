@@ -3,8 +3,8 @@ import { useDispatch } from "react-redux";
 import { getIntoCourse } from "../../features/school/schoolSlice";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import left from '../../assets/icons/corchete izquierdo.svg';
-import right from '../../assets/icons/corchete derecho.svg';
+import left from "../../assets/icons/corchete-izquierdo.svg";
+import right from "../../assets/icons/corchete-derecho.svg";
 import lifeIcon from "../../assets/icons/heart.svg";
 import streakIcon from "../../assets/icons/fire.svg";
 import pointsIcon from "../../assets/icons/points.svg";
@@ -78,7 +78,7 @@ const ClassRoom = () => {
           onClick={handleJoinClassroom}
           className="flex items-center space-x-2 px-6 py-2 bg-gray-300 text-white font-semibold rounded-lg hover:bg-gray-700 focus:outline-none focus:ring focus:ring-blue-300"
         >
-           <img src={arrowLeftIcon} />
+          <img src={arrowLeftIcon} />
           <span className="text-black">Unirme</span>
         </button>
       </div>
