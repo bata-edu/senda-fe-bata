@@ -15,8 +15,8 @@ const TeacherHome = () => {
 
   const navigate = useNavigate();
 
-  const handleSchoolClick = (schoolId) => {
-    navigate(`/courses/${schoolId}`);
+  const handleSchoolClick = (school) => {
+    navigate(`/courses/${school.id}`, {state: {schoolInfo: school}});
   };
 
   const handleJoin = async () => {
@@ -42,7 +42,7 @@ const TeacherHome = () => {
             key={school.id}
             className="relative bg-darkBlue text-white shadow-[0_8px_3px_rgba(49,55,119,1)] p-6 hover:shadow-[0_12px_3px_rgba(49,55,119,1)] transition-all cursor-pointer"
             style={{borderRadius: '1.5rem'}}
-            onClick={() => handleSchoolClick(school.id)}
+            onClick={() => handleSchoolClick(school)}
           >
             <span className="text-4xl font-semibold block mb-10">{school.name}</span>
             <div className="flex justify-between">
