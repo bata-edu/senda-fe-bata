@@ -6,11 +6,13 @@ import { getExamsByCourse } from "../../features/exam/examSlice";
 import { getCourseArticles } from "../../features/courseArticle/courseArticle";
 import { getStudentsProgress } from "../../features/school/schoolSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import LoadingPage from "../../pages/LoadingPage";
 import { fetchModulesInfo } from "../../features/module/moduleSlice";
 import cycle from "../../assets/icons/cycle.svg";
 import maleExample from "../../assets/male-example.svg";
+import GenericDialog from '../common/dialog/dialog';
+
 
 const CourseDashboard = () => {
     const location = useLocation();
@@ -22,6 +24,15 @@ const CourseDashboard = () => {
     const {modules} = useSelector((state) => state.modules);
     const [studentsProgress, setStudentsProgress] = useState([]);
     const [selectedModule, setSelectedModule] = useState();
+    const [selectedModuleIndex, setSelectedModuleIndex] = useState(0);
+    const {students_module} = useSelector((state) => state.school);
+    const [showDialog, setShowDialog] = useState(false);
+    const [name, setName] = useState('');
+    const [description, setDescription] = useState('');
+    const [file, setFile] = useState('');
+    const [content, setContent] = useState('');
+    const [labels, setLabels] = useState('');
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetchCourseInfo();
@@ -31,7 +42,7 @@ const CourseDashboard = () => {
     const fetchCourseInfo = async () => {
         setLoading(true);
         const m = await dispatch(fetchModulesInfo());
-        const moduleA = m.payload.results[0];
+        const moduleA = m.payload.results[selectedModuleIndex];
         setSelectedModule(moduleA);
         const res = await Promise.all(
             [
@@ -48,18 +59,43 @@ const CourseDashboard = () => {
         setLoading(false); 
     };
 
-    const selectRandomImage = () => {
-        const images = [
-            pencil,
-            pencilB,
-        ];
-     return images[Math.floor(Math.random() * images.length)];
+    const changeModule = async () =>{
+        const index = (selectedModuleIndex + 1 >= modules.length) ? 0 : selectedModuleIndex + 1
+        await dispatch(getStudentsProgress({ courseId: courseInfo.id, moduleId: modules[index].id }));
+        setSelectedModuleIndex(index);
+
+    }
+
+    useEffect(() => {
+        if(loading) return;
+        setSelectedModule(modules[selectedModuleIndex]);
+        setStudentsProgress([...students_module]);
+    }, [selectedModuleIndex]);
+    
+    const handleNavigateExam = () => {
+        navigate(`/exam-form/${courseInfo.id}`, { state: { courseInfo, schoolInfo } });
     }
 
     return (
         loading ? <LoadingPage/> : (
-
         <div className="flex flex-col justify-center md:flex-row gap-20 p-6 bg-gray-50 min-h-screen">
+        {
+            showDialog &&
+            <GenericDialog 
+                title={"Nuevo artículo"}
+                description={"Agrega un nuevo artículo a tu curso"}
+                open={showDialog}
+                type="form"
+                onCancel={() => setShowDialog(false)}
+                inputs={[
+                    { type: "text", placeholder: "Título", name: "title", required: true, value: name, onChange: (e) => setName(e.target.value) },
+                    { type: "text", placeholder: "Descripción", name: "description", required: true, value: description, onChange: (e) => setDescription(e.target.value) },
+                    { type: "text", placeholder: "Etiquetas", name: "labels", required: true, value: labels, onChange: (e) => setLabels(e.target.value) },
+                    { type: "text", placeholder: "Contenido", name: "content", required: true, value: content, onChange: (e) => setContent(e.target.value) },
+                    { type: "file", placeholder: "Imagen", name: "photo", required: true, value: file, onChange: (e) => setFile(e.target.files[0]), file: file, setFile: setFile, fileName: "Subir o arrastrar la imagen de portada", fileType: "IMG, SVG, PNG o JPG"  },
+                ]}
+            />
+        }
         <div className="w-1/4">
             <div
                 className="animate-bounce-in-down bg-[#F2F4FC] text-[#4558C8] border border-blue-200 rounded-lg px-6 py-3 items-center gap-4 shadow-md"
@@ -75,17 +111,24 @@ const CourseDashboard = () => {
             </div>
 
             <div className="mt-6">
-            <h3 className="text-lg font-bold text-gray-700">📄 Artículos</h3>
+            <div className="flex justify-between items-center">
+                <div onClick={() => handleNavigateExam()}>
+                    <span >Ir a examenes PRUEBA</span>
+                </div>
+                <div className="bg-[#F2F4FC] rounded-md p-2 items-center cursor-pointer" onClick={() => setShowDialog(true)}>
+                    <h3 className="text-xs font-bold text-gray-700">Nuevo articulo</h3>
+                </div>
+            </div>
             </div>
 
             <div className="mt-4 space-y-6">
-            {courseData.map((data) => (
+            {courseData.map((data, index) => (
                 <div
                 key={data.id}
                 className="bg-white border border-gray-200 rounded-lg shadow-md p-6 gap-4 hover: cursor-pointer transition-all shadow-lg"
                 >
                 <img
-                    src={data.photo || selectRandomImage()}
+                    src={data.photo ? data.photo : (index % 2 === 0 ? pencil : pencilB)}
                     alt="Artículo"
                     className="w-full h-32 object-cover rounded-md"
                 />
@@ -151,7 +194,7 @@ const CourseDashboard = () => {
             </div>
             <div className="flex justify-between items-center mt-6">
                 <span className="bg-[#4558C8] text-white px-2 py-1 rounded-md text-xs">{selectedModule.name}</span>
-                <div className="flex rounded-md bg-[#F2F4F7] p-2 gap-2 items-center">
+                <div className="flex rounded-md bg-[#F2F4F7] p-2 gap-2 items-center cursor-pointer" onClick={changeModule}>
                     <img src={cycle} alt="Ciclo" className="w-3 h-3" />
                     <span className="text-xs">Cambiar curso</span>
                 </div>

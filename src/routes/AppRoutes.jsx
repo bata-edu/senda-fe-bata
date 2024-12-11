@@ -204,6 +204,16 @@ const AppRoutes = () => {
             </AuthGuard>
           }
         />
+        <Route 
+          path="/exam-form/:courseId"
+          element={
+            <AuthGuard>
+              <TeacherGuard>
+                <ExamForm />
+              </TeacherGuard>
+            </AuthGuard>
+          }
+        />
       </Routes>
     </Router>
   );
