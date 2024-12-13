@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
-import left from '../../assets/icons/corchete izquierdo.svg';
-import right from '../../assets/icons/corchete derecho.svg';
+import left from '../../assets/icons/corchete-izquierdo.svg';
+import right from '../../assets/icons/corchete-derecho.svg';
 import rightArrow from '../../assets/icons/rightLeft.svg';
 import graduationIcon from '../../assets/icons/graduation.svg';
 import GenericDialog from "../common/dialog/dialog";
