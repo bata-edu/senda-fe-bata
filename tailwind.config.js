@@ -68,9 +68,8 @@ module.exports = {
         grayBg: "#FAFAFA",
         borderGray: "#E4E7EC",
         darkGrayText: "#46505E",
+        darkBlue: '#4558C8'
       },
-    },
-    keyframes: {
       'bounce-in-down': {
         '0%': {
           transform: 'translateY(-100%)',
@@ -91,7 +90,6 @@ module.exports = {
     animation: {
       'bounce-in-down': 'bounce-in-down 0.8s ease-out forwards',
     },
-    }
   },
   plugins: [],
 };
