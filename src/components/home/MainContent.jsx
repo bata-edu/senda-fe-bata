@@ -55,6 +55,10 @@ const MainContent = () => {
       backgroundDone: "#F59D7C",
       borderCurrent: "#EB4624",
       borderDone: "#B72017",
+      borderDisable: "#C8C8C8",
+      barDone: "#EB4624",
+      barCurrent: "#B72017",
+      barUnfilled: "#F59D7C",
     },
   };
 
@@ -341,23 +345,27 @@ const MainContent = () => {
           </div>
           <div className="relative h-screen w-full mt-36">
             {levelsInfo?.map((level, index) => {
-              const moduleColor = colors[index % colors.length]; // Asigna un color cíclico
+              console.log(index, userCurrentInfo.currentLevelIndex);
               return (
                 <motion.div
                   onClick={() => handleSectionClick(level._id)}
                   key={level.id}
-                  className={`absolute w-full rounded-[50px] h-[300px] flex flex-col items-center justify-start py-10 px-12 border-2`}
+                  className={`absolute w-full rounded-[50px] h-[400px] flex flex-col items-center justify-start py-10 px-12 border-2`}
                   style={{
-                    top: `${index * 180}px`,
+                    top: `${index * 250}px`,
                     zIndex: index,
                     borderColor:
-                      index <= userCurrentInfo.currentLevelIndex
+                      index < userCurrentInfo.currentLevelIndex
+                        ? courseImage[selectedModule].borderDone
+                        : index == userCurrentInfo.currentLevelIndex
                         ? courseImage[selectedModule].borderCurrent
-                        : courseImage[selectedModule].borderDone,
+                        : courseImage[selectedModule].borderDisable,
                     backgroundColor:
-                      index <= userCurrentInfo.currentLevelIndex
+                      index < userCurrentInfo.currentLevelIndex
+                        ? courseImage[selectedModule].backgroundDone
+                        : index == userCurrentInfo.currentLevelIndex
                         ? courseImage[selectedModule].backgroundCurrent
-                        : courseImage[selectedModule].backgroundDone,
+                        : "white",
                   }}
                   whileHover={{
                     y: -20,
@@ -367,7 +375,11 @@ const MainContent = () => {
                   <div className="flex justify-between w-full">
                     <span
                       // onClick={() => updateSelectedModule(module.id)}
-                      className="font-mono text-5xl text-white"
+                      className={`font-mono text-5xl ${
+                        index <= userCurrentInfo.currentLevelIndex
+                          ? "text-white"
+                          : "text-[#ADADAD]"
+                      }`}
                     >
                       {`NIVEL ${level.order}`}
                     </span>
@@ -375,18 +387,42 @@ const MainContent = () => {
                       {module.percentage || 0}%
                     </span>
                   </div>
-                  <div className="flex justify-between w-full mt-4">
+                  <div className="flex flex-col justify-between w-full mt-4">
+                    <p
+                      className={`font-mono text-2xl ${
+                        index <= userCurrentInfo.currentLevelIndex
+                          ? "text-white"
+                          : "text-[#ADADAD]"
+                      }`}
+                    >
+                      Lorem Ipsumes simplemente el texto de relleno de las
+                      imprentas.
+                    </p>
                     <div className="flex">
-                      {["Label", "Label"].map((tag, i) => (
+                      <div
+                        style={{
+                          background:
+                            index < userCurrentInfo.currentLevelIndex
+                              ? courseImage[selectedModule].barUnfilled
+                              : index == userCurrentInfo.currentLevelIndex
+                              ? courseImage[selectedModule].barUnfilled
+                              : "#DDDDDD",
+                        }}
+                        className="w-full rounded-full h-2.5 "
+                      >
                         <div
-                          key={i}
-                          className="border-white border-2 rounded-full flex items-center px-4 mr-3"
-                        >
-                          <span className="text-xl text-white">{tag}</span>
-                        </div>
-                      ))}
-                    </div>
-                    <div>
+                          style={{
+                            background:
+                              index < userCurrentInfo.currentLevelIndex
+                                ? courseImage[selectedModule].barDone
+                                : index == userCurrentInfo.currentLevelIndex
+                                ? courseImage[selectedModule].barCurrent
+                                : "#DDDDDD",
+                          }}
+                          className={` h-2.5 rounded-full w-[45%]`}
+                        ></div>
+                      </div>
+
                       <ArrowRight color={"white"} />
                     </div>
                   </div>

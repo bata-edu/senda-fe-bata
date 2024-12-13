@@ -31,6 +31,18 @@ const Sections = () => {
     lastSectionIndex: 0,
   });
 
+  const courseImage = {
+    Python: { course: "Python" },
+    JavaScript: { course: "Python" },
+    CSS: { course: "Python" },
+    "66fc2fb14c227e973f81b4d1": {
+      course: "Html",
+      border: "#F59D7C",
+      progress: "#DD2E19B2",
+      background: "#FEF5F2",
+    },
+  };
+
   const selectedModule = localStorage.getItem("selectedModule");
 
   useEffect(() => {
@@ -217,49 +229,126 @@ const Sections = () => {
     <div>
       <div className="flex flex-col py-4 px-6 bg-[#EE5E37] mt-4 rounded-xl border-2 border-[#F9BEA8]">
         <div onClick={() => navigate(`/learn/levels`)}>Volver a Niveles</div>
-        <span>{level?.order}</span>
       </div>
-      <div className="relative w-full h-[500px] flex justify-center items-start mt-12">
-        {/* Objeto 1 */}
-        <div className="absolute  top-0 left-1/2 transform -translate-x-1/2 flex flex-col items-center">
-          <div className="bg-blue-500 w-20 h-20 text-white py-4 px-4 rounded-lg shadow-md">
-            Objeto 1
-          </div>
-          {/* Línea hacia abajo */}
-          <div className="w-px h-12 border-dotted border-2 border-gray-300"></div>
-        </div>
-        {/* Objeto 2 (derecha abajo) */}
-        <div className="absolute top-[70px] left-[55%] flex flex-col items-center">
-          {/* Línea horizontal desde Objeto 1 */}
-          <div className="absolute -left-[50px] top-[20px] transform -translate-y-1/2 w-[50px] border-t-2 border-dotted border-gray-300"></div>
-          <div className="bg-blue-500 w-20 h-20 text-white py-2 px-4 rounded-lg shadow-md">
-            Objeto 2
-          </div>
-          <div className="absolute left-[110px] top-[20px] transform -translate-y-1/2 w-[50px] border-t-2 border-dotted border-gray-300"></div>
-        </div>
-        {/* Objeto 3 (abajo al centro) */}
-        <div className="absolute top-[90px] left-[65%] flex flex-col items-center">
-          <div className="w-px h-12 border-dotted border-2 border-gray-300"></div>
+      <div className="relative w-full h-auto flex justify-center items-start mt-12">
+        {["", "", "", "", ""].map((section, index) => {
+          // Calcula la posición relativa dentro del bloque (0 a 4)
+          const position = index % 5;
 
-          <div className="bg-blue-500 w-20 h-20 text-white py-2 px-4 rounded-lg shadow-md">
-            Objeto 3
-          </div>
-          <div className="w-px h-12 border-dotted border-2 border-gray-300"></div>
-          <div className="absolute left-[0px] top-[140px] transform -translate-y-1/2 w-[50px] border-t-2 border-dotted border-gray-300"></div>
-        </div>
+          // Calcula el desplazamiento vertical para el bloque actual
+          const rowOffset = Math.floor(index / 5) * 300; // Ajusta la separación vertical entre bloques
 
-        {/* <div className="absolute top-[250px] left-[45%] w-[100px] border-t-2 border-dotted border-gray-300"></div> */}
-        {/* Objeto 4 (derecha de Objeto 3) */}
-        <div className="absolute top-[200px] left-[55%] flex flex-col items-center">
-          <div className="absolute -left-[50px] top-[20px] transform -translate-y-1/2 w-[50px] border-t-2 border-dotted border-gray-300"></div>
+          // Define las posiciones y estilos para cada posición en el patrón
+          const positions = [
+            {
+              className:
+                "absolute left-1/2 transform -translate-x-1/2 flex flex-col-reverse items-center",
+              top: "0px",
+              extra: (
+                <div
+                  className="w-1 h-20 relative ml-[70px]"
+                  style={{
+                    borderLeft: "3px dashed gray", // Borde izquierdo
+                    borderBottom: "3px dashed gray", // Borde inferior
+                    borderTop: "none",
+                    borderRight: "none",
+                    width: "75px", // Ajusta el ancho para la base de la "L"
+                    height: "75px", // Ajusta la altura para la parte vertical de la "L"
+                  }}
+                ></div>
+              ),
+            },
+            {
+              className: "absolute left-[55%] flex flex-col items-center",
+              top: "110px",
+              extra: (
+                <div
+                  style={{
+                    position: "absolute",
+                    top: "50%", // Centrado verticalmente dentro del contenedor
+                    left: "100%", // Justo a la derecha del contenido
+                    width: "60px", // Longitud de la línea horizontal
+                    height: "0px", // Altura 0 ya que es solo una línea
+                    borderBottom: "3px dashed gray", // Línea discontinua usando border
+                  }}
+                ></div>
+              ),
+            },
+            {
+              className:
+                "absolute mt-16 left-[60.2%] flex flex-col items-center",
+              top: "90px",
+              extra: (
+                <>
+                  <div
+                    style={{
+                      marginBottom: "-20px",
+                      borderRight: "3px dashed gray",
+                      marginRight: "70px",
+                      width: "75px",
+                      height: "75px",
+                    }}
+                  ></div>
+                </>
+              ),
+            },
 
-          <div className="bg-blue-500 w-20 h-20 text-white py-2 px-4 rounded-lg shadow-md">
-            Objeto 4
-          </div>
-        </div>
-        {/* Línea hacia abajo desde Objeto 4 */}
-        <div className="absolute top-[220px] left-[50%] w-px h-12 border-dotted border-2 border-gray-300"></div>
-        {/* Nodo final */}
+            {
+              className:
+                "absolute left-[55%] flex flex-col items-center z-[10]",
+              top: "320px",
+              extra: (
+                <div
+                  className="w-1 h-20 absolute ml-32 -mt-8"
+                  style={{
+                    borderRight: "3px dashed gray", // Borde izquierdo
+                    borderBottom: "3px dashed gray", // Borde inferior
+                    borderTop: "none",
+                    width: "75px", // Ajusta el ancho para la base de la "L"
+                    height: "75px", // Ajusta la altura para la parte vertical de la "L"
+                  }}
+                ></div>
+              ),
+            },
+            {
+              className:
+                "absolute left-1/2 transform -translate-x-1/2 flex flex-col items-center",
+              top: "430px",
+              extra: (
+                <div
+                  className="w-1 h-20 absolute ml-[75px] -mt-[70px]"
+                  style={{
+                    borderLeft: "3px dashed gray", // Borde izquierdo
+                    borderTop: "3px dashed gray", // Borde inferior
+                    width: "75px", // Ajusta el ancho para la base de la "L"
+                    height: "75px", // Ajusta la altura para la parte vertical de la "L"
+                  }}
+                ></div>
+              ),
+            },
+          ];
+
+          const { className, top, extra } = positions[position];
+
+          return (
+            <div
+              key={index}
+              className={`${className}`}
+              style={{ top: `calc(${top} + ${rowOffset}px)` }}
+            >
+              {extra}
+              <div
+                style={{
+                  background: courseImage[level?.parent]?.background,
+                  border: `2px solid ${courseImage[level?.parent]?.border}`,
+                }}
+                className="w-20 h-20 text-white py-2 px-4 rounded-lg shadow-md"
+              >
+                {`Objeto ${index + 1}`}
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
