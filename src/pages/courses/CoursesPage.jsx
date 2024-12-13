@@ -1,52 +1,35 @@
-import React from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { useDispatch } from "react-redux";
+import React, { useState } from "react";
+import CoursesList from "../../components/courses/CoursesList";
+import { useParams } from "react-router-dom";
 import { useEffect } from "react";
+import { useDispatch } from "react-redux";
 import { fetchSchoolCourses } from "../../features/school/schoolSlice";
 import { getUser } from "../../features/auth/authService";
+import LoadingPage from "../LoadingPage";
 
 const CoursesPage = () => {
     const { schoolId } = useParams();
     const dispatch = useDispatch();
-    const { courses } = useSelector((state) => state.school);
     const user = getUser();
-    const navigate = useNavigate();
-    
+    const [loading, setLoading] = useState(true);
+
+
     useEffect(() => {
+        getCourses();
+    }, [])
+
+    const getCourses = async () => {
         let query;
         if(user.role === 'teacher'){
             query = { teacher_id: user.id };
         }
-        dispatch(fetchSchoolCourses({ schoolId, query }));
-    }, [dispatch, schoolId]);
-    
-    const handleAddCourse = () => {
-        navigate(`/courses/${schoolId}/new`);
-    };
-
-    const handleNavigateToCourse = (course) => {
-        navigate('/teacher/course/' + course.id, { state: { courseInfo: course } });
+        await dispatch(fetchSchoolCourses({ schoolId, query }));
+        setLoading(false);
     }
 
     return (
-        <div>
-        <h1>Courses</h1>
-        <ul>
-            {courses.map((course) => (
-            <li key={course.id} onClick={() => handleNavigateToCourse(course)}>{course.name}</li>
-            ))}
-        </ul>
-        {(user.role === 'teacher') &&
-            <div>
-                <div onClick={() => handleAddCourse()}>
-                <span>+</span>
-                <span>agrega un nuevo curso</span>
-                </div>
-
-            </div>
-        }
-      </div>
+        loading ? <LoadingPage /> :
+        <CoursesList />
     );
 }
 

@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { SCHOOL_ENDPOINT, RESET_STATE, COURSE_ENDPOINT, GET_INTO_COURSE, GET_STUDENTS_IN_COURSE } from "../../utils/constants";
+import { SCHOOL_ENDPOINT, RESET_STATE, COURSE_ENDPOINT, GET_INTO_COURSE, GET_STUDENTS_IN_COURSE, GET_STUDENTS_PROGRESS } from "../../utils/constants";
 import apiClient from "../../utils/interceptors/authInterceptor";
 import { buildQueryString } from "../../utils/buildQueryString";
 
@@ -67,6 +67,17 @@ export const getStudentsInCourse = createAsyncThunk(
     }
 );
 
+export const getStudentsProgress = createAsyncThunk(
+    "school/getStudentsProgress",
+    async ( {courseId, moduleId}, { rejectWithValue }) => {
+      try {
+        const response = await apiClient.get(`${GET_STUDENTS_PROGRESS}/${courseId}/${moduleId}`);
+        return response.data;
+      } catch (error) {
+        return rejectWithValue(error.response.data);
+  }
+});
+
 export const getTeachers = createAsyncThunk(
     "school/getTeachers",
     async ( {schoolId, query} , { rejectWithValue }) => {
@@ -103,7 +114,8 @@ const schoolSlice = createSlice({
         students: [],
         course: null,
         teachers: [],
-        school: null
+        school: null,
+        students_module: []
     },
     reducers: {},
     extraReducers: (builder) => {
@@ -154,6 +166,13 @@ const schoolSlice = createSlice({
             state.course = action.payload;
         })
         .addCase(getCourseById.rejected, (state, action) => {
+            state.error = action.payload;
+        })
+        builder
+        .addCase(getStudentsProgress.fulfilled, (state, action) => {
+            state.students_module = action.payload;
+        })
+        .addCase(getStudentsProgress.rejected, (state, action) => {
             state.error = action.payload;
         })
         .addCase(RESET_STATE, (state) => {

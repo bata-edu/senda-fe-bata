@@ -1,6 +1,5 @@
 export const decrypt = async (encryptedData, ivBase64) => {
     try {
-        console.log("holaa")
         const algorithm = {
             name: "AES-CBC",
             iv: Uint8Array.from(atob(ivBase64), (c) => c.charCodeAt(0)), // Decodifica IV desde Base64

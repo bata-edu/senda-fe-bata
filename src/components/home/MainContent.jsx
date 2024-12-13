@@ -9,11 +9,15 @@ import {
   fetchUserProgressById,
   startCourse,
 } from "../../features/userProgress/userProgressSlice";
-import "../../styles/mainContent.css";
 import LoadingPage from "../../pages/LoadingPage";
 import Modules from "./CourseSelector";
 import robot from "../../assets/robot.png";
 import { setSelectedModule } from "../../features/module/moduleSlice";
+import ArrowRight from "../../assets/icons/arrowRight";
+import { motion } from "framer-motion";
+import StreaksNDiamonds from "../common/Streaks&Diamons/Streaks&Diamons";
+import Html from "../../assets/icons/html.svg";
+import Python from "../../assets/icons/python.svg";
 
 const MainContent = () => {
   const dispatch = useDispatch();
@@ -38,7 +42,25 @@ const MainContent = () => {
   });
 
   const selectedModule = localStorage.getItem("selectedModule");
+  const colors = ["blue", "red", "green", "purple", "orange", "teal", "pink"];
 
+  const courseImage = {
+    Python: { image: <img src={Python} alt="Html logo" />, course: "Python" },
+    JavaScript: { image: <img src={Html} alt="Html logo" />, course: "Python" },
+    CSS: { image: <img src={Html} alt="Html logo" />, course: "Python" },
+    "66fc2fb14c227e973f81b4d1": {
+      image: <img src={Html} alt="Html logo" />,
+      course: "Html",
+      backgroundCurrent: "#EE5E37",
+      backgroundDone: "#F59D7C",
+      borderCurrent: "#EB4624",
+      borderDone: "#B72017",
+      borderDisable: "#C8C8C8",
+      barDone: "#EB4624",
+      barCurrent: "#B72017",
+      barUnfilled: "#F59D7C",
+    },
+  };
 
   const setLevelInfo = async () => {
     if (courseId) {
@@ -58,13 +80,13 @@ const MainContent = () => {
   };
 
   useEffect(() => {
-    if(selectedModule){
+    if (selectedModule) {
       fetchData(selectedModule);
     }
   }, []);
 
   useEffect(() => {
-    if(levelsInfo && levelsInfo.length){
+    if (levelsInfo && levelsInfo.length) {
       setLevelInfo();
     }
   }, [levelsInfo]);
@@ -207,38 +229,31 @@ const MainContent = () => {
     return false;
   };
 
-  const handleSectionClick = (sectionId, levelIndex, sectionIndex) => {
-    let current =
-      levelIndex === userCurrentInfo.currentLevelIndex &&
-      sectionIndex === userCurrentInfo.currentSectionIndex 
-    if (current && currentProgress.finalProjectLevel.isReady) current = false;
-    if(!current && currentProgress.courseCompleted) current = false;  
-    navigate(`/progress?section=${sectionId}&current=${current}`);
+  const handleSectionClick = (levelId) => {
+    console.log(levelId);
+    localStorage.setItem("selectedLevel", levelId);
+    navigate(`/learn/sections`);
   };
 
   const handleFinalProjectClick = (levelIndex, levelId) => {
-    let current =
-      levelIndex === userCurrentInfo.currentLevelIndex
-    if(!current && currentProgress.courseCompleted) current = false;  
+    let current = levelIndex === userCurrentInfo.currentLevelIndex;
+    if (!current && currentProgress.courseCompleted) current = false;
     if (current) {
       navigate(`/progress?current=true`);
     } else {
       navigate(`/progress?level=${levelId}&index=${levelIndex}&current=false`);
     }
   };
-
   return (
-    <div className="main-content">
+    <div className="w-2/3 mx-auto">
       {loading && (
         <div className="loading">
           <LoadingPage />
         </div>
       )}
-      {!selectedModule && <Modules setLoading={setLoading}  fetchModuleInfo={handleStartCourse}/>}
       {selectedModule && levelsInfo?.length ? (
-        <div className="progress-path">
-          <div className="level-container">
-            {levelsInfo.map((level, levelIndex) => (
+        <>
+          {/* {levelsInfo.map((level, levelIndex) => (
               <div
                 key={level._id}
                 className={`level-info
@@ -313,10 +328,109 @@ const MainContent = () => {
                     )}
                 </div>
               </div>
-            ))}
-            <div ref={sentinelRef} className="sentinel"></div>
+            ))} */}
+          <div className="flex w-full">
+            <div className="flex flex-col py-4 px-6 bg-[#EE5E37] mt-4 rounded-xl border-2 border-[#F9BEA8] w-full">
+              <div onClick={() => navigate(`/learn/modules`)}>
+                <span className="text-white font-sans">Ir a Lenguajes</span>
+                <div className="flex">
+                  {courseImage[selectedModule].image}
+                  <span className="ml-2 text-white font-mono">
+                    {courseImage[selectedModule].course}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <StreaksNDiamonds />
           </div>
-        </div>
+          <div className="relative h-screen w-full mt-36">
+            {levelsInfo?.map((level, index) => {
+              console.log(index, userCurrentInfo.currentLevelIndex);
+              return (
+                <motion.div
+                  onClick={() => handleSectionClick(level._id)}
+                  key={level.id}
+                  className={`absolute w-full rounded-[50px] h-[400px] flex flex-col items-center justify-start py-10 px-12 border-2`}
+                  style={{
+                    top: `${index * 250}px`,
+                    zIndex: index,
+                    borderColor:
+                      index < userCurrentInfo.currentLevelIndex
+                        ? courseImage[selectedModule].borderDone
+                        : index == userCurrentInfo.currentLevelIndex
+                        ? courseImage[selectedModule].borderCurrent
+                        : courseImage[selectedModule].borderDisable,
+                    backgroundColor:
+                      index < userCurrentInfo.currentLevelIndex
+                        ? courseImage[selectedModule].backgroundDone
+                        : index == userCurrentInfo.currentLevelIndex
+                        ? courseImage[selectedModule].backgroundCurrent
+                        : "white",
+                  }}
+                  whileHover={{
+                    y: -20,
+                  }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <div className="flex justify-between w-full">
+                    <span
+                      // onClick={() => updateSelectedModule(module.id)}
+                      className={`font-mono text-5xl ${
+                        index <= userCurrentInfo.currentLevelIndex
+                          ? "text-white"
+                          : "text-[#ADADAD]"
+                      }`}
+                    >
+                      {`NIVEL ${level.order}`}
+                    </span>
+                    <span className="font-mono text-3xl text-white">
+                      {module.percentage || 0}%
+                    </span>
+                  </div>
+                  <div className="flex flex-col justify-between w-full mt-4">
+                    <p
+                      className={`font-mono text-2xl ${
+                        index <= userCurrentInfo.currentLevelIndex
+                          ? "text-white"
+                          : "text-[#ADADAD]"
+                      }`}
+                    >
+                      Lorem Ipsumes simplemente el texto de relleno de las
+                      imprentas.
+                    </p>
+                    <div className="flex">
+                      <div
+                        style={{
+                          background:
+                            index < userCurrentInfo.currentLevelIndex
+                              ? courseImage[selectedModule].barUnfilled
+                              : index == userCurrentInfo.currentLevelIndex
+                              ? courseImage[selectedModule].barUnfilled
+                              : "#DDDDDD",
+                        }}
+                        className="w-full rounded-full h-2.5 "
+                      >
+                        <div
+                          style={{
+                            background:
+                              index < userCurrentInfo.currentLevelIndex
+                                ? courseImage[selectedModule].barDone
+                                : index == userCurrentInfo.currentLevelIndex
+                                ? courseImage[selectedModule].barCurrent
+                                : "#DDDDDD",
+                          }}
+                          className={` h-2.5 rounded-full w-[45%]`}
+                        ></div>
+                      </div>
+
+                      <ArrowRight color={"white"} />
+                    </div>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+        </>
       ) : (
         <></>
       )}

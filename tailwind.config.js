@@ -63,11 +63,35 @@ module.exports = {
         sans: ["DM Sans", "sans-serif"], // Fuente principal para textos
         mono: ["DM Mono", "monospace"], // Fuente para código o elementos monoespaciados
       },
-      colors:{
-        strongBlue : 'rgba(69, 88, 200, 1)',
-        grayBg: '#FAFAFA'
+      colors: {
+        strongBlue: "rgba(69, 88, 200, 1)",
+        grayBg: "#FAFAFA",
+        borderGray: "#E4E7EC",
+        darkGrayText: "#46505E",
+      },
     },
-  }
+    keyframes: {
+      'bounce-in-down': {
+        '0%': {
+          transform: 'translateY(-100%)',
+          opacity: '0',
+        },
+        '60%': {
+          transform: 'translateY(10%)',
+          opacity: '1',
+        },
+        '80%': {
+          transform: 'translateY(-5%)',
+        },
+        '100%': {
+          transform: 'translateY(0)',
+        },
+      },
+    },
+    animation: {
+      'bounce-in-down': 'bounce-in-down 0.8s ease-out forwards',
+    },
+    }
   },
   plugins: [],
 };
