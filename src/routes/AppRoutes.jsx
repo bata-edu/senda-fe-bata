@@ -48,7 +48,6 @@ const AppRoutes = () => {
       <Routes>
         <Route path="/" element={<LandingPage />} />
 
-        {/* <Route path="/" element={<RootRedirect />} /> */}
         <Route
           path="/login"
           element={

@@ -1,5 +1,6 @@
 import React from 'react';
 import FileInput from '../input/fileInput';
+import ChipInput from '../input/chipInput';
 
 const GenericDialog = ({
   title,
@@ -19,19 +20,26 @@ const GenericDialog = ({
 
         {inputs.length > 0 && (
           <div className="space-y-4 mb-6">
-            {inputs.map((input, index) => (
-              input.type === 'file' ? (
-                <FileInput key={index} file={input.file} setFile={input.setFile} name={input.fileName} type={input.fileType} />
-              ) : (
-              <input
-                key={index}
-                type={input.type || 'text'}
-                placeholder={input.placeholder}
-                value={input.value}
-                onChange={input.onChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              )
+              {inputs.map((input, index) => (
+                input.type === 'file' ? (
+                  <FileInput key={index} file={input.file} setFile={input.setFile} name={input.fileName} type={input.fileType} />
+                ) : input.type === 'chip' ? (
+                  <ChipInput
+                    key={index}
+                    chips={input.chips}
+                    setChips={input.setChips}
+                    placeholder={input.placeholder}
+                  />
+                ) : (
+                  <input
+                    key={index}
+                    type={input.type || 'text'}
+                    placeholder={input.placeholder}
+                    value={input.value}
+                    onChange={input.onChange}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                )
             ))}
           </div>
         )}

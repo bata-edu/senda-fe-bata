@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import apiClient from "../../utils/interceptors/authInterceptor";
 import { COURSE_ARTICLE_ENDPOINT, COURSE_ARTICLE_DETAIL, RESET_STATE } from "../../utils/constants";
+import { genericCreateAndUpload } from "../../utils/createObjectWithFile";
 
 // Thunk para obtener los articulos de un curso
 export const getCourseArticles = createAsyncThunk(
@@ -32,10 +33,12 @@ export const getCourseArticleDetail = createAsyncThunk(
 // Thunk para crear un articulo
 export const createCourseArticle = createAsyncThunk(
     "courseArticle/createCourseArticle",
-    async ({courseId ,article}, { rejectWithValue }) => {
+    async ({courseId ,article, file}, { rejectWithValue }) => {
         try {
-            const response = await apiClient.post(`${COURSE_ARTICLE_ENDPOINT}/${courseId}`, article);
-            return response.data;
+            const postUrl = `${COURSE_ARTICLE_ENDPOINT}/${courseId}`;
+            const response = await genericCreateAndUpload({body: article, createUrl: postUrl, file, fileKey: "photo", updateUrl: COURSE_ARTICLE_DETAIL});
+            console.log(response)
+            return { id: response.id, ...response };
         } catch (error) {
             return rejectWithValue(error.response.data);
         }
@@ -99,7 +102,8 @@ const courseArticleSlice = createSlice({
         })
         .addCase(createCourseArticle.fulfilled, (state, action) => {
             state.loading = false;
-            state.articles.push(action.payload);
+            //[TODO] Fix bug
+            //state.articles.push(action.payload);
         })
         .addCase(createCourseArticle.rejected, (state, action) => {
             state.loading = false;

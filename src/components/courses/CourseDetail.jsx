@@ -3,7 +3,7 @@ import pencil from "../../assets/pencil.svg";
 import pencilB from "../../assets/pencilB.svg";
 import graduationIcon from '../../assets/icons/graduation.svg';
 import { getExamsByCourse } from "../../features/exam/examSlice";
-import { getCourseArticles } from "../../features/courseArticle/courseArticle";
+import { getCourseArticles, createCourseArticle } from "../../features/courseArticle/courseArticle";
 import { getStudentsProgress } from "../../features/school/schoolSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -12,6 +12,8 @@ import { fetchModulesInfo } from "../../features/module/moduleSlice";
 import cycle from "../../assets/icons/cycle.svg";
 import maleExample from "../../assets/male-example.svg";
 import GenericDialog from '../common/dialog/dialog';
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 
 const CourseDashboard = () => {
@@ -33,6 +35,7 @@ const CourseDashboard = () => {
     const [content, setContent] = useState('');
     const [labels, setLabels] = useState('');
     const navigate = useNavigate();
+    const [chips, setChips] = useState([]);
 
     useEffect(() => {
         fetchCourseInfo();
@@ -76,6 +79,30 @@ const CourseDashboard = () => {
         navigate(`/exam-form/${courseInfo.id}`, { state: { courseInfo, schoolInfo } });
     }
 
+    const handleCreateArticle = async () => {
+        try{
+            const body = { 
+                name,
+                description,
+                content,
+                labels : chips
+            } 
+            const res = await dispatch(createCourseArticle({
+                courseId: courseInfo.id,
+                article: body,
+                file: file
+            },
+            ));
+            toast.success("Artículo creado correctamente");
+            setCourseData([...courseData, res.payload]);
+            setShowDialog(false);
+        }
+        catch(error){
+            console.error('Error al crear el articulo:', error);
+        }
+
+    };
+
     return (
         loading ? <LoadingPage/> : (
         <div className="flex flex-col justify-center md:flex-row gap-20 p-6 bg-gray-50 min-h-screen">
@@ -90,10 +117,11 @@ const CourseDashboard = () => {
                 inputs={[
                     { type: "text", placeholder: "Título", name: "title", required: true, value: name, onChange: (e) => setName(e.target.value) },
                     { type: "text", placeholder: "Descripción", name: "description", required: true, value: description, onChange: (e) => setDescription(e.target.value) },
-                    { type: "text", placeholder: "Etiquetas", name: "labels", required: true, value: labels, onChange: (e) => setLabels(e.target.value) },
+                    { type: "chip", placeholder: "Etiquetas", name: "labels", required: true, chips: chips, setChips: setChips },
                     { type: "text", placeholder: "Contenido", name: "content", required: true, value: content, onChange: (e) => setContent(e.target.value) },
                     { type: "file", placeholder: "Imagen", name: "photo", required: true, value: file, onChange: (e) => setFile(e.target.files[0]), file: file, setFile: setFile, fileName: "Subir o arrastrar la imagen de portada", fileType: "IMG, SVG, PNG o JPG"  },
                 ]}
+                onConfirm={handleCreateArticle}
             />
         }
         <div className="w-1/4">
@@ -115,26 +143,26 @@ const CourseDashboard = () => {
                 <div onClick={() => handleNavigateExam()}>
                     <span >Ir a examenes PRUEBA</span>
                 </div>
-                <div className="bg-[#F2F4FC] rounded-md p-2 items-center cursor-pointer" onClick={() => setShowDialog(true)}>
-                    <h3 className="text-xs font-bold text-gray-700">Nuevo articulo</h3>
+                <div className="bg-white rounded-md p-2 flex items-center cursor-pointer border" onClick={() => setShowDialog(true)}>
+                    <span className="text-xs font-bold text-gray-700 ">Nuevo articulo</span>
                 </div>
             </div>
             </div>
 
-            <div className="mt-4 space-y-6">
+            <div className="mt-4 space-y-6 max-h-[700px] overflow-y-scroll">
             {courseData.map((data, index) => (
                 <div
                 key={data.id}
                 className="bg-white border border-gray-200 rounded-lg shadow-md p-6 gap-4 hover: cursor-pointer transition-all shadow-lg"
                 >
                 <img
-                    src={data.photo ? data.photo : (index % 2 === 0 ? pencil : pencilB)}
+                    src={data?.photo ? data.photo : (index % 2 === 0 ? pencil : pencilB)}
                     alt="Artículo"
                     className="w-full h-32 object-cover rounded-md"
                 />
                 <div className="flex flex-col justify-between flex-grow mt-10">
                     <div className="flex justify-between items-center">
-                    <h3 className="text-lg font-bold">{data.title || data.name}</h3>
+                    <h3 className="text-lg font-bold">{data?.name}</h3>
         
                     </div>
                     <p className="text-gray-600 text-sm">{data?.description}</p>
