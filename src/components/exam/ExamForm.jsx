@@ -8,6 +8,7 @@ import { useLocation } from 'react-router-dom';
 import FileInput from '../common/input/fileInput';
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import DatePickerInput from '../common/input/dateInput';
 
 const ExamForm = () => {
     const { courseId } = useParams();
@@ -19,12 +20,13 @@ const ExamForm = () => {
         description: '',
         endDate: '',
         isFreeCode: false,
+        questionText: '',
     });
     const [loading, setLoading] = useState(false);
     const { courseInfo, schoolInfo } = location.state;
 
     const [file, setFile] = useState(null);
-    const [isAttachFile, setIsAttachFile] = useState(true); // Controla si se selecciona "adjuntar archivo" o "redactar consigna"
+    const [isAttachFile, setIsAttachFile] = useState(true);
     const examTypes = [
         {
             value: 'EXAM',
@@ -49,10 +51,17 @@ const ExamForm = () => {
     const submitExam = async () => {
         try {
             const body = {
-                ...examData,
+                name: examData.name,
+                description: examData.description,
                 schoolCourse: courseId,
                 type: examTypes[examTypeIndex].value,
                 teacher_id: getUser().id,
+                code: examData.isFreeCode,
+                endDate: examData.endDate
+            }
+            if(!isAttachFile){
+                body.question = examData.questionText;
+                setFile(null);
             }
             await dispatch(createExam({ exam: body, file }));
             toast.success("Examen creado correctamente");
@@ -96,7 +105,7 @@ const ExamForm = () => {
             <div className='flex flex-col justify-center md:flex-row gap-20 p-6'>
                 <div className='w-1/2 bg-white p-6 rounded-lg'>
                     <div>
-                        <h3 className='text-xl font-bold'>Crear nuevo examen</h3>
+                        <h3 className='text-xl font-bold'>Crear nuevo {examTypes[examTypeIndex].label}</h3>
                     </div>
                     <div className='mt-4 grid'>
                         <input
@@ -145,8 +154,8 @@ const ExamForm = () => {
                                 placeholder="Redacte la consigna aquí"
                                 className="w-full py-2 px-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 rows={4}
-                                value={examData.description}
-                                onChange={(e) => setExamData({ ...examData, description: e.target.value })}
+                                value={examData.questionText}
+                                onChange={(e) => setExamData({ ...examData, questionText: e.target.value })}
                             />
                         )}
 
@@ -162,16 +171,21 @@ const ExamForm = () => {
                                 Activar acceso directo a Codeo Libre
                             </label>
                         </div>
-                        <input
-                            type="date"
-                            placeholder='Fecha de entrega'
+                        <DatePickerInput
+                            label="Fecha de entrega"
                             value={examData.endDate}
-                            className='w-full mb-4 py-2 rounder-lg'
-                            onChange={(e) => setExamData({ ...examData, endDate: e.target.value })}
+                            onChange={(value) => setExamData({ ...examData, endDate: value })}
+                            placeholder="Fecha de entrega"
                         />
                     </div>
-                    <div className='flex justify-end'>
-                        <button className='bg-[#4558C8] text-white px-4 py-2 rounded-lg mt-4' onClick={submitExam}>Crear asignación</button>
+                    <div className='flex w-full'>
+                        <button 
+                            className='text-white px-4 py-2 rounded-lg mt-4 w-full active: bg-[#4558C8] disabled:bg-gray-300 cursor-not-allowed'
+                            disabled={(!examData.description || !examData.name || !examData.endDate || (!isAttachFile && !examData.questionText) || loading || (isAttachFile && !file))}
+                            onClick={submitExam}
+                        >
+                            Crear asignación
+                        </button>
                     </div>
                 </div>
             </div>
