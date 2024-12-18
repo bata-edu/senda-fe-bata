@@ -73,7 +73,7 @@ const LoginForm = () => {
   const handleGoogleLogin = async (response) => {
     try {
       await googleLogin(response.credential);
-      navigate("/home");
+      navigate("/learn/modules");
     } catch (error) {
       setError("Error al autenticar con Google");
       console.error(error);

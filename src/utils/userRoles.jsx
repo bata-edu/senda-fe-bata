@@ -15,7 +15,7 @@ const useNavigateToDashboard = () => {
         navigate("/admin");
         break;
       case USER_STUDENT:
-        navigate("/home");
+        navigate("/learn/modules");
         break;
       case USER_TEACHER:
         navigate("/teacher");

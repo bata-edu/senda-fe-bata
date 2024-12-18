@@ -10,14 +10,13 @@ import {
   startCourse,
 } from "../../features/userProgress/userProgressSlice";
 import LoadingPage from "../../pages/LoadingPage";
-import Modules from "./CourseSelector";
-import robot from "../../assets/robot.png";
-import { setSelectedModule } from "../../features/module/moduleSlice";
+
 import ArrowRight from "../../assets/icons/arrowRight";
 import { motion } from "framer-motion";
 import StreaksNDiamonds from "../common/Streaks&Diamons/Streaks&Diamons";
 import Html from "../../assets/icons/html.svg";
 import Python from "../../assets/icons/python.svg";
+import ArrowBack from "../../assets/icons/arrowBack.svg";
 
 const MainContent = () => {
   const dispatch = useDispatch();
@@ -42,7 +41,6 @@ const MainContent = () => {
   });
 
   const selectedModule = localStorage.getItem("selectedModule");
-  const colors = ["blue", "red", "green", "purple", "orange", "teal", "pink"];
 
   const courseImage = {
     Python: { image: <img src={Python} alt="Html logo" />, course: "Python" },
@@ -53,8 +51,8 @@ const MainContent = () => {
       course: "Html",
       backgroundCurrent: "#EE5E37",
       backgroundDone: "#F59D7C",
-      borderCurrent: "#EB4624",
-      borderDone: "#B72017",
+      borderCurrent: "#B72017",
+      borderDone: "#EB4624",
       borderDisable: "#C8C8C8",
       barDone: "#EB4624",
       barCurrent: "#B72017",
@@ -244,6 +242,7 @@ const MainContent = () => {
       navigate(`/progress?level=${levelId}&index=${levelIndex}&current=false`);
     }
   };
+  console.log(currentProgress);
   return (
     <div className="w-2/3 mx-auto">
       {loading && (
@@ -330,12 +329,20 @@ const MainContent = () => {
               </div>
             ))} */}
           <div className="flex w-full">
-            <div className="flex flex-col py-4 px-6 bg-[#EE5E37] mt-4 rounded-xl border-2 border-[#F9BEA8] w-full">
-              <div onClick={() => navigate(`/learn/modules`)}>
-                <span className="text-white font-sans">Ir a Lenguajes</span>
-                <div className="flex">
+            <div className="flex flex-col py-3 px-6 bg-[#EE5E37] mt-4 rounded-xl border-2 border-[#F9BEA8] w-full">
+              <div>
+                <button
+                  onClick={() => navigate(`/learn/modules`)}
+                  className="flex items-center"
+                >
+                  <img src={ArrowBack} alt="arrow back" />
+                  <span className="text-white text-lg font-sans ml-2 font-medium">
+                    Ir a Lenguajes
+                  </span>
+                </button>
+                <div className="flex mt-3">
                   {courseImage[selectedModule].image}
-                  <span className="ml-2 text-white font-mono">
+                  <span className="ml-2 text-white font-sans text-xl font-medium">
                     {courseImage[selectedModule].course}
                   </span>
                 </div>
@@ -345,21 +352,33 @@ const MainContent = () => {
           </div>
           <div className="relative h-screen w-full mt-36">
             {levelsInfo?.map((level, index) => {
-              console.log(index, userCurrentInfo.currentLevelIndex);
+              const progressBarColor =
+                index < userCurrentInfo.currentLevelIndex
+                  ? courseImage[selectedModule].barDone
+                  : index === userCurrentInfo.currentLevelIndex
+                  ? courseImage[selectedModule].barCurrent
+                  : "#DDDDDD";
+              const remainingProgressBarColor =
+                index < userCurrentInfo.currentLevelIndex
+                  ? courseImage[selectedModule].barUnfilled
+                  : index === userCurrentInfo.currentLevelIndex
+                  ? courseImage[selectedModule].barUnfilled
+                  : "#DDDDDD";
               return (
                 <motion.div
                   onClick={() => handleSectionClick(level._id)}
                   key={level.id}
-                  className={`absolute w-full rounded-[50px] h-[400px] flex flex-col items-center justify-start py-10 px-12 border-2`}
+                  className={`absolute w-full rounded-[50px] h-[400px] flex  items-startf justify-start py-10 px-12 `}
                   style={{
                     top: `${index * 250}px`,
                     zIndex: index,
-                    borderColor:
+                    border: `2px solid ${
                       index < userCurrentInfo.currentLevelIndex
                         ? courseImage[selectedModule].borderDone
                         : index == userCurrentInfo.currentLevelIndex
                         ? courseImage[selectedModule].borderCurrent
-                        : courseImage[selectedModule].borderDisable,
+                        : courseImage[selectedModule].borderDisable
+                    }`,
                     backgroundColor:
                       index < userCurrentInfo.currentLevelIndex
                         ? courseImage[selectedModule].backgroundDone
@@ -372,9 +391,8 @@ const MainContent = () => {
                   }}
                   transition={{ duration: 0.3 }}
                 >
-                  <div className="flex justify-between w-full">
+                  <div className="flex flex-col justify-start w-2/3">
                     <span
-                      // onClick={() => updateSelectedModule(module.id)}
                       className={`font-mono text-5xl ${
                         index <= userCurrentInfo.currentLevelIndex
                           ? "text-white"
@@ -383,48 +401,59 @@ const MainContent = () => {
                     >
                       {`NIVEL ${level.order}`}
                     </span>
-                    <span className="font-mono text-3xl text-white">
-                      {module.percentage || 0}%
-                    </span>
-                  </div>
-                  <div className="flex flex-col justify-between w-full mt-4">
-                    <p
-                      className={`font-mono text-2xl ${
-                        index <= userCurrentInfo.currentLevelIndex
-                          ? "text-white"
-                          : "text-[#ADADAD]"
-                      }`}
-                    >
-                      Lorem Ipsumes simplemente el texto de relleno de las
-                      imprentas.
-                    </p>
-                    <div className="flex">
+                    <div className="mt-2">
+                      <p
+                        className={`font-mono text-2xl ${
+                          index <= userCurrentInfo.currentLevelIndex
+                            ? "text-white"
+                            : "text-[#ADADAD]"
+                        }`}
+                      >
+                        Lorem Ipsumes simplemente el texto de relleno de las
+                        imprentas.
+                      </p>
+                    </div>
+                    <div className="flex flex-row-reverse items-center">
+                      <span className="font-mono text-3xl text-white ml-12">
+                        {index < userCurrentInfo.currentLevelIndex
+                          ? "100%"
+                          : index == userCurrentInfo.currentLevelIndex
+                          ? currentProgress?.levelProgress + "%"
+                          : "0%"}
+                      </span>
                       <div
                         style={{
                           background:
                             index < userCurrentInfo.currentLevelIndex
                               ? courseImage[selectedModule].barUnfilled
-                              : index == userCurrentInfo.currentLevelIndex
+                              : index === userCurrentInfo.currentLevelIndex
                               ? courseImage[selectedModule].barUnfilled
                               : "#DDDDDD",
                         }}
-                        className="w-full rounded-full h-2.5 "
+                        className="w-full rounded-md h-4 "
                       >
-                        <div
-                          style={{
-                            background:
-                              index < userCurrentInfo.currentLevelIndex
-                                ? courseImage[selectedModule].barDone
-                                : index == userCurrentInfo.currentLevelIndex
-                                ? courseImage[selectedModule].barCurrent
-                                : "#DDDDDD",
+                        <motion.div
+                          initial={{
+                            background: `linear-gradient(
+                      to right,
+                      ${progressBarColor} 0%, 
+                      ${remainingProgressBarColor} 0%
+                    )`,
                           }}
-                          className={` h-2.5 rounded-full w-[45%]`}
-                        ></div>
+                          animate={{
+                            background: `linear-gradient(
+                      to right,
+                      ${progressBarColor} ${currentProgress?.levelProgress}%, 
+                      ${remainingProgressBarColor} ${currentProgress?.levelProgress}%
+                    )`,
+                          }}
+                          className={`h-4 rounded-md`}
+                        ></motion.div>
                       </div>
-
-                      <ArrowRight color={"white"} />
                     </div>
+                  </div>
+                  <div className="flex justify-end w-1/3 items-center ">
+                    <ArrowRight color={"white"} />
                   </div>
                 </motion.div>
               );
