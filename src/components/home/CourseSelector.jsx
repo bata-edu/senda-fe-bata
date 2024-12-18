@@ -20,10 +20,17 @@ const Modules = () => {
 
   // Colores asignados a cada curso
   const courseColors = {
-    Python: "#D9B9F3",
-    JavaScript: "#F6FCCB",
-    CSS: "#4558C8",
-    Html: "#EE5E37",
+    Python: {
+      primary: "#D9B9F3",
+      secondary: "#D9B9F3",
+    },
+    JavaScript: {
+      primary: "#E0F47E",
+      secondary: "#F6FCCB",
+    },
+
+    CSS: { primary: "#4558C8", secondary: "#7B97DF" },
+    Html: { primary: "#EE5E37", secondary: "#F9C5AF" },
   };
 
   useEffect(() => {
@@ -51,40 +58,60 @@ const Modules = () => {
 
   return (
     <>
-      <div className="flex flex-col justify-start items-center h-screen bg-gray-100 ">
+      <div className="flex flex-col justify-start items-center ">
         <div className="text-5xl font-semibold text-gray-800 flex items-center space-x-2 my-12">
           <img src={Left} alt="Corchete izquierdo" className="h-10" />
-          <span>Comenzá tu curso</span>
+          <span className="font-mono text-3xl font-medium">
+            Comenzá tu curso
+          </span>
           <img src={Right} alt="Corchete derecho" className="h-10" />
         </div>
         <section className="w-2/3 relative">
           {modules?.map((module) => {
-            const moduleColor = courseColors[module.name] || "gray"; // Color predeterminado si no está asignado
+            const moduleColor = courseColors[module.name].primary;
+            const percentage =
+              module.progress[0]?.courseProgress.toFixed(0) || 59;
+            const transparentModuleColor = courseColors[module.name].secondary;
 
             return (
               <motion.div
                 onClick={() => updateSelectedModule(module.id)}
                 key={module.id}
-                className={`absolute w-full rounded-[50px] h-[300px] flex flex-col items-center justify-start py-10 px-12`}
-                style={{
-                  top: `${modules.indexOf(module) * 180}px`,
-                  zIndex: modules.indexOf(module),
-                  backgroundColor: moduleColor,
+                className={`absolute w-full rounded-[50px] h-[320px] flex flex-col items-center justify-start py-10 px-12`}
+                initial={{
+                  background: `linear-gradient(
+          to right,
+          ${moduleColor} 0%, 
+          ${transparentModuleColor} 0%
+        )`,
+                }}
+                animate={{
+                  background: `linear-gradient(
+          to right,
+          ${moduleColor} ${percentage}%, 
+          ${transparentModuleColor} ${percentage}%
+        )`,
                 }}
                 whileHover={{
                   y: -20,
                 }}
-                transition={{ duration: 0.3 }}
+                transition={{
+                  y: { duration: 0.3, ease: "easeOut" },
+                }}
+                style={{
+                  top: `${modules.indexOf(module) * 210}px`,
+                  zIndex: modules.indexOf(module),
+                }}
               >
                 <div className="flex justify-between w-full">
                   <span
                     onClick={() => updateSelectedModule(module.id)}
-                    className="font-mono text-5xl text-white"
+                    className="font-mono text-7xl text-white"
                   >
                     {module.name}
                   </span>
                   <span className="font-mono text-3xl text-white">
-                    {module.percentage || 0}%
+                    {percentage}%
                   </span>
                 </div>
                 <div className="flex justify-between w-full mt-4">

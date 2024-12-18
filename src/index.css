@@ -35,6 +35,7 @@ code {
 .main-container{
   flex-grow: 1;
   overflow: scroll;
+  background-color: #FAFAFA;
 }
 
 .logo {
