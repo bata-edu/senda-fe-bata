@@ -22,14 +22,13 @@ export const fetchUser = createAsyncThunk(
   }
 );
 
-// Thunk para obtener el progreso del usuario en el modo libre
+// Thunk para obtener los progresos del usuario en el modo libre
 export const fetchUserFreeModeProgress = createAsyncThunk(
   "user/fetchUserFreeModeProgress",
   async (_, { rejectWithValue }) => {
     try {
-      const user = getUser();
       const response = await apiClient.get(
-        `${USER_ENDPOINT}/freeModeProgress/${user.id}`
+        `${USER_ENDPOINT}/freeModeProgress`
       );
       return response.data;
     } catch (error) {
@@ -38,14 +37,27 @@ export const fetchUserFreeModeProgress = createAsyncThunk(
   }
 );
 
+// Thunk para obtener el progreso del usuario en modo libre por id
+export const fetchUserFreeModeProgressById = createAsyncThunk(
+  "user/fetchUserFreeModeProgressById",
+  async ({ id }, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.get(
+        `${USER_ENDPOINT}/freeModeProgress/${id}`
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  });
+
 // Thunk para actualizar el progreso del usuario en el modo libre
 export const updateUserFreeModeProgress = createAsyncThunk(
   "user/updateUserFreeModeProgress",
-  async ({ code }, { rejectWithValue }) => {
+  async ({ code, id }, { rejectWithValue }) => {
     try {
-      const user = getUser();
       const response = await apiClient.patch(
-        `${USER_ENDPOINT}/freeModeProgress/${user.id}`,
+        `${USER_ENDPOINT}/freeModeProgress/${id}`,
         code
       );
       return response.data;
@@ -93,6 +105,7 @@ const userSlice = createSlice({
   initialState: {
     user: null,
     error: null,
+    freeModeProgressList: [],
     freeModeProgress: null,
     rank: null,
   },
@@ -113,9 +126,19 @@ const userSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchUserFreeModeProgress.fulfilled, (state, action) => {
-        state.freeModeProgress = action.payload;
+        state.freeModeProgressList = action.payload;
       })
       .addCase(fetchUserFreeModeProgress.rejected, (state, action) => {
+        state.error = action.payload;
+      });
+    builder
+      .addCase(fetchUserFreeModeProgressById.pending, (state) => {
+        state.error = null;
+      })
+      .addCase(fetchUserFreeModeProgressById.fulfilled, (state, action) => {
+        state.freeModeProgress = action.payload;
+      })
+      .addCase(fetchUserFreeModeProgressById.rejected, (state, action) => {
         state.error = action.payload;
       });
     builder

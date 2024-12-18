@@ -8,19 +8,21 @@ import { saveAs } from "file-saver";
 import {
   createUserFreeModeProgress,
   fetchUserFreeModeProgress,
+  fetchUserFreeModeProgressById,
   updateUserFreeModeProgress,
 } from "../../features/user/userSlice";
 import { toast } from "react-toastify";
+import { useParams } from "react-router-dom";
 
 const EditorPage = () => {
   const dispatch = useDispatch();
+  const {id} = useParams();
   const [htmlCode, setHtmlCode] = useState("");
   const [cssCode, setCssCode] = useState("");
   const [jsCode, setJsCode] = useState("");
   const [activeTab, setActiveTab] = useState("html");
   const [play, setPlay] = useState(false);
   const [showSaveOptions, setShowSaveOptions] = useState(false);
-
   const { freeModeProgress } = useSelector((state) => state.user);
 
   const handleClear = () => {
@@ -33,11 +35,7 @@ const EditorPage = () => {
   const handleSave = async (exportFiles = false) => {
     const code = { html: htmlCode, css: cssCode, javascript: jsCode };
     try {
-      if (freeModeProgress) {
-        await dispatch(updateUserFreeModeProgress({ code }));
-      } else {
-        await dispatch(createUserFreeModeProgress({ code }));
-      }
+      await dispatch(updateUserFreeModeProgress({ code, id }));
       toast.success("Código guardado con éxito");
 
       if (exportFiles) {
@@ -64,7 +62,7 @@ const EditorPage = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!freeModeProgress) await dispatch(fetchUserFreeModeProgress());
+      if (!freeModeProgress) await dispatch(fetchUserFreeModeProgressById({id}));
       if (freeModeProgress && freeModeProgress.code) {
         parseCode(freeModeProgress.code);
       }

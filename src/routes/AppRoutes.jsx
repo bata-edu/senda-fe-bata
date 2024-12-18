@@ -81,7 +81,7 @@ const AppRoutes = () => {
           <Route path="modules" element={<Modules />} />
           <Route path="sections" element={<Sections />} />
           <Route path="levels" element={<Levels />} />
-          <Route path="editor" element={<EditorPage />} />
+          <Route path="editor/:id" element={<EditorPage />} />
           <Route path="profile" element={<Profile />} />
         </Route>
         <Route
