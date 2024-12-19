@@ -1,14 +1,14 @@
 import React, {useState, useEffect} from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
-import { getExamSubmissionsByExam, getExamsByCourse, gradeSubmission } from "../../features/exam/examSlice";
+import { getCourseExams, getExamSubmissionsByExam, getExamsByCourse, gradeSubmission } from "../../features/exam/examSlice";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import graduationIcon from '../../assets/icons/graduation.svg';
 import LoadingPage from "../../pages/LoadingPage";
 import GenericTable from "../common/table/GenericTable";
-
-
+import GenericDialog from "../common/dialog/dialog";
+import pencilA from '../../assets/pencil.svg';
 
 const ExamCalifications = () => {
     const dispatch = useDispatch();
@@ -17,25 +17,62 @@ const ExamCalifications = () => {
     const [loading, setLoading] = useState(true);
     const {exams, submissions} = useSelector((state) => state.exam);
     const [selectedExam, setSelectedExam] = useState(null);
-    const [page, setPage] = useState(0);
+    const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
+    const [openDialog, setOpenDialog] = useState(false);
+    const [examType, setExamType] = useState('');
 
     useEffect(() => {
-        fetchExams(courseInfo.id);
-    }, [dispatch, courseInfo]);
+        const fetchExams = async () => {
+            try {
+                const query = { limit : 999, sortBy: "updatedAt:desc"};
+                await dispatch(getExamsByCourse({ courseId: courseInfo.id, query })).unwrap();
+            } catch (error) {
+                console.error("Error al cargar exámenes:", error);
+            }
+        };
+        fetchExams();
+    }, [dispatch, courseInfo.id]);
 
-    const fetchExams = async (courseId) => {
-        if(exams.length === 0) {
-            await dispatch(getExamsByCourse({courseId}));
+    useEffect(() => {
+        if (exams.length > 0) {
+            setSelectedExam(exams[0]);
         }
-        setSelectedExam(exams[0]);
-        setLoading(false);
-    };
+    }, [exams]);
 
     const handleExamChange = async (e) => {
         const examId = e.target.value;
-        await dispatch(getExamSubmissionsByExam(examId));
-        //setTotalPages(submissions.totalResults)
+        setSelectedExam(exams.find((exam) => exam.id === examId));
+    };
+
+    useEffect(() => {
+        if (selectedExam) {
+            fetchSubmissions(selectedExam.id, page);
+            setExamType(parseAssigmentType(selectedExam.type));
+        }
+    }, [selectedExam]);
+
+    const fetchSubmissions = async (examId, currentPage) => {
+        try {
+            const query = { limit : 10, page: currentPage, sortBy: "updatedAt:desc"};
+            await dispatch((getCourseExams({ courseId: courseInfo.id, examId, query }))).unwrap();
+        } catch (error) {
+            console.error("Error al cargar las entregas:", error);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    useEffect(() => {
+        if (submissions) {
+            setTotalPages(submissions.totalPages)
+        }
+    }, [submissions]);
+
+    const handlePageChange = async (next) => {
+        setLoading(true)
+        setPage(next);
+        await fetchSubmissions(selectedExam.id, next);
     };
 
     const handleGradeSubmission = async (submission, score) => {
@@ -52,18 +89,45 @@ const ExamCalifications = () => {
 
     const columns = [
         { header: 'Nombre', accessor: 'student', type: 'user' },
-        { header: 'Entrego', accessor: 'delay', type: 'delay' },
-        { header: 'Nota', accessor: 'score' },
-      ];
+        { header: 'Entrego', accessor: 'examSubmissions[0].delay', type: 'delay' },
+        { header: 'Nota', accessor: 'examSubmissions[0].score' },
+    ];
+    
+    
     const actions = [{
         label: "Calificar",
         color: "blue",
         onClick: handleGradeSubmission,
     }];
 
+    const parseAssigmentType = (type) => {
+        switch (type) {
+            case 'EXAM':
+                return 'Examen';
+            case 'ASSIGNMENT':
+                return 'Trabajo Práctico';
+            default:
+                return 'Tarea';
+        }
+    }
+
     return (
         loading ? <LoadingPage/> : (
         <div className="bg-gray-50 min-h-screen">
+            { openDialog &&
+                <GenericDialog
+                title={selectedExam.name}
+                description={selectedExam.description}
+                imageSrc={pencilA}
+                type="info"
+                content={[
+                  { type: 'text', value: `Tipo: ${examType}` },
+                  { type: 'text', value: `Fecha de finalización: ${new Date(selectedExam.endDate).toLocaleDateString()}` },
+                  { type: 'file', fileType: 'pdf', value: selectedExam.question },
+                ]}
+                onCancel={() => setOpenDialog(false)}
+              />
+            }
             <div className='flex flex-col justify-center md:flex-row gap-20 p-6'>
             <div className="w-1/4">
                 <div
@@ -82,9 +146,10 @@ const ExamCalifications = () => {
             <div className='w-1/6'>
                 <div className="animate-bounce-in-down bg-white border border-blue-200 rounded-lg px-6 py-3 items-center gap-4 shadow-md">
                     <div className="grid items-center">
-                        <h3 className="text-xl font-bold border-b border-gray-200 pb-3">{selectedExam?.name}</h3>
-                        <span
+                        <h3 className="text-xl font-bold border-b border-gray-200 pb-3">{selectedExam.name}</h3>
+                        <span 
                             className="text-[#4558C8] font-bold text-sm text-center mb-2 mt-2 cursor-pointer"
+                            onClick={() => setOpenDialog(true)}
                         >
                             Ver detalle
                         </span>
@@ -93,29 +158,40 @@ const ExamCalifications = () => {
             </div>
 
             </div>
-            <div>
-                <select
-                    value={selectedExam?.id}
-                    onChange={handleExamChange}
-                    className="w-1/4 bg-white border border-blue-200 rounded-lg px-6 py-3 items-center gap-4 shadow-md"
-                >
-                    {exams.map((exam) => (
-                        <option key={exam.id} value={exam.id}>
-                            {exam.name}
-                        </option>
-                    ))}
-                </select>
+            <div className="flex flex-col justify-center md:flex-row gap-20 px-6">
+                <div className='w-1/2 bg-white p-6 rounded-lg'>
+                    <div className="px-6">
+                        <div className="flex justify-between items-center">
+                            <select
+                                value={selectedExam.id}
+                                onChange={handleExamChange}
+                                className="w-1/2 bg-white border border-blue-200 rounded-lg px-6 py-3 items-center gap-4 shadow-md"
+                            >
+                                {exams.map((exam) => (
+                                    <option key={exam.id} value={exam.id}>
+                                        {exam.name}
+                                    </option>
+                                ))}
+                            </select>
+
+                            <span className="font-semibold">{new Date(selectedExam.endDate).toLocaleDateString()}</span>
+
+                        </div>
+                    </div>
+                    {submissions && (
+                        <div className="p-6">
+                        <GenericTable
+                            data={submissions.results}
+                            columns={columns}
+                            actions={actions}
+                            totalPages={totalPages}
+                            onPageChange={handlePageChange}
+                            currentPage={page}
+                        />
+                    </div>
+                    )}
+                </div>
             </div>
-            {submissions && (
-                <div className="p-6">
-                <GenericTable
-                    data={submissions.results}
-                    columns={columns}
-                    actions={actions}
-                    totalPages={1}
-                />
-            </div>
-            )}
         </div>
         )
 )

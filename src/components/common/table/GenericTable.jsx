@@ -11,13 +11,33 @@ const GenericTable = ({
   onPageChange,
   minWidth = 800,
 }) => {
-  const [editRow, setEditRow] = useState(null); // Guarda la fila que está en edición
-  const [inputValue, setInputValue] = useState(''); // Valor del input para calificación
+  const [editRow, setEditRow] = useState(null);
+  const [inputValue, setInputValue] = useState('');
 
   const handleSendClick = (row, action) => {
-    action.onClick(row, inputValue); // Llama a la función con el valor
-    setEditRow(null); // Resetea el estado de edición
-    setInputValue(''); // Limpia el input
+    action.onClick(row, inputValue);
+    setEditRow(null);
+    setInputValue('');
+  };
+
+  const resolveAccessor = (row, accessor) => {
+    if (!accessor) return '-';
+    try {
+      const keys = accessor.split('.');
+      let value = row;
+      for (const key of keys) {
+        if (key.includes('[')) {
+          const [arrayKey, index] = key.split(/[\[\]]/).filter(Boolean);
+          value = value[arrayKey]?.[parseInt(index, 10)];
+        } else {
+          value = value[key];
+        }
+        if (value === undefined || value === null) return '-';
+      }
+      return value;
+    } catch (error) {
+      return '-';
+    }
   };
 
   return (
@@ -58,23 +78,31 @@ const GenericTable = ({
                           />
                           <div className="flex flex-col">
                             <span className="font-semibold text-sm">
-                              {row[column.accessor]?.name || '-'}
+                              {resolveAccessor(row, `${column.accessor}.name`) || '-'}
                             </span>
                             <span className="text-xs text-gray-500">
-                              {row[column.accessor]?.email || '-'}
+                              {resolveAccessor(row, `${column.accessor}.email`) || '-'}
                             </span>
                           </div>
                         </div>
                       ) : column.type === 'delay' ? (
                         <span
                           className={`font-medium ${
-                            row[column.accessor] ? 'text-orange-500' : 'text-green-500'
+                            resolveAccessor(row, column.accessor) === true
+                              ? 'text-orange-500'
+                              : resolveAccessor(row, column.accessor) === false
+                              ? 'text-green-500'
+                              : 'text-gray-500'
                           }`}
                         >
-                          {row[column.accessor] ? 'Tarde' : 'A tiempo'}
+                          {resolveAccessor(row, column.accessor) === null || resolveAccessor(row, 'examSubmissions')?.length === 0
+                            ? 'No entregó'
+                            : resolveAccessor(row, column.accessor) === true
+                            ? 'Tarde'
+                            : 'A tiempo'}
                         </span>
                       ) : (
-                        row[column.accessor] || '-'
+                        resolveAccessor(row, column.accessor)
                       )}
                     </Table.Td>
                   ))}
@@ -90,9 +118,7 @@ const GenericTable = ({
                             className="w-16 px-2 py-1 border rounded-lg text-sm"
                           />
                           <button
-                            onClick={() =>
-                              handleSendClick(row, actions[0])
-                            }
+                            onClick={() => handleSendClick(row, actions[0])}
                             className="bg-strongBlue text-white text-xs px-2 py-1 rounded-lg hover:bg-blue-600"
                           >
                             Enviar

@@ -64,7 +64,6 @@ const CourseDashboard = () => {
         setStudentsProgress([...progress]);
         const data = [...exams, ...articles];
         data.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
-        console.log(data)
         setCourseData(data);
         setLoading(false); 
     };
@@ -129,7 +128,7 @@ const CourseDashboard = () => {
                     { type: "text", placeholder: "Título", name: "title", required: true, value: name, onChange: (e) => setName(e.target.value) },
                     { type: "text", placeholder: "Descripción", name: "description", required: true, value: description, onChange: (e) => setDescription(e.target.value) },
                     { type: "chip", placeholder: "Etiquetas", name: "labels", required: true, chips: chips, setChips: setChips },
-                    { type: "text", placeholder: "Contenido", name: "content", required: true, value: content, onChange: (e) => setContent(e.target.value) },
+                    { type: "textarea", placeholder: "Contenido", name: "content", required: true, value: content, onChange: (e) => setContent(e.target.value) },
                     { type: "file", placeholder: "Imagen", name: "photo", required: true, value: file, onChange: (e) => setFile(e.target.files[0]), file: file, setFile: setFile, fileName: "Subir o arrastrar la imagen de portada", fileType: "IMG, SVG, PNG o JPG"  },
                 ]}
                 onConfirm={handleCreateArticle}

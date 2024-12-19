@@ -67,6 +67,7 @@ export const EXAM_SUBMISSIONS = `${EXAM_ENDPOINT}/submissions`;
 export const EXAM_SUBMISSIONS_BY_EXAM = `${EXAM_SUBMISSIONS}ByExam`;
 export const EXAM_BY_COURSE = `${EXAM_ENDPOINT}/byCourse`;
 export const GET_LAST = `${EXAM_ENDPOINT}/getLast`;
+export const GET_COURSE_EXAMS = `${EXAM_ENDPOINT}/studentsExamSubmissions`;
 
 export const COURSE_ARTICLE_ENDPOINT = `${API_BASE_URL}/v1/courseArticle`;
 export const COURSE_ARTICLE_DETAIL = `${COURSE_ARTICLE_ENDPOINT}/detail`;
