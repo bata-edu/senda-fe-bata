@@ -1,8 +1,9 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { EXAM_BY_COURSE, EXAM_ENDPOINT, EXAM_SUBMISSIONS, EXAM_SUBMISSIONS_BY_EXAM, RESET_STATE } from "../../utils/constants";
+import { EXAM_BY_COURSE, EXAM_ENDPOINT, EXAM_SUBMISSIONS, EXAM_SUBMISSIONS_BY_EXAM, GET_COURSE_EXAMS, RESET_STATE } from "../../utils/constants";
 import apiClient from "../../utils/interceptors/authInterceptor";
-import { buildQueryString } from "../../utils/buildQueryString";
 import { genericCreateAndUpload } from "../../utils/createObjectWithFile";
+import { buildQueryString } from "../../utils/buildQueryString";
+
 
 // Thunk para crear un examen
 export const createExam = createAsyncThunk(
@@ -43,9 +44,10 @@ export const getExamSubmissions = createAsyncThunk(
 
 export const getExamSubmissionsByExam = createAsyncThunk(
     "exam/getExamSubmissionsByExam",
-    async (examId, { rejectWithValue }) => {
+    async ({examId, query}, { rejectWithValue }) => {
         try {
-            const response = await apiClient.get(`${EXAM_SUBMISSIONS_BY_EXAM}/${examId}`);
+            const queryString = query ? `?${buildQueryString(query)}` : '';
+            const response = await apiClient.get(`${EXAM_SUBMISSIONS_BY_EXAM}/${examId}${queryString}`);
             return response.data;
         } catch (error) {
             return rejectWithValue(error.response.data);
@@ -69,9 +71,25 @@ export const gradeSubmission = createAsyncThunk(
 // Thunk para obtener los examenes por curso
 export const getExamsByCourse = createAsyncThunk(
     "exam/getExamsByCourse",
-    async (courseId, { rejectWithValue }) => {
+    async ({courseId, query}, { rejectWithValue }) => {
         try {
-            const response = await apiClient.get(`${EXAM_BY_COURSE}/${courseId}`);
+            const queryString = query ? `?${buildQueryString(query)}` : '';
+            const response = await apiClient.get(`${EXAM_BY_COURSE}/${courseId}${queryString}`);
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response.data);
+        }
+    }
+);
+
+// Thunk para obtener las entregas de un curso
+
+export const getCourseExams = createAsyncThunk(
+    "exam/getCourseExams",
+    async ({courseId, examId, query}, { rejectWithValue }) => {
+        try {
+            const queryString = query ? `?${buildQueryString(query)}` : '';
+            const response = await apiClient.get(`${GET_COURSE_EXAMS}/${courseId}/${examId}${queryString}`);
             return response.data;
         } catch (error) {
             return rejectWithValue(error.response.data);
@@ -85,7 +103,7 @@ const examSlice = createSlice({
     initialState: {
         exam: null,
         submission: null,
-        submissions: [],
+        submissions: null,
         error: null,
         exams: []
     },
@@ -106,11 +124,11 @@ const examSlice = createSlice({
             .addCase(getExamSubmissions.rejected, (state, action) => {
                 state.error = action.payload;
             })
-            .addCase(getExamSubmissionsByExam.fulfilled, (state, action) => {
-                state.submissions = action.payload.results;
+            .addCase(getCourseExams.fulfilled, (state, action) => {
+                state.submissions = action.payload;
                 state.error = null;
             })
-            .addCase(getExamSubmissionsByExam.rejected, (state, action) => {
+            .addCase(getCourseExams.rejected, (state, action) => {
                 state.error = action.payload;
             })
             .addCase(getExamsByCourse.fulfilled, (state, action) => {
@@ -123,7 +141,7 @@ const examSlice = createSlice({
             .addCase(RESET_STATE, (state) => {
                 state.exam = null;
                 state.submission = null;
-                state.submissions = [];
+                state.submissions = null;
                 state.error = null;
                 state.exams = [];
             });

@@ -2,13 +2,15 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import apiClient from "../../utils/interceptors/authInterceptor";
 import { COURSE_ARTICLE_ENDPOINT, COURSE_ARTICLE_DETAIL, RESET_STATE } from "../../utils/constants";
 import { genericCreateAndUpload } from "../../utils/createObjectWithFile";
+import { buildQueryString } from "../../utils/buildQueryString";
 
 // Thunk para obtener los articulos de un curso
 export const getCourseArticles = createAsyncThunk(
     "courseArticle/getCourseArticles",
-    async (courseId, { rejectWithValue }) => {
+    async ({courseId, query}, { rejectWithValue }) => {
         try {
-            const response = await apiClient.get(`${COURSE_ARTICLE_ENDPOINT}/${courseId}`);
+            const queryString = query ? `?${buildQueryString(query)}` : '';
+            const response = await apiClient.get(`${COURSE_ARTICLE_ENDPOINT}/${courseId}${queryString}`);
             return response.data;
         } catch (error) {
             return rejectWithValue(error.response.data);

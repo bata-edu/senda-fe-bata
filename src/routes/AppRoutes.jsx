@@ -33,6 +33,7 @@ import { useEffect } from "react";
 import ClassRoom from "../components/classRoom/classRoom";
 import Modules from "../components/home/CourseSelector";
 import Sections from "../components/home/Sections";
+import ExamCalifications from "../components/exam/examCalifications";
 
 const AppRoutes = () => {
   useEffect(() => {
@@ -209,6 +210,16 @@ const AppRoutes = () => {
             <AuthGuard>
               <TeacherGuard>
                 <ExamForm />
+              </TeacherGuard>
+            </AuthGuard>
+          }
+        />
+          <Route 
+          path="/exam-califications/:courseId"
+          element={
+            <AuthGuard>
+              <TeacherGuard>
+                <ExamCalifications />
               </TeacherGuard>
             </AuthGuard>
           }

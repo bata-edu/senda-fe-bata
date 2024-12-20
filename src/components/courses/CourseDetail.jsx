@@ -47,10 +47,14 @@ const CourseDashboard = () => {
         const m = await dispatch(fetchModulesInfo());
         const moduleA = m.payload.results[selectedModuleIndex];
         setSelectedModule(moduleA);
+        const query = {
+            limit: 5,
+            sortBy: "updatedAt:desc",
+        }
         const res = await Promise.all(
             [
-                dispatch(getExamsByCourse(courseInfo.id)),
-                dispatch(getCourseArticles(courseInfo.id)),
+                dispatch(getExamsByCourse({courseId: courseInfo.id, query})),
+                dispatch(getCourseArticles({courseId: courseInfo.id, query})),
                 dispatch(getStudentsProgress({ courseId: courseInfo.id, moduleId: moduleA.id }))
             ]
         )
@@ -58,7 +62,9 @@ const CourseDashboard = () => {
         const articles = res[1].payload.results;
         const progress = res[2].payload;
         setStudentsProgress([...progress]);
-        setCourseData([ ...exams, ...articles ]);
+        const data = [...exams, ...articles];
+        data.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+        setCourseData(data);
         setLoading(false); 
     };
 
@@ -77,6 +83,10 @@ const CourseDashboard = () => {
     
     const handleNavigateExam = () => {
         navigate(`/exam-form/${courseInfo.id}`, { state: { courseInfo, schoolInfo } });
+    }
+
+    const handleNavigateCalifications = () => {
+        navigate(`/exam-califications/${courseInfo.id}`, { state: { courseInfo, schoolInfo } });
     }
 
     const handleCreateArticle = async () => {
@@ -118,7 +128,7 @@ const CourseDashboard = () => {
                     { type: "text", placeholder: "Título", name: "title", required: true, value: name, onChange: (e) => setName(e.target.value) },
                     { type: "text", placeholder: "Descripción", name: "description", required: true, value: description, onChange: (e) => setDescription(e.target.value) },
                     { type: "chip", placeholder: "Etiquetas", name: "labels", required: true, chips: chips, setChips: setChips },
-                    { type: "text", placeholder: "Contenido", name: "content", required: true, value: content, onChange: (e) => setContent(e.target.value) },
+                    { type: "textarea", placeholder: "Contenido", name: "content", required: true, value: content, onChange: (e) => setContent(e.target.value) },
                     { type: "file", placeholder: "Imagen", name: "photo", required: true, value: file, onChange: (e) => setFile(e.target.files[0]), file: file, setFile: setFile, fileName: "Subir o arrastrar la imagen de portada", fileType: "IMG, SVG, PNG o JPG"  },
                 ]}
                 onConfirm={handleCreateArticle}
@@ -142,6 +152,9 @@ const CourseDashboard = () => {
             <div className="flex justify-between items-center">
                 <div onClick={() => handleNavigateExam()}>
                     <span >Ir a examenes PRUEBA</span>
+                </div>
+                <div onClick={() => handleNavigateCalifications()}>
+                    <span >Calificaciones prueba</span>
                 </div>
                 <div className="bg-white rounded-md p-2 flex items-center cursor-pointer border" onClick={() => setShowDialog(true)}>
                     <span className="text-xs font-bold text-gray-700 ">Nuevo articulo</span>
