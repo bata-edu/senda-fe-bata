@@ -198,7 +198,7 @@ const MainContent = () => {
   const fetchData = async (moduleId) => {
     await Promise.all([
       dispatch(fetchUserProgressById(moduleId)),
-      dispatch(fetchLevelInfo({ courseId: moduleId, page, limit: 3 })),
+      dispatch(fetchLevelInfo({ courseId: moduleId, page: 0, limit: 100 })),
       dispatch(fetchAllLevels({ courseId: moduleId })),
     ]);
   };
@@ -360,7 +360,7 @@ const MainContent = () => {
                   : "#DDDDDD";
               const remainingProgressBarColor =
                 index < userCurrentInfo.currentLevelIndex
-                  ? courseImage[selectedModule].barUnfilled
+                  ? courseImage[selectedModule].barDone
                   : index === userCurrentInfo.currentLevelIndex
                   ? courseImage[selectedModule].barUnfilled
                   : "#DDDDDD";
@@ -399,7 +399,7 @@ const MainContent = () => {
                           : "text-[#ADADAD]"
                       }`}
                     >
-                      {`NIVEL ${level.order}`}
+                      {`Nivel ${level.order}`}
                     </span>
                     <div className="mt-2">
                       <p
@@ -447,6 +447,7 @@ const MainContent = () => {
                       ${remainingProgressBarColor} ${currentProgress?.levelProgress}%
                     )`,
                           }}
+                          transition={{ duration: 1 }}
                           className={`h-4 rounded-md`}
                         ></motion.div>
                       </div>
