@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { EXAM_BY_COURSE, EXAM_ENDPOINT, EXAM_SUBMISSIONS, EXAM_SUBMISSIONS_BY_EXAM, GET_COURSE_EXAMS, RESET_STATE } from "../../utils/constants";
+import { EXAM_BY_COURSE, EXAM_ENDPOINT, EXAM_SUBMISSIONS, EXAM_SUBMISSIONS_BY_EXAM, EXAM_SUBMIT, GET_COURSE_EXAMS, RESET_STATE } from "../../utils/constants";
 import apiClient from "../../utils/interceptors/authInterceptor";
 import { genericCreateAndUpload } from "../../utils/createObjectWithFile";
 import { buildQueryString } from "../../utils/buildQueryString";
@@ -60,6 +60,7 @@ export const gradeSubmission = createAsyncThunk(
     "exam/gradeSubmission",
     async ({id, score}, { rejectWithValue }) => {
         try {
+            console.log(score, id);
             const response = await apiClient.patch(`${EXAM_SUBMISSIONS}/${id}`, {score});
             return response.data;
         } catch (error) {
@@ -83,7 +84,6 @@ export const getExamsByCourse = createAsyncThunk(
 );
 
 // Thunk para obtener las entregas de un curso
-
 export const getCourseExams = createAsyncThunk(
     "exam/getCourseExams",
     async ({courseId, examId, query}, { rejectWithValue }) => {
@@ -97,6 +97,44 @@ export const getCourseExams = createAsyncThunk(
     }
 );
 
+// Thunk para obtener la entrega por id
+export const getSubmissionById = createAsyncThunk(
+    "exam/getSubmissionById",
+    async (submissionId, { rejectWithValue }) => {
+        try {
+            const response = await apiClient.get(`${EXAM_SUBMISSIONS}/${submissionId}`);
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response.data);
+        }
+    }
+);
+
+// Thunk para enviar una entrega
+export const submitExam = createAsyncThunk(
+    "exam/submitExam",
+    async ({body}, { rejectWithValue }) => {
+        try {
+            const response = await apiClient.post(`${EXAM_SUBMIT}`, body);
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response.data);
+        }
+    }
+);
+
+export const setActivateExamToCorrect = createAsyncThunk(
+    "user/setActivateExamToCorrect",
+    async (progress, { rejectWithValue }) => {
+      try {
+        return progress;
+      } catch (error) {
+        return rejectWithValue(error.message);
+      }
+    }
+  );
+
+
 // Creación del slice para los examenes
 const examSlice = createSlice({
     name: "exam",
@@ -105,7 +143,8 @@ const examSlice = createSlice({
         submission: null,
         submissions: null,
         error: null,
-        exams: []
+        exams: [],
+        examToCorrect: null
     },
     reducers: {},
     extraReducers: (builder) => {
@@ -136,6 +175,41 @@ const examSlice = createSlice({
                 state.error = null;
             })
             .addCase(getExamsByCourse.rejected, (state, action) => {
+                state.error = action.payload;
+            })
+            .addCase(getExamSubmissionsByExam.fulfilled, (state, action) => {
+                state.submissions = action.payload;
+                state.error = null;
+            })
+            .addCase(getExamSubmissionsByExam.rejected, (state, action) => {
+                state.error = action.payload;
+            })
+            .addCase(gradeSubmission.fulfilled, (state, action) => {
+                state.submission = action.payload;
+                state.error = null;
+            })
+            .addCase(gradeSubmission.rejected, (state, action) => {
+                state.error = action.payload;
+            })
+            .addCase(submitExam.fulfilled, (state, action) => {
+                state.submission = action.payload;
+                state.error = null;
+            })
+            .addCase(submitExam.rejected, (state, action) => {
+                state.error = action.payload;
+            })
+            .addCase(setActivateExamToCorrect.fulfilled, (state, action) => {
+                state.examToCorrect = action.payload;
+                state.error = null;
+            })
+            .addCase(setActivateExamToCorrect.rejected, (state, action) => {
+                state.error = action.payload;
+            })
+            .addCase(getSubmissionById.fulfilled, (state, action) => {
+                state.examToCorrect = action.payload;
+                state.error = null;
+            })
+            .addCase(getSubmissionById.rejected, (state, action) => {
                 state.error = action.payload;
             })
             .addCase(RESET_STATE, (state) => {

@@ -9,7 +9,7 @@ const Preview = ({ htmlCode, cssCode, play, jsCode }) => {
     const sanitizedCss = DOMPurify.sanitize(cssCode);
     const sanitizedJs = DOMPurify.sanitize(jsCode);
 
-    const completeOutput = `
+    const output = `
     <html>
       <head>
         <style>${sanitizedCss}</style>
@@ -45,17 +45,16 @@ const Preview = ({ htmlCode, cssCode, play, jsCode }) => {
       </body>
     </html>
   `;
-  
 
     const iframeDoc = iframeRef.current.contentDocument || iframeRef.current.contentWindow.document;
     iframeDoc.open();
-    iframeDoc.write(completeOutput);
+    iframeDoc.write(output);
     iframeDoc.close();
   }, [play]);
 
   return (
-    <div className="preview-container">
-      <iframe ref={iframeRef} title="Preview" className="preview-iframe" />
+    <div className="w-full h-full">
+      <iframe ref={iframeRef} title="Preview" className="w-full h-full border-none" />
     </div>
   );
 };

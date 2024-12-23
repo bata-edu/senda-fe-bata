@@ -7,8 +7,9 @@ import rightArrow from '../../assets/icons/rightLeft.svg';
 import graduationIcon from '../../assets/icons/graduation.svg';
 import GenericDialog from "../common/dialog/dialog";
 import { useDispatch } from "react-redux";
-import { createCourse } from '../../features/school/schoolSlice';
+import { createCourse, getSchoolLocalStorage, saveCourseLocalStorage } from '../../features/school/schoolSlice';
 import { placeholder } from "@codemirror/view";
+import Header from "../common/header/Header";
 
 
 const CoursesList = () => {
@@ -16,7 +17,7 @@ const CoursesList = () => {
     const location = useLocation();
     const { schoolId } = useParams();
     const { courses } = useSelector((state) => state.school);
-    let { schoolInfo } = location.state || {};
+    let schoolInfo = getSchoolLocalStorage();
     const navigate = useNavigate();
     const [showDialog, setShowDialog] = useState(false);
     const [name, setName] = useState('');
@@ -25,7 +26,8 @@ const CoursesList = () => {
     const [endDate, setEndDate] = useState('');
 
     const handleNavigateToCourse = (course) => {
-      navigate('/teacher/course/' + course.id, { state: { courseInfo: course, schoolInfo: schoolInfo } });
+      saveCourseLocalStorage(course);
+      navigate('/teacher/course/' + course.id);
   }
 
     const createNewCourse = async () => {
@@ -43,12 +45,8 @@ const CoursesList = () => {
 
     return (
     <div className="flex flex-col items-center min-h-screen bg-grayBg">
-        <div className="flex w-full items-center justify-between  relative mt-4">
-        <div className="flex gap-2 cursor-pointer" onClick={() => navigate("/teacher")}>
-            <img src={rightArrow} alt="Flecha izquierda" className="h-7" />
-            <span className="text-lg text-gray-600">Volver</span>
-        </div>
-
+      <Header />
+        <div className="flex w-full items-center justify-center  relative mt-4">
         <div
             className="animate-bounce-in-down bg-[#F2F4FC] text-[#4558C8] border border-blue-200 rounded-lg px-6 py-3 flex items-center gap-4 shadow-md justify-between w-1/4"
         >

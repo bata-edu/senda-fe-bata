@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Table, Avatar, ScrollArea, Button } from '@mantine/core';
+import React, { useState, useEffect } from 'react';
+import { Table, Avatar, ScrollArea } from '@mantine/core';
 import defaultAvatar from '../../../assets/male-example.svg';
 
 const GenericTable = ({
@@ -10,14 +10,11 @@ const GenericTable = ({
   totalPages = 1,
   onPageChange,
   minWidth = 800,
+  isDarkBackground = false,
 }) => {
-  const [editRow, setEditRow] = useState(null);
-  const [inputValue, setInputValue] = useState('');
 
   const handleSendClick = (row, action) => {
-    action.onClick(row, inputValue);
-    setEditRow(null);
-    setInputValue('');
+    action.onClick(row);
   };
 
   const resolveAccessor = (row, accessor) => {
@@ -41,22 +38,28 @@ const GenericTable = ({
   };
 
   return (
-    <div className="p-4 bg-white rounded-xl shadow-sm border border-gray-200">
+    <div
+      className={'pb-4 rounded-xl shadow-sm bg-transaparent' }
+    >
       <ScrollArea>
         <Table.ScrollContainer minWidth={minWidth}>
           <Table className="w-full">
-            <Table.Thead className="bg-gray-50">
+            <Table.Thead
+              className={`${
+                isDarkBackground ? 'bg-gray-800 text-white' : 'bg-gray-50 text-gray-600'
+              }`}
+            >
               <Table.Tr>
                 {columns.map((column) => (
                   <Table.Th
                     key={column.accessor}
-                    className="text-gray-600 text-sm font-medium px-4 py-3"
+                    className="text-sm font-medium px-4 py-3"
                   >
                     {column.header}
                   </Table.Th>
                 ))}
                 {actions.length > 0 && (
-                  <Table.Th className="text-gray-600 text-sm font-medium px-4 py-3">
+                  <Table.Th className="text-sm font-medium px-4 py-3">
                     Acciones
                   </Table.Th>
                 )}
@@ -65,9 +68,14 @@ const GenericTable = ({
 
             <Table.Tbody>
               {data.map((row, rowIndex) => (
-                <Table.Tr key={rowIndex} className="hover:bg-gray-50 transition">
+                <Table.Tr
+                  key={rowIndex}
+                  className={`hover:scale-105 hover:shadow-md transition-transform duration-200 ${
+                    isDarkBackground ? 'text-white' : 'text-gray-700'
+                  }`}
+                >
                   {columns.map((column) => (
-                    <Table.Td key={column.accessor} className="px-4 py-3 text-gray-700">
+                    <Table.Td key={column.accessor} className="px-4 py-3">
                       {column.type === 'user' ? (
                         <div className="flex items-center gap-3">
                           <Avatar
@@ -80,7 +88,7 @@ const GenericTable = ({
                             <span className="font-semibold text-sm">
                               {resolveAccessor(row, `${column.accessor}.name`) || '-'}
                             </span>
-                            <span className="text-xs text-gray-500">
+                            <span className="text-xs">
                               {resolveAccessor(row, `${column.accessor}.email`) || '-'}
                             </span>
                           </div>
@@ -95,46 +103,46 @@ const GenericTable = ({
                               : 'text-gray-500'
                           }`}
                         >
-                          {resolveAccessor(row, column.accessor) === null || resolveAccessor(row, 'examSubmissions')?.length === 0
+                          {resolveAccessor(row, column.accessor) === null ||
+                          resolveAccessor(row, 'examSubmissions')?.length === 0
                             ? 'No entregó'
                             : resolveAccessor(row, column.accessor) === true
                             ? 'Tarde'
                             : 'A tiempo'}
                         </span>
-                      ) : (
+                      ) : column.type === 'date' ? (
+                        <span className="font-medium">
+                          {new Date(resolveAccessor(row, column.accessor)).toLocaleDateString()}
+                        </span>
+                      ) : column.type === 'proyectType' ? (
+                        <span className={
+                          `font-medium ${
+                            resolveAccessor(row, column.accessor) === '-'
+                              ? 'text-[#E0F47E]'
+                              : 'text-gray-500'
+                          }`
+                        }>
+                          {resolveAccessor(row, column.accessor) === '-' ? "Libre": "Trabajo practico" }
+                        </span>
+                      ) :
+                      (
                         resolveAccessor(row, column.accessor)
                       )}
                     </Table.Td>
                   ))}
                   {actions.length > 0 && (
                     <Table.Td className="px-4 py-3">
-                      {editRow === rowIndex ? (
-                        <div className="flex items-center gap-2">
-                          <input
-                            type="number"
-                            value={inputValue}
-                            onChange={(e) => setInputValue(e.target.value)}
-                            placeholder="Nota"
-                            className="w-16 px-2 py-1 border rounded-lg text-sm"
-                          />
-                          <button
-                            onClick={() => handleSendClick(row, actions[0])}
-                            className="bg-strongBlue text-white text-xs px-2 py-1 rounded-lg hover:bg-blue-600"
-                          >
-                            Enviar
-                          </button>
-                        </div>
-                      ) : (
-                        actions.map((action, idx) => (
-                          <button
-                            key={idx}
-                            onClick={() => setEditRow(rowIndex)}
-                            className="text-strongBlue hover:underline font-medium text-sm"
-                          >
-                            {action.label}
-                          </button>
-                        ))
-                      )}
+                      {actions.map((action, idx) => (
+                        <button
+                          key={idx}
+                          onClick={() => handleSendClick(row, action)}
+                          className={`font-medium text-sm ${
+                            isDarkBackground ? 'text-blue-300' : 'text-strongBlue'
+                          } hover:underline`}
+                        >
+                          {action.label}
+                        </button>
+                      ))}
                     </Table.Td>
                   )}
                 </Table.Tr>
@@ -148,19 +156,23 @@ const GenericTable = ({
         <button
           disabled={currentPage === 1}
           onClick={() => onPageChange(currentPage - 1)}
-          className={`text-gray-600 font-medium hover:text-strongBlue ${
+          className={`font-medium ${
+            isDarkBackground ? 'text-white' : 'text-gray-600'
+          } hover:text-strongBlue ${
             currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''
           }`}
         >
           Anterior
         </button>
-        <span className="text-sm text-gray-600">
+        <span className={`text-sm ${isDarkBackground ? 'text-white' : 'text-gray-600'}`}>
           Página {currentPage} de {totalPages}
         </span>
         <button
           disabled={currentPage === totalPages}
           onClick={() => onPageChange(currentPage + 1)}
-          className={`text-gray-600 font-medium hover:text-strongBlue ${
+          className={`font-medium ${
+            isDarkBackground ? 'text-white' : 'text-gray-600'
+          } hover:text-strongBlue ${
             currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''
           }`}
         >
