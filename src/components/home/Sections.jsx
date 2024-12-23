@@ -196,42 +196,14 @@ const Sections = () => {
     ]);
   };
 
-  const handleStartCourse = async (moduleId) => {
-    try {
-      setLoading(true);
-      const response = await dispatch(startCourse(moduleId)).unwrap();
-      await fetchData(moduleId);
-      setLevelInfo();
-      setLoading(false);
-    } catch (error) {
-      console.error("Error starting course:", error);
-    }
-  };
-
-  const isSectionEnabled = (levelIndex, sectionIndex) => {
-    if (levelIndex < userCurrentInfo.currentLevelIndex) {
-      return true;
-    } else if (
-      levelIndex === userCurrentInfo.currentLevelIndex &&
-      sectionIndex <= userCurrentInfo.currentSectionIndex
-    ) {
-      return true;
-    }
-    return false;
-  };
-
-  const handleSectionClick = (levelId) => {
-    localStorage.setItem("selectedLevel", levelId);
-    navigate(`/sections`);
-  };
-
+  console.log(levelsInfo, level);
   return (
     <div>
       <div className="flex flex-col py-4 px-6 bg-[#EE5E37] mt-4 rounded-xl border-2 border-[#F9BEA8]">
         <div onClick={() => navigate(`/learn/levels`)}>Volver a Niveles</div>
       </div>
       <div className="relative w-full h-auto flex justify-center items-start mt-12">
-        {["", "", "", "", ""].map((section, index) => {
+        {level?.sections?.map((section, index) => {
           // Calcula la posición relativa dentro del bloque (0 a 4)
           const position = index % 5;
 
@@ -332,6 +304,7 @@ const Sections = () => {
 
           return (
             <div
+              onClick={() => navigate(`/learn/section/${section._id}`)}
               key={index}
               className={`${className}`}
               style={{ top: `calc(${top} + ${rowOffset}px)` }}

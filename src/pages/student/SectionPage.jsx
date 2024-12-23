@@ -43,10 +43,11 @@ const SectionPage = () => {
   const handleAdvance = () => {
     dispatch(fetchNextAction(progress.course));
   };
+  console.log(sectionId, progress, nextAction);
 
   return (
     <div>
-      {!progress.id && (
+      {!progress?.id && (
         <div className="loading">
           <LoadingPage />
         </div>

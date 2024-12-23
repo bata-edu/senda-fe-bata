@@ -33,6 +33,7 @@ import { useEffect } from "react";
 import ClassRoom from "../components/classRoom/classRoom";
 import Modules from "../components/home/CourseSelector";
 import Sections from "../components/home/Sections";
+import SectionPage from "../pages/student/SectionPage";
 
 const AppRoutes = () => {
   useEffect(() => {
@@ -82,6 +83,14 @@ const AppRoutes = () => {
           <Route path="levels" element={<Levels />} />
           <Route path="editor" element={<EditorPage />} />
           <Route path="profile" element={<Profile />} />
+          <Route
+            path="section/:id"
+            element={
+              <AuthGuard>
+                <SectionPage />
+              </AuthGuard>
+            }
+          ></Route>
         </Route>
         <Route
           path="/progress"
@@ -203,7 +212,7 @@ const AppRoutes = () => {
             </AuthGuard>
           }
         />
-        <Route 
+        <Route
           path="/exam-form/:courseId"
           element={
             <AuthGuard>
