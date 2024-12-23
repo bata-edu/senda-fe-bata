@@ -103,6 +103,22 @@ export const getSchoolById = createAsyncThunk(
     }
 );
 
+export const saveSchoolLocalStorage = (school) => {
+    localStorage.setItem("school", JSON.stringify(school));
+}
+
+export const getSchoolLocalStorage = () => {
+    return JSON.parse(localStorage.getItem("school"));
+}
+
+export const saveCourseLocalStorage = (course) => {
+    localStorage.setItem("course", JSON.stringify(course));
+}
+
+export const getCourseLocalStorage = () => {
+    return JSON.parse(localStorage.getItem("course"));
+}
+
 
 // Creación del slice para la escuela
 

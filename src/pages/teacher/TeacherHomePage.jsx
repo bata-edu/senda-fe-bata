@@ -4,6 +4,7 @@ import LoadingPage from "../LoadingPage";
 import { useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
 import TeacherHome from "../../components/teacherHome/TeacherHome";
+import Header from "../../components/common/header/Header";
 
 const TeacherHomePage = () => {
     const dispatch = useDispatch();
@@ -23,7 +24,10 @@ const TeacherHomePage = () => {
             {loading ? (
                 <LoadingPage />
             ) : (
+                <div>
+                <Header />
                 <TeacherHome/>
+                </div>
             )}
         </div>
     );

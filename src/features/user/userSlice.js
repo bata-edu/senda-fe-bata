@@ -7,6 +7,7 @@ import {
 } from "../../utils/constants";
 import apiClient from "../../utils/interceptors/authInterceptor";
 import { getUser } from "../auth/authService";
+import { buildQueryString } from "../../utils/buildQueryString";
 
 // Thunk para obtener la información del usuario
 export const fetchUser = createAsyncThunk(
@@ -25,14 +26,27 @@ export const fetchUser = createAsyncThunk(
 // Thunk para obtener los progresos del usuario en el modo libre
 export const fetchUserFreeModeProgress = createAsyncThunk(
   "user/fetchUserFreeModeProgress",
-  async (_, { rejectWithValue }) => {
+  async ({query}, { rejectWithValue }) => {
     try {
+      const queryString = query ? `?${buildQueryString(query)}` : '';
       const response = await apiClient.get(
-        `${USER_ENDPOINT}/freeModeProgress`
+        `${USER_ENDPOINT}/freeModeProgress${queryString}`
       );
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+// Thunk para establecer el progreso activo del usuario en modo libre
+export const setActiveFreeModeProgress = createAsyncThunk(
+  "user/setActiveFreeModeProgress",
+  async (progress, { rejectWithValue }) => {
+    try {
+      return progress;
+    } catch (error) {
+      return rejectWithValue(error.message);
     }
   }
 );
@@ -71,12 +85,12 @@ export const updateUserFreeModeProgress = createAsyncThunk(
 
 export const createUserFreeModeProgress = createAsyncThunk(
   "user/createUserFreeModeProgress",
-  async ({ code }, { rejectWithValue }) => {
+  async ({ body }, { rejectWithValue }) => {
     try {
       const user = getUser();
       const response = await apiClient.post(
-        `${USER_ENDPOINT}/freeModeProgress/${user.id}`,
-        code
+        `${USER_ENDPOINT}/freeModeProgress`,
+        body
       );
       return response.data;
     } catch (error) {
@@ -105,7 +119,7 @@ const userSlice = createSlice({
   initialState: {
     user: null,
     error: null,
-    freeModeProgressList: [],
+    freeModeProgressList: null,
     freeModeProgress: null,
     rank: null,
   },
@@ -141,6 +155,16 @@ const userSlice = createSlice({
       .addCase(fetchUserFreeModeProgressById.rejected, (state, action) => {
         state.error = action.payload;
       });
+    builder
+    .addCase(setActiveFreeModeProgress.pending, (state) => {
+      state.error = null;
+    })
+    .addCase(setActiveFreeModeProgress.fulfilled, (state, action) => {
+      state.freeModeProgress = action.payload;
+    })
+    .addCase(setActiveFreeModeProgress.rejected, (state, action) => {
+      state.error = action.payload;
+    });
     builder
       .addCase(updateUserFreeModeProgress.pending, (state) => {
         state.error = null;

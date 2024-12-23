@@ -8,6 +8,10 @@ import Book from "../../assets/icons/book.svg";
 import Store from "../../assets/icons/store.svg";
 import Trophy from "../../assets/icons/trophy.svg";
 import Computer from "../../assets/icons/computer.svg";
+import { getCourseLocalStorage } from "../../features/school/schoolSlice";
+import calificationIcon from "../../assets/icons/califications.svg";
+import pizzaronIcon from "../../assets/icons/pizzaron.svg";
+import formIcon from "../../assets/icons/form.svg";
 
 const Sidebar = () => {
   const navigate = useNavigate();
@@ -16,6 +20,8 @@ const Sidebar = () => {
   const { rank } = useSelector((state) => state.user || {});
 
   const { user } = getAuthData();
+  const course = getCourseLocalStorage() || {};
+
 
   const handleLogout = async () => {
     await logoutUser();
@@ -27,29 +33,76 @@ const Sidebar = () => {
     navigate(path);
   };
 
-  return (
-    <div className="flex flex-col justify-between p-4">
-      <div className="flex flex-col space-y-6">
-        <div className="flex ">
-          <img src={Book} alt="Book icon" />
-          <span
-            className="text-lg font-sans font-medium ml-4 "
-            onClick={() => handleNavigation("/home")}
-          >
-            Aprender
-          </span>
-        </div>
-        <div className="flex">
-          <img src={Store} alt="Book icon" />
-          <span
-            className="text-lg font-sans font-medium ml-4"
-            onClick={() => handleNavigation("/home/levels")}
-          >
-            Tienda
-          </span>
-        </div>
-      </div>
+  const handleNavigateExam = () => {
+    navigate(`/exam-form/${course.id}`);
+}
 
+const handleNavigateCalifications = () => {
+    navigate(`/exam-califications/${course.id}`);
+}
+
+const handleNavigateTeacherHome = () => {
+    navigate(`/teacher/course/${course.id}`);
+}
+
+  return (
+    <div className="flex flex-col justify-between pr-24 py-4 pl-8">
+      <div>
+        {user.role === "student" && (
+        <div className="flex flex-col space-y-6 cursor-pointer">
+          <div className="flex ">
+            <img src={Book} alt="Book icon" />
+            <span
+              className="text-lg font-sans font-medium ml-4 "
+              onClick={() => handleNavigation("/home")}
+            >
+              Aprender
+            </span>
+          </div>
+          <div className="flex">
+            <img src={Store} alt="Book icon" />
+            <span
+              className="text-lg font-sans font-medium ml-4"
+              onClick={() => handleNavigation("/home/levels")}
+            >
+              Tienda
+            </span>
+          </div>
+        </div>
+        )}
+        {user.role === "teacher" && (
+          <div className="flex flex-col space-y-6 cursor-pointer">
+            <div className="flex">
+            <img src={pizzaronIcon} alt="Pizzaron icon" />
+            <span
+              className="text-lg font-sans font-medium ml-4"
+              onClick={() => handleNavigateTeacherHome()}
+            >
+              Pizarron
+            </span>
+          </div>
+          <div className="flex">
+            <img src={formIcon} alt="Form icon" />
+            <span
+              className="text-lg font-sans font-medium ml-4"
+              onClick={() => handleNavigateExam()}
+            >
+              Formularios
+            </span>
+          </div>
+          <div className="flex">
+            <img src={calificationIcon} alt="Calification icon" />
+            <span
+              className="text-lg font-sans font-medium ml-4"
+              onClick={() => handleNavigateCalifications()}
+            >
+              Calificaciones
+            </span>
+          </div>
+      </div>
+      )}
+      {(user && user.role === "student") && (
+      <div>
       <div className="">
         <div className="flex mb-8">
           <img src={Trophy} alt="Book icon" />
@@ -81,6 +134,9 @@ const Sidebar = () => {
           <span>Mi pagina web</span>
         </div>
       </div>
+      </div>
+      )}
+    </div>
     </div>
   );
 };

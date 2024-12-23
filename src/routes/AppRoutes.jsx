@@ -34,6 +34,8 @@ import ClassRoom from "../components/classRoom/classRoom";
 import Modules from "../components/home/CourseSelector";
 import Sections from "../components/home/Sections";
 import ExamCalifications from "../components/exam/examCalifications";
+import FreeCodeList from "../pages/student/FreeCodeList";
+import TeacherAndStudentGuard from "../utils/guards/teacherAndStudentGuard";
 
 const AppRoutes = () => {
   useEffect(() => {
@@ -71,9 +73,9 @@ const AppRoutes = () => {
           path="/learn"
           element={
             <AuthGuard>
-              <StudentGuard>
+              <TeacherAndStudentGuard>
                 <Home />
-              </StudentGuard>
+              </TeacherAndStudentGuard>
             </AuthGuard>
           }
         >
@@ -81,7 +83,6 @@ const AppRoutes = () => {
           <Route path="modules" element={<Modules />} />
           <Route path="sections" element={<Sections />} />
           <Route path="levels" element={<Levels />} />
-          <Route path="editor/:id" element={<EditorPage />} />
           <Route path="profile" element={<Profile />} />
         </Route>
         <Route
@@ -99,8 +100,28 @@ const AppRoutes = () => {
           element={
             <AuthGuard>
               <StudentGuard>
-                <ClassRoom /> {/* Crear componente page */}
+                <ClassRoom />
               </StudentGuard>
+            </AuthGuard>
+          }
+        />
+        <Route
+          path="/editor"
+          element={
+            <AuthGuard>
+              <TeacherAndStudentGuard>
+                <FreeCodeList />
+              </TeacherAndStudentGuard>
+            </AuthGuard>
+          }
+        />
+        <Route
+          path="/editor/:id"
+          element={
+            <AuthGuard>
+              <TeacherAndStudentGuard>
+                <EditorPage />
+              </TeacherAndStudentGuard>
             </AuthGuard>
           }
         />
