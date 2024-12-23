@@ -44,7 +44,18 @@ const MainContent = () => {
 
   const courseImage = {
     Python: { image: <img src={Python} alt="Html logo" />, course: "Python" },
-    JavaScript: { image: <img src={Html} alt="Html logo" />, course: "Python" },
+    "67190a2ecc62ee9e8f06c57b": {
+      image: <img src={Html} alt="Html logo" />,
+      course: "Html",
+      backgroundCurrent: "#EE5E37",
+      backgroundDone: "#F59D7C",
+      borderCurrent: "#B72017",
+      borderDone: "#EB4624",
+      borderDisable: "#C8C8C8",
+      barDone: "#EB4624",
+      barCurrent: "#B72017",
+      barUnfilled: "#F59D7C",
+    },
     CSS: { image: <img src={Html} alt="Html logo" />, course: "Python" },
     "66fc2fb14c227e973f81b4d1": {
       image: <img src={Html} alt="Html logo" />,
@@ -341,9 +352,9 @@ const MainContent = () => {
                   </span>
                 </button>
                 <div className="flex mt-3">
-                  {courseImage[selectedModule].image}
+                  {courseImage[selectedModule]?.image}
                   <span className="ml-2 text-white font-sans text-xl font-medium">
-                    {courseImage[selectedModule].course}
+                    {courseImage[selectedModule]?.course}
                   </span>
                 </div>
               </div>

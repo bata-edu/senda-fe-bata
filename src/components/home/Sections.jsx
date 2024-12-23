@@ -304,7 +304,7 @@ const Sections = () => {
 
           return (
             <div
-              onClick={() => navigate(`/learn/section/${section._id}`)}
+              onClick={() => navigate(`/learn/progress?section=${section._id}`)}
               key={index}
               className={`${className}`}
               style={{ top: `calc(${top} + ${rowOffset}px)` }}
