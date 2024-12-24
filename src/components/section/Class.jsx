@@ -10,6 +10,7 @@ import {
 } from "../../features/userProgress/userProgressSlice";
 import { useDispatch, useSelector } from "react-redux";
 import LoadingPage from "../../pages/LoadingPage";
+import BackLogo from "../../assets/icons/back.png";
 
 const SectionClass = ({ advance, completedClass, loadingNextAction }) => {
   const navigate = useNavigate();
@@ -44,9 +45,6 @@ const SectionClass = ({ advance, completedClass, loadingNextAction }) => {
         </div>
       )}
       <div className="header">
-        <button className="close-button" onClick={() => navigate("/home")}>
-          X
-        </button>
         <div className="header-buttons">
           <button className="skip-button">SALTAR</button>
           <button className="advance-button" onClick={() => advanceClass()}>

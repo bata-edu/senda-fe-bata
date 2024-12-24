@@ -95,17 +95,17 @@ const AppRoutes = () => {
               </AuthGuard>
             }
           ></Route>
-          <Route
-            path="progress"
-            element={
-              <AuthGuard>
-                <StudentGuard>
-                  <ProgressPage />
-                </StudentGuard>
-              </AuthGuard>
-            }
-          ></Route>
         </Route>
+        <Route
+          path="learn/progress"
+          element={
+            <AuthGuard>
+              <StudentGuard>
+                <ProgressPage />
+              </StudentGuard>
+            </AuthGuard>
+          }
+        ></Route>
         <Route
           path="/classroom"
           element={

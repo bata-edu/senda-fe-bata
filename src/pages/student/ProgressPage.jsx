@@ -23,6 +23,10 @@ import AdvanceSection from "../../components/section/AdvanceSection";
 import AdvanceLevel from "../../components/section/AdvanceLevel";
 import CompleteCourse from "../../components/section/CompleteCourse";
 import { fetchSection } from "../../features/section/sectionSlice";
+import Header from "../../components/common/header/Header";
+import Html from "../../assets/icons/html.svg";
+import Python from "../../assets/icons/python.svg";
+import BackLogo from "../../assets/icons/back.png";
 
 const ProgressPage = () => {
   const navigate = useNavigate();
@@ -33,6 +37,37 @@ const ProgressPage = () => {
   const { section, loading: loadingSection } = useSelector(
     (state) => state.section || {}
   );
+
+  const selectedModule = localStorage.getItem("selectedModule");
+
+  const courseImage = {
+    Python: { image: <img src={Python} alt="Html logo" />, course: "Python" },
+    "67190a2ecc62ee9e8f06c57b": {
+      image: <img src={Html} alt="Html logo" />,
+      course: "Html",
+      backgroundCurrent: "#EE5E37",
+      backgroundDone: "#F59D7C",
+      borderCurrent: "#B72017",
+      borderDone: "#EB4624",
+      borderDisable: "#C8C8C8",
+      barDone: "#EB4624",
+      barCurrent: "#B72017",
+      barUnfilled: "#F59D7C",
+    },
+    CSS: { image: <img src={Html} alt="Html logo" />, course: "Python" },
+    "66fc2fb14c227e973f81b4d1": {
+      image: <img src={Html} alt="Html logo" />,
+      course: "Html",
+      backgroundCurrent: "#EE5E37",
+      backgroundDone: "#F59D7C",
+      borderCurrent: "#B72017",
+      borderDone: "#EB4624",
+      borderDisable: "#C8C8C8",
+      barDone: "#EB4624",
+      barCurrent: "#B72017",
+      barUnfilled: "#F59D7C",
+    },
+  };
   const [searchParams] = useSearchParams();
   let sectionId = searchParams.get("section");
   let levelId = searchParams.get("level");
@@ -41,6 +76,8 @@ const ProgressPage = () => {
   const [completedClass, setCompletedClass] = useState(null);
   const [completedExercise, setCompletedExercise] = useState(null);
   const [loadingNextAction, setLoadingNextAction] = useState(false);
+  const sectionOrder = localStorage.getItem("sectionOrder");
+  const sectionName = localStorage.getItem("sectionName");
 
   useEffect(() => {
     const fetchProgress = async () => {
@@ -110,48 +147,73 @@ const ProgressPage = () => {
       }
     }
   };
-
   return (
-    <div>
-      {(loading || loadingSection || loadingNextAction) && (
-        <div className="loading">
-          <LoadingPage />
-        </div>
-      )}
+    <>
+      <Header />
       <div>
-        {(nextAction?.message === NEXT_CLASS || completedClass) && (
-          <SectionClass
-            advance={handleAdvance}
-            completedClass={completedClass}
-            loadingNextAction={loadingNextAction}
-          />
+        {(loading || loadingSection || loadingNextAction) && (
+          <div className="loading">
+            <LoadingPage />
+          </div>
         )}
-        {(nextAction?.message === NEXT_EXERCISE || completedExercise) && (
-          <Exercise
-            advance={handleAdvance}
-            completedExercise={completedExercise}
-            loadingNextAction={loadingNextAction}
-          />
-        )}
-        {(nextAction?.message === SUBMIT_FINAL_LEVEL_PROJECT || levelId) && (
-          <FinalWork
-            advance={handleAdvance}
-            progress={currentProgress}
-            levelId={levelId}
-            index={levelIndex}
-            loadingNextAction={loadingNextAction}
-          />
-        )}
-        {nextAction?.message === ADVANCE_SECTION && (
-          <AdvanceSection
-            advance={handleAdvance}
-            loadingNextAction={loadingNextAction}
-          />
-        )}
-        {nextAction?.message === ADVANCE_LEVEL && <AdvanceLevel />}
-        {nextAction?.message === COURSE_COMPLETED && <CompleteCourse />}
+        <div className="w-full flex mt-4">
+          <div className="w-12">
+            <button
+              className="flex items-center pl-4"
+              onClick={() => navigate("/learn/modules")}
+            >
+              <img
+                src={BackLogo}
+                alt="Back Bata"
+                className="h-4 mx-auto my-3"
+              />
+              <span className="ml-2">Salir</span>
+            </button>
+          </div>
+          <div className="w-full -ml-12">
+            <div className="flex border-[#E4E7EC] border-2 rounded-xl py-4 px-6 w-1/2 mx-auto">
+              {courseImage[selectedModule].image}
+              <span className="ml-2 font-sans text-lg font-semibold">
+                Seccion {sectionOrder}: {sectionName}
+              </span>
+            </div>
+          </div>
+        </div>
+        <div>
+          {(nextAction?.message === NEXT_CLASS || completedClass) && (
+            <SectionClass
+              advance={handleAdvance}
+              completedClass={completedClass}
+              loadingNextAction={loadingNextAction}
+            />
+          )}
+          {(nextAction?.message === NEXT_EXERCISE || completedExercise) && (
+            <Exercise
+              advance={handleAdvance}
+              completedExercise={completedExercise}
+              loadingNextAction={loadingNextAction}
+            />
+          )}
+          {(nextAction?.message === SUBMIT_FINAL_LEVEL_PROJECT || levelId) && (
+            <FinalWork
+              advance={handleAdvance}
+              progress={currentProgress}
+              levelId={levelId}
+              index={levelIndex}
+              loadingNextAction={loadingNextAction}
+            />
+          )}
+          {nextAction?.message === ADVANCE_SECTION && (
+            <AdvanceSection
+              advance={handleAdvance}
+              loadingNextAction={loadingNextAction}
+            />
+          )}
+          {nextAction?.message === ADVANCE_LEVEL && <AdvanceLevel />}
+          {nextAction?.message === COURSE_COMPLETED && <CompleteCourse />}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
