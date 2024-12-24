@@ -239,7 +239,6 @@ const MainContent = () => {
   };
 
   const handleSectionClick = (levelId) => {
-    console.log(levelId);
     localStorage.setItem("selectedLevel", levelId);
     navigate(`/learn/sections`);
   };
@@ -253,7 +252,7 @@ const MainContent = () => {
       navigate(`/progress?level=${levelId}&index=${levelIndex}&current=false`);
     }
   };
-  console.log(currentProgress);
+
   return (
     <div className="w-2/3 mx-auto">
       {loading && (

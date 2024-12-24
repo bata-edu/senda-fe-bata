@@ -30,21 +30,19 @@ const Sections = () => {
     currentSectionIndex: 0,
     lastSectionIndex: 0,
   });
+  const selectedModule = localStorage.getItem("selectedModule");
 
   const courseImage = {
     Python: { course: "Python" },
     JavaScript: { course: "Python" },
     CSS: { course: "Python" },
-    "66fc2fb14c227e973f81b4d1": {
+    "67190a2ecc62ee9e8f06c57b": {
       course: "Html",
       border: "#F59D7C",
       progress: "#DD2E19B2",
       background: "#FEF5F2",
     },
   };
-
-  const selectedModule = localStorage.getItem("selectedModule");
-
   useEffect(() => {
     const selectedLevelId = localStorage.getItem("selectedLevel");
     const selectedLevel = levelsInfo?.find(
@@ -196,7 +194,6 @@ const Sections = () => {
     ]);
   };
 
-  console.log(levelsInfo, level);
   return (
     <div>
       <div className="flex flex-col py-4 px-6 bg-[#EE5E37] mt-4 rounded-xl border-2 border-[#F9BEA8]">
@@ -206,7 +203,6 @@ const Sections = () => {
         {level?.sections?.map((section, index) => {
           // Calcula la posición relativa dentro del bloque (0 a 4)
           const position = index % 5;
-
           // Calcula el desplazamiento vertical para el bloque actual
           const rowOffset = Math.floor(index / 5) * 300; // Ajusta la separación vertical entre bloques
 
@@ -273,11 +269,11 @@ const Sections = () => {
                 <div
                   className="w-1 h-20 absolute ml-32 -mt-8"
                   style={{
-                    borderRight: "3px dashed gray", // Borde izquierdo
-                    borderBottom: "3px dashed gray", // Borde inferior
+                    borderRight: "3px dashed gray",
+                    borderBottom: "3px dashed gray",
                     borderTop: "none",
-                    width: "75px", // Ajusta el ancho para la base de la "L"
-                    height: "75px", // Ajusta la altura para la parte vertical de la "L"
+                    width: "75px",
+                    height: "75px",
                   }}
                 ></div>
               ),
@@ -290,10 +286,10 @@ const Sections = () => {
                 <div
                   className="w-1 h-20 absolute ml-[75px] -mt-[70px]"
                   style={{
-                    borderLeft: "3px dashed gray", // Borde izquierdo
-                    borderTop: "3px dashed gray", // Borde inferior
-                    width: "75px", // Ajusta el ancho para la base de la "L"
-                    height: "75px", // Ajusta la altura para la parte vertical de la "L"
+                    borderLeft: "3px dashed gray",
+                    borderTop: "3px dashed gray",
+                    width: "75px",
+                    height: "75px",
                   }}
                 ></div>
               ),
@@ -301,10 +297,13 @@ const Sections = () => {
           ];
 
           const { className, top, extra } = positions[position];
-
           return (
             <div
-              onClick={() => navigate(`/learn/progress?section=${section._id}`)}
+              onClick={() => {
+                navigate(`/learn/progress?section=${section._id}&current=true`);
+                localStorage.setItem("sectionName", section.name);
+                localStorage.setItem("sectionOrder", section.order);
+              }}
               key={index}
               className={`${className}`}
               style={{ top: `calc(${top} + ${rowOffset}px)` }}
@@ -312,12 +311,12 @@ const Sections = () => {
               {extra}
               <div
                 style={{
-                  background: courseImage[level?.parent]?.background,
-                  border: `2px solid ${courseImage[level?.parent]?.border}`,
+                  background: courseImage[selectedModule]?.background,
+                  border: `2px solid ${courseImage[selectedModule]?.border}`,
                 }}
                 className="w-20 h-20 text-white py-2 px-4 rounded-lg shadow-md"
               >
-                {`Objeto ${index + 1}`}
+                {section.name}
               </div>
             </div>
           );
