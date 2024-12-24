@@ -79,7 +79,7 @@ const ExamForm = () => {
             <Header />
                 <div className='home-container'>
                     <Sidebar />
-                    <div className="bg-gray-50 min-h-screen w-full">
+                    <div className="bg-gray-50 w-full min-h-screen">
                     <div className='flex flex-col justify-center md:flex-row gap-20 p-6'>
                         <div className="w-1/4">
                             <div

@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { SCHOOL_ENDPOINT, RESET_STATE, COURSE_ENDPOINT, GET_INTO_COURSE, GET_STUDENTS_IN_COURSE, GET_STUDENTS_PROGRESS } from "../../utils/constants";
+import { SCHOOL_ENDPOINT, RESET_STATE, COURSE_ENDPOINT, GET_INTO_COURSE, GET_STUDENTS_IN_COURSE, GET_STUDENTS_PROGRESS, GET_COURSE_AND_SCHOOL } from "../../utils/constants";
 import apiClient from "../../utils/interceptors/authInterceptor";
 import { buildQueryString } from "../../utils/buildQueryString";
 
@@ -103,6 +103,18 @@ export const getSchoolById = createAsyncThunk(
     }
 );
 
+export const getCourseAndSchool = createAsyncThunk(
+    "school/getCourseAndSchool",
+    async ( courseId , { rejectWithValue }) => {
+      try {
+        const response = await apiClient.get(`${GET_COURSE_AND_SCHOOL}/${courseId}`);
+        return response.data;
+      } catch (error) {
+        return rejectWithValue(error.response.data);
+      }
+    }
+);
+
 export const saveSchoolLocalStorage = (school) => {
     localStorage.setItem("school", JSON.stringify(school));
 }
@@ -183,12 +195,19 @@ const schoolSlice = createSlice({
         })
         .addCase(getCourseById.rejected, (state, action) => {
             state.error = action.payload;
-        })
+        });
         builder
         .addCase(getStudentsProgress.fulfilled, (state, action) => {
             state.students_module = action.payload;
         })
         .addCase(getStudentsProgress.rejected, (state, action) => {
+            state.error = action.payload;
+        });
+        builder
+        .addCase(getCourseAndSchool.fulfilled, (state, action) => {
+            state.course = action.payload;
+        })
+        .addCase(getCourseAndSchool.rejected, (state, action) => {
             state.error = action.payload;
         })
         .addCase(RESET_STATE, (state) => {

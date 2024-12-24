@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import logoImage from "../../../assets/logo.svg";
 import Clasroom from "../../../assets/icons/aula.svg";
@@ -6,17 +6,25 @@ import FreeCode from "../../../assets/icons/codeo-libre.svg";
 import Courses from "../../../assets/icons/cursos.svg";
 import Settings from "../../../assets/icons/settings.svg";
 import Bell from "../../../assets/icons/bell.svg";
-import { getAuthData } from "../../../features/auth/authService";
+import { getAuthData, logoutUser } from "../../../features/auth/authService";
+
 const Header = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = getAuthData();
+  const [showMenu, setShowMenu] = useState(false);
+
 
   const isActive = (path) => location.pathname === path;
 
   const navigateTo = (path) => {
     navigate(path);
   };
+
+  const handleLogout = async () => {
+    await logoutUser();
+    navigate("/login");
+  };  
 
   return (
     <header className="w-full bg-white shadow-sm border-b border-borderGray flex items-center p-4">
@@ -73,7 +81,22 @@ const Header = () => {
           </div>
 
           <div className="flex justify-end items-center gap-2 w-24">
-            <img src={Settings} alt="Ajustes" className="h-6" />
+          <img
+              src={Settings}
+              alt="Ajustes"
+              className="h-6 cursor-pointer"
+              onClick={() => setShowMenu(!showMenu)}
+            />
+            {showMenu && (
+              <div className="absolute top-12 right-0 bg-white shadow-md rounded w-40 p-2">
+                <button
+                  className="w-full text-left px-4 py-2 hover:bg-gray-100"
+                  onClick={handleLogout}
+                >
+                  Cerrar sesión
+                </button>
+              </div>
+            )}
             <img src={Bell} alt="Notificaciones" className="h-6" />
           </div>
         </>

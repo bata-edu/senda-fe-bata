@@ -39,7 +39,6 @@ export const createCourseArticle = createAsyncThunk(
         try {
             const postUrl = `${COURSE_ARTICLE_ENDPOINT}/${courseId}`;
             const response = await genericCreateAndUpload({body: article, createUrl: postUrl, file, fileKey: "photo", updateUrl: COURSE_ARTICLE_DETAIL});
-            console.log(response)
             return { id: response.id, ...response };
         } catch (error) {
             return rejectWithValue(error.response.data);

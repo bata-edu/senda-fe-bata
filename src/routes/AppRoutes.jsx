@@ -36,6 +36,7 @@ import Sections from "../components/home/Sections";
 import ExamCalifications from "../components/exam/examCalifications";
 import FreeCodeList from "../pages/student/FreeCodeList";
 import TeacherAndStudentGuard from "../utils/guards/teacherAndStudentGuard";
+import ClassRoomDetail from "../components/classRoom/classRoomDetail";
 
 const AppRoutes = () => {
   useEffect(() => {
@@ -101,6 +102,16 @@ const AppRoutes = () => {
             <AuthGuard>
               <StudentGuard>
                 <ClassRoom />
+              </StudentGuard>
+            </AuthGuard>
+          }
+        />
+        <Route
+          path="/classroom/:id"
+          element={
+            <AuthGuard>
+              <StudentGuard>
+                <ClassRoomDetail />
               </StudentGuard>
             </AuthGuard>
           }

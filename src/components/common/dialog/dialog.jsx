@@ -70,6 +70,18 @@ const GenericDialog = ({
                     )}
                   </div>
                 );
+              } else if (item.type === 'button') {
+                return (
+                  <div key={index} className="flex justify-end mt-4">
+                    <button
+                      onClick={item.onClick}
+                      className="px-4 py-2 border border-black rounded-lg hover:opacity-90"
+                      style={{ backgroundColor: item.color || '#4558C8' }}
+                    >
+                      {item.value}
+                    </button>
+                  </div>
+                );
               } else if (item.type === 'file') {
                 return <p key={index} className="text-gray-700">Archivo: {item.value}</p>;
               }

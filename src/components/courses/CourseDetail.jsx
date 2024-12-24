@@ -152,7 +152,7 @@ const CourseDashboard = () => {
                 </div>
                 </div>
 
-                <div className="mt-4 space-y-6 max-h-[400px] overflow-y-scroll">
+                <div className="mt-4 space-y-6 max-h-[60vh] overflow-y-scroll">
                 {courseData.map((data, index) => (
                     <div
                     key={data.id}

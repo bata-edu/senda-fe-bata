@@ -60,7 +60,6 @@ export const gradeSubmission = createAsyncThunk(
     "exam/gradeSubmission",
     async ({id, score}, { rejectWithValue }) => {
         try {
-            console.log(score, id);
             const response = await apiClient.patch(`${EXAM_SUBMISSIONS}/${id}`, {score});
             return response.data;
         } catch (error) {
@@ -133,6 +132,18 @@ export const setActivateExamToCorrect = createAsyncThunk(
       }
     }
   );
+
+export const getExamById = createAsyncThunk(
+    "exam/getExamById",
+    async (examId, { rejectWithValue }) => {
+        try {
+            const response = await apiClient.get(`${EXAM_ENDPOINT}/${examId}`);
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response.data);
+        }
+    }
+);
 
 
 // Creación del slice para los examenes
@@ -210,6 +221,13 @@ const examSlice = createSlice({
                 state.error = null;
             })
             .addCase(getSubmissionById.rejected, (state, action) => {
+                state.error = action.payload;
+            })
+            .addCase(getExamById.fulfilled, (state, action) => {
+                state.exam = action.payload;
+                state.error = null;
+            })
+            .addCase(getExamById.rejected, (state, action) => {
                 state.error = action.payload;
             })
             .addCase(RESET_STATE, (state) => {

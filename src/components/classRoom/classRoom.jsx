@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { getIntoCourse } from "../../features/school/schoolSlice";
 import { toast } from "react-toastify";
@@ -11,11 +11,21 @@ import pointsIcon from "../../assets/icons/points.svg";
 import arrowLeftIcon from "../../assets/icons/arrowLeft.svg";
 import { getUser } from "../../features/auth/authService";
 import Header from "../../components/common/header/Header";
+import { useNavigate } from "react-router-dom";
 
 const ClassRoom = () => {
   const dispatch = useDispatch();
   const [classroomCode, setClassroomCode] = useState("");
   const user = getUser();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if(user.schoolData.courses.length > 0) {
+      console.log("holaa")
+      navigate(`/classroom/${user.schoolData.courses[1]}`);
+    } 
+  
+  }, []);
 
   const handleJoinClassroom = async () => {
     try {
