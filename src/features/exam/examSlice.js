@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { EXAM_BY_COURSE, EXAM_ENDPOINT, EXAM_SUBMISSIONS, EXAM_SUBMISSIONS_BY_EXAM, EXAM_SUBMIT, GET_COURSE_EXAMS, RESET_STATE } from "../../utils/constants";
+import { EXAM_BY_COURSE, EXAM_ENDPOINT, EXAM_SUBMISSIONS, EXAM_SUBMISSIONS_BY_EXAM, EXAM_SUBMIT, GET_COURSE_EXAMS, RESET_STATE, GET_MY_TASK_PROGRESS, GET_MY_GRADE } from "../../utils/constants";
 import apiClient from "../../utils/interceptors/authInterceptor";
 import { genericCreateAndUpload } from "../../utils/createObjectWithFile";
 import { buildQueryString } from "../../utils/buildQueryString";
@@ -145,6 +145,30 @@ export const getExamById = createAsyncThunk(
     }
 );
 
+export const myTaskProgress = createAsyncThunk(
+    "exam/myTaskProgress",
+    async ({examId, courseId}, { rejectWithValue }) => {
+        try {
+            const response = await apiClient.get(`${GET_MY_TASK_PROGRESS}/${examId}/${courseId}`);
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response.data);
+        }
+    }
+);
+
+export const myGrade = createAsyncThunk(
+    "exam/myGrade",
+    async (examId, { rejectWithValue }) => {
+        try {
+            const response = await apiClient.get(`${GET_MY_GRADE}/${examId}`);
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response.data);
+        }
+    }
+);
+
 
 // Creación del slice para los examenes
 const examSlice = createSlice({
@@ -155,7 +179,8 @@ const examSlice = createSlice({
         submissions: null,
         error: null,
         exams: [],
-        examToCorrect: null
+        examToCorrect: null,
+        studentGrade: null
     },
     reducers: {},
     extraReducers: (builder) => {
@@ -228,6 +253,13 @@ const examSlice = createSlice({
                 state.error = null;
             })
             .addCase(getExamById.rejected, (state, action) => {
+                state.error = action.payload;
+            })
+            .addCase(myGrade.fulfilled, (state, action) => {
+                state.studentGrade = action.payload;
+                state.error = null;
+            })
+            .addCase(myGrade.rejected, (state, action) => {
                 state.error = action.payload;
             })
             .addCase(RESET_STATE, (state) => {

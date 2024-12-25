@@ -37,6 +37,7 @@ import ExamCalifications from "../components/exam/examCalifications";
 import FreeCodeList from "../pages/student/FreeCodeList";
 import TeacherAndStudentGuard from "../utils/guards/teacherAndStudentGuard";
 import ClassRoomDetail from "../components/classRoom/classRoomDetail";
+import StudentGrades from "../components/classRoom/StudentGrades";
 
 const AppRoutes = () => {
   useEffect(() => {
@@ -116,6 +117,18 @@ const AppRoutes = () => {
             </AuthGuard>
           }
         />
+
+        <Route
+          path="/grades/:id"
+          element={
+            <AuthGuard>
+              <StudentGuard>
+                <StudentGrades />
+              </StudentGuard>
+            </AuthGuard>
+          }
+        />
+
         <Route
           path="/editor"
           element={

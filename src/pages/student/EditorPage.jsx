@@ -266,7 +266,7 @@ const EditorPage = () => {
         title={"Consigna"}
         type="info"
         description={exam.question}
-        onConfirm={() => setShowConsigna(false)}
+        onCancel={() => setShowConsigna(false)}
         confirmButtonText="Cerrar"
       />
     )  

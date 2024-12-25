@@ -7,15 +7,17 @@ import formIcon from "../../assets/icons/form.svg";
 import Trophy from "../../assets/icons/trophy.svg";
 import examIcon from "../../assets/icons/exam.svg";
 import taskIcon from "../../assets/icons/task.svg";
+import { getUser } from "../../features/auth/authService";
 
 
 
 const SideBarClassroom = () => {
   const navigate = useNavigate();
   const { rank } = useSelector((state) => state.user || {});
+  const user = getUser();
 
   const handleNavigation = (path) => {
-    navigate(path);
+    navigate(path + `/${user.schoolData.courses[1]}`);
   };
 
   return (
@@ -26,7 +28,7 @@ const SideBarClassroom = () => {
             <img src={pizarronIcon} alt="Pizarrón icon" />
             <span
               className="text-lg font-sans font-medium ml-4"
-              onClick={() => handleNavigation("/classroom/board")}
+              onClick={() => handleNavigation("/classroom")}
             >
               Pizarrón
             </span>
@@ -62,7 +64,7 @@ const SideBarClassroom = () => {
             <img src={calificationIcon} alt="Calificaciones icon" />
             <span
               className="text-lg font-sans font-medium ml-4"
-              onClick={() => handleNavigation("/classroom/grades")}
+              onClick={() => handleNavigation("/grades")}
             >
               Calificaciones
             </span>
