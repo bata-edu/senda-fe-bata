@@ -9,7 +9,7 @@ import LoadingPage from "../../pages/LoadingPage";
 import "../../styles/exercise.css";
 import { fetchExercise } from "../../features/section/sectionSlice";
 import MultipleChoice from "../exercises/MultipleChoice";
-import DragNDrop from "../exercises/DragNDrop";
+import DragNDrop from "../exercises/DragNDrop/DragNDrop";
 
 const Exercise = ({ advance, completedExercise, loadingNextAction }) => {
   const navigate = useNavigate();
@@ -160,7 +160,7 @@ const Exercise = ({ advance, completedExercise, loadingNextAction }) => {
       {!loading && (
         <div className="w-full">
           {exe.template === 1 ? (
-            <MultipleChoice
+            <DragNDrop
               completedExercise={completedExercise}
               advance={advanceExercise}
               exercise={exe}
