@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import pencil from "../../assets/pencil.svg";
 import pencilB from "../../assets/pencilB.svg";
 import graduationIcon from '../../assets/icons/graduation.svg';
-import { getExamsByCourse } from "../../features/exam/examSlice";
-import { getCourseArticles, createCourseArticle } from "../../features/courseArticle/courseArticle";
+import { getExamsByCourse, updateExam } from "../../features/exam/examSlice";
+import { getCourseArticles, createCourseArticle, editCourseArticle } from "../../features/courseArticle/courseArticle";
 import { getCourseLocalStorage, getSchoolLocalStorage, getStudentsProgress } from "../../features/school/schoolSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -36,6 +36,8 @@ const CourseDashboard = () => {
     const [content, setContent] = useState('');
     const navigate = useNavigate();
     const [chips, setChips] = useState([]);
+    const [showUpdateDialog, setShowUpdateDialog] = useState(false);
+    const [selectedData, setSelectedData] = useState();
 
     useEffect(() => {
         fetchCourseInfo();
@@ -105,6 +107,33 @@ const CourseDashboard = () => {
 
     };
 
+    const updateData = async () => {
+        if(selectedData.content){
+            const body = {
+                name: selectedData.name,
+                description: selectedData.description,
+                content: selectedData.content,
+                labels: selectedData.labels
+            }
+            const res = await dispatch(editCourseArticle({articleId: selectedData.id, article: body}));
+            toast.success("Artículo editado correctamente");
+            setCourseData(courseData.map((data) => data.id === res.payload.id ? res.payload : data));
+            setShowUpdateDialog(false);
+        }
+        else{
+            const body = {
+                name: selectedData.name,
+                description: selectedData.description,
+                endDate: selectedData.endDate
+            }
+            const res = await dispatch(updateExam({examId: selectedData.id, exam: body}));
+            toast.success("Examen editado correctamente");
+            setCourseData(courseData.map((data) => data.id === res.payload.id ? res.payload : data));
+            setShowUpdateDialog(false);
+        }
+        setSelectedData(null);
+    };
+
     return (
         loading ? <LoadingPage/> : (
         <div>
@@ -130,6 +159,81 @@ const CourseDashboard = () => {
                     onConfirm={handleCreateArticle}
                 />
             }
+            {
+                showUpdateDialog &&
+                <GenericDialog 
+                    title={selectedData?.content ? "Editar artículo" : "Editar examen"}
+                    description={selectedData?.content ? "Edita un artículo de tu curso" : "Edita un examen de tu curso"}
+                    open={showUpdateDialog}
+                    type="form"
+                    onCancel={() => setShowUpdateDialog(false)}
+                    inputs={
+                        selectedData?.content
+                            ? [
+                                { 
+                                    type: "text", 
+                                    placeholder: "Título", 
+                                    name: "title", 
+                                    required: true, 
+                                    value: selectedData?.name, 
+                                    onChange: (e) => setSelectedData({ ...selectedData, name: e.target.value }) 
+                                },
+                                { 
+                                    type: "text", 
+                                    placeholder: "Descripción", 
+                                    name: "description", 
+                                    required: true, 
+                                    value: selectedData?.description, 
+                                    onChange: (e) => setSelectedData({ ...selectedData, description: e.target.value }) 
+                                },
+                                { 
+                                    type: "chip", 
+                                    placeholder: "Etiquetas", 
+                                    name: "labels", 
+                                    required: true, 
+                                    chips: selectedData?.labels, 
+                                    setChips: (chips) => setSelectedData({ ...selectedData, labels: chips }) 
+                                },
+                                { 
+                                    type: "textarea", 
+                                    placeholder: "Contenido", 
+                                    name: "content", 
+                                    required: true, 
+                                    value: selectedData?.content, 
+                                    onChange: (e) => setSelectedData({ ...selectedData, content: e.target.value }) 
+                                }
+                            ]
+                            : [
+                                { 
+                                    type: "text", 
+                                    placeholder: "Título", 
+                                    name: "title", 
+                                    required: true, 
+                                    value: selectedData?.name, 
+                                    onChange: (e) => setSelectedData({ ...selectedData, name: e.target.value }) 
+                                },
+                                { 
+                                    type: "text", 
+                                    placeholder: "Descripción", 
+                                    name: "description", 
+                                    required: true, 
+                                    value: selectedData?.description, 
+                                    onChange: (e) => setSelectedData({ ...selectedData, description: e.target.value }) 
+                                },
+                                { 
+                                    type: "date", 
+                                    placeholder: "Fecha de entrega", 
+                                    name: "dueDate", 
+                                    required: true, 
+                                    value: selectedData?.endDate, 
+                                    onChange: (e) => setSelectedData({ ...selectedData, endDate: e }) 
+                                }
+                            ]
+                    }
+                    onConfirm={() => {updateData()}}
+                />
+
+            }
             <div className="w-1/4">
                 <div
                     className="animate-bounce-in-down bg-[#F2F4FC] text-[#4558C8] border border-blue-200 rounded-lg px-6 py-3 items-center gap-4 shadow-md"
@@ -152,7 +256,7 @@ const CourseDashboard = () => {
                 </div>
                 </div>
 
-                <div className="mt-4 space-y-6 max-h-[400px] overflow-y-scroll">
+                <div className="mt-4 space-y-6 max-h-[60vh] overflow-y-scroll">
                 {courseData.map((data, index) => (
                     <div
                     key={data.id}
@@ -172,7 +276,7 @@ const CourseDashboard = () => {
                         <div className="items-center text-sm text-gray-500 mt-2">
                         {data.type && (
                             <p>
-                                📅 Fecha de entrega: {data.dueDate || new Date().toLocaleDateString()}
+                                📅 Fecha de entrega: {new Date(data.endDate).toLocaleDateString() || new Date().toLocaleDateString()}
                             </p>
                         )}
 
@@ -201,7 +305,7 @@ const CourseDashboard = () => {
                                 </span>
                             </div>
                         </div>
-                            <span className="text-[#4558C8] cursor-pointer items-center mt-4">
+                            <span className="text-[#4558C8] cursor-pointer items-center mt-4" onClick={() => {setSelectedData(data); setShowUpdateDialog(true)} }>
                                 Editar
                             </span>
                         </div>

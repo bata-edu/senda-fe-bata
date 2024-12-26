@@ -58,7 +58,7 @@ const Modules = () => {
 
   return (
     <>
-      <div className="flex flex-col justify-start items-center ">
+      <div className="flex flex-col justify-start items-center min-h-screen">
         <div className="text-5xl font-semibold text-gray-800 flex items-center space-x-2 my-12">
           <img src={Left} alt="Corchete izquierdo" className="h-10" />
           <span className="font-mono text-3xl font-medium">

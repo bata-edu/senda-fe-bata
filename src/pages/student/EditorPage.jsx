@@ -13,8 +13,15 @@ import { toast } from "react-toastify";
 import { useParams } from "react-router-dom";
 import { useLocation } from 'react-router-dom';
 import { getUser } from "../../features/auth/authService";
-import { getSubmissionById, gradeSubmission, submitExam } from "../../features/exam/examSlice";
-import GenericDialog from "../../components/common/dialog/dialog"
+import { getExamById, getSubmissionById, gradeSubmission, submitExam } from "../../features/exam/examSlice";
+import Header from "../../components/common/header/Header";
+import playIcon from "../../assets/icons/play.svg";
+import saveIcon from "../../assets/icons/save.svg";
+import uploadIcon from "../../assets/icons/upload.svg";
+import sendIcon from "../../assets/icons/send.svg";
+import readIcon from "../../assets/icons/read.svg";
+import PdfViewer from "../../utils/PdfViewer";
+import GenericDialog from "../../components/common/dialog/dialog";
 
 const EditorPage = () => {
   const dispatch = useDispatch();
@@ -27,9 +34,10 @@ const EditorPage = () => {
   const [play, setPlay] = useState(false);
   const [showSaveOptions, setShowSaveOptions] = useState(false);
   const { freeModeProgress } = useSelector((state) => state.user);
-  const {examToCorrect} = useSelector((state) => state.exam);
+  const {examToCorrect, exam} = useSelector((state) => state.exam);
   const [showCorrectDialog, setShowCorrectDialog] = useState(false);
   const [score, setScore] = useState(0);
+  const [showConsigna, setShowConsigna] = useState(false);
   
   const handleClear = () => {
     setHtmlCode("");
@@ -89,7 +97,14 @@ const EditorPage = () => {
         }
       };
       fetchData();
+      if(examId){
+        const fetchExam = async () => {
+          await dispatch(getExamById(examId));
+      }
+      fetchExam();
+      }
     }
+
   }, [dispatch, freeModeProgress]);
 
   useEffect(() => {
@@ -127,7 +142,6 @@ const EditorPage = () => {
         student: getUser().id,
         exam: examId,
       };
-
       await dispatch(submitExam({body}));
       toast.success("Examen entregado con éxito");
     } catch (error) {
@@ -145,106 +159,144 @@ const EditorPage = () => {
   }
   }
 
+
   return (
-    <div className="flex flex-col h-screen">
-    {showCorrectDialog && 
-    <GenericDialog 
-      title={"Corregir examen"}
-      type="form"
-      description={"Ingrese la calificación del examen"}
-      onConfirm={handleCorrect}
-      onCancel={() => setShowCorrectDialog(false)}
-      cancelButtonText="Cancelar"
-      confirmButtonText="Corregir"
-      inputs={[{type: "number", placeholder: "Calificación", value: score, onChange: (e) => setScore(e.target.value)}]}
-      />
-    }
-      <nav className="bg-gray-900 text-white flex justify-between items-center p-4 shadow-md">
-        <CodeTabs activeTab={activeTab} setActiveTab={setActiveTab} />
-        <div className="flex gap-4">
-  {isTeacher ? (
-    <div className="flex gap-4">
-    <button
-      onClick={() => setPlay(!play)}
-      className="bg-[#E0F47E] text-black font-semibold px-4 py-1 rounded hover:bg-[#D9F0A3]"
-    >
-      Ejecutar
-    </button>
-    <button className="bg-blue-500 px-4 py-1 font-semibold rounded hover:bg-blue-600" onClick={() => setShowCorrectDialog(true)}>
-      Calificar
-    </button>
-    </div>
-  ) : (
-    <>
-      <button
-        onClick={handleClear}
-        className="bg-[#EE5E37] px-4 py-1 font-semibold rounded hover:bg-[#E76B4D]"
-      >
-        Borrar
-      </button>
+    <div>
+      <Header />
+      <div className="flex flex-col h-screen">
+      {showCorrectDialog && 
+      <GenericDialog 
+        title={"Corregir examen"}
+        type="form"
+        description={"Ingrese la calificación del examen"}
+        onConfirm={handleCorrect}
+        onCancel={() => setShowCorrectDialog(false)}
+        cancelButtonText="Cancelar"
+        confirmButtonText="Corregir"
+        inputs={[{type: "number", placeholder: "Calificación", value: score, onChange: (e) => setScore(e.target.value)}]}
+        />
+      }
+        <nav className="bg-[#1D2B33] text-white flex justify-between items-center p-3 shadow-md">
+          <div className="flex items-center gap-4 w-6/12">
+            <div className="flex justify-center w-full items-center gap-2">
+              <img src={uploadIcon} alt="Upload icon" />
+              <span>{freeModeProgress?.name}</span>
+            </div>
+          </div>
+          <div className="flex gap-4">
+    {isTeacher ? (
+      <div className="flex gap-4">
       <button
         onClick={() => setPlay(!play)}
-        className="bg-[#E0F47E] text-black font-semibold px-4 py-1 rounded hover:bg-[#D9F0A3]"
+        className="bg-[#141F25] text-[#E0F47E]  font-semibold px-4 py-1 rounded"
       >
         Ejecutar
       </button>
-      <div className="relative">
-        <button
-          onClick={() => setShowSaveOptions(!showSaveOptions)}
-          className="bg-[#A5BAEB] px-4 py-1 font-semibold rounded hover:bg-[#9CB0E3]"
-        >
-          Guardar
-        </button>
-        {showSaveOptions && (
-          <div className="absolute right-0 mt-2 w-48 bg-[#A5BAEB] font-semibold rounded-md shadow-lg z-10">
-            <button
-              onClick={() => handleSave(false)}
-              className="block w-full px-4 py-2 text-left hover:bg-[#9CB0E3] rounded-md"
-            >
-              Solo Guardar
-            </button>
-            <button
-              onClick={() => handleSave(true)}
-              className="block w-full px-4 py-2 text-left hover:bg-[#9CB0E3] rounded-md"
-            >
-              Guardar y Exportar
-            </button>
-          </div>
-        )}
+      <button className="bg-[#141F25] px-4 py-1 font-semibold rounded" onClick={() => setShowCorrectDialog(true)}>
+        Calificar
+      </button>
       </div>
-      {examId && (
-        <button
-          onClick={handleSubmit}
-          className="bg-[#A5BAEB] px-4 py-1 font-semibold rounded hover:bg-[#9CB0E3]"
+    ) : (
+      <>
+{/*         <button
+          onClick={handleClear}
+          className="bg-[#EE5E37] px-4 py-1 font-semibold rounded hover:bg-[#E76B4D]"
         >
-          Entregar
+          Borrar
+        </button> */}
+        <button
+          onClick={() => setPlay(!play)}
+          className="bg-[#141F25] text-[#E0F47E] flex items-center gap-2 font-semibold px-4 py-1 rounded"
+        >
+          <img src={playIcon} alt="Play icon" />
+          <span>
+            Ejecutar
+          </span>
         </button>
-      )}
-    </>
-  )}
-</div>
-
-      </nav>
-
-      <div className="flex flex-grow">
-        <div className="w-1/2 bg-gray-800 text-white p-4 overflow-hidden">
-          <Editor
-            activeTab={activeTab}
-            htmlCode={htmlCode}
-            setHtmlCode={setHtmlCode}
-            cssCode={cssCode}
-            setCssCode={setCssCode}
-            jsCode={jsCode}
-            setJsCode={setJsCode}
-          />
+         <div className="relative">
+          <button
+            onClick={() => setShowSaveOptions(!showSaveOptions)}
+            className="bg-[#141F25] flex items-center gap-2 font-semibold px-3 py-1 rounded"
+          >
+            <img src={saveIcon} alt="Save icon" />
+            <span>
+              Guardar
+            </span>
+          </button>
+          {showSaveOptions && (
+            <div className="absolute right-0 mt-2 w-48 bg-[#141F25] font-semibold rounded-md shadow-lg z-10">
+              <button
+                onClick={() => handleSave(false)}
+                className="block w-full px-4 py-2 text-left hover:bg-[#141F25] rounded-md"
+              >
+                Solo Guardar
+              </button>
+              <button
+                onClick={() => handleSave(true)}
+                className="block w-full px-4 py-2 text-left hover:bg-[#141F25] rounded-md"
+              >
+                Guardar y Exportar
+              </button>
+            </div>
+          )}
         </div>
-        <div className="w-1/2 bg-white border-l p-4">
-          <Preview
-            htmlCode={htmlCode}
-            cssCode={cssCode}
-            jsCode={jsCode}
-            play={play}
-          />
+      {examId && (
+        <>
+          <button className="bg-[#141F25] flex items-center gap-2 font-semibold px-4 py-1 rounded" onClick={() => setShowConsigna(!showConsigna)}>
+            <img src={readIcon} alt="Read icon" />
+            Consigna
+          </button>
+          <button
+            onClick={handleSubmit}
+            className="bg-[#141F25] flex items-center gap-2 font-semibold px-4 py-1 rounded"
+          >
+            <img src={sendIcon} alt="Send icon" />
+            Entregar
+          </button>
+        </>
+      )}
+
+      </>
+    )}
+    {showConsigna && (
+    exam.question.startsWith('http') ? (
+    <PdfViewer pdfUrl={exam?.question} onClose={() => setShowConsigna(false)} />
+    ) : (
+      <GenericDialog 
+        title={"Consigna"}
+        type="info"
+        description={exam.question}
+        onCancel={() => setShowConsigna(false)}
+        confirmButtonText="Cerrar"
+      />
+    )  
+    )}
+    </div>
+
+        </nav>
+        <div className="bg-[#141F25] p-2">
+          <CodeTabs activeTab={activeTab} setActiveTab={setActiveTab} />
+        </div>
+        <div className="flex flex-grow">
+          <div className="w-1/2 bg-gray-800 text-white p-4 overflow-hidden">
+            <Editor
+              activeTab={activeTab}
+              htmlCode={htmlCode}
+              setHtmlCode={setHtmlCode}
+              cssCode={cssCode}
+              setCssCode={setCssCode}
+              jsCode={jsCode}
+              setJsCode={setJsCode}
+            />
+          </div>
+          <div className="w-1/2 bg-white border-l p-4">
+            <Preview
+              htmlCode={htmlCode}
+              cssCode={cssCode}
+              jsCode={jsCode}
+              play={play}
+            />
+          </div>
         </div>
       </div>
     </div>

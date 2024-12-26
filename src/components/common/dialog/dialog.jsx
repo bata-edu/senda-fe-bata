@@ -29,7 +29,7 @@ const GenericDialog = ({
             <img src={imageSrc} alt="info" className="object-contain" />
           </div>
         )}
-        <h2 className="text-xl font-semibold mb-2">{title}</h2>
+        <h2 className="text-xl text-black font-semibold mb-2">{title}</h2>
         <p className="text-gray-600 mb-4">{description}</p>
 
 
@@ -72,25 +72,38 @@ const GenericDialog = ({
                 );
               } else if (item.type === 'file') {
                 return <p key={index} className="text-gray-700">Archivo: {item.value}</p>;
-              }
-
+              } 
               return null;
             })}
           </div>
         )}
 
         {type === 'info' && (
-          <div className="flex justify-end space-x-4">
-            <button
-              onClick={onCancel}
-              className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg border-2 border-gray-300 hover:bg-gray-100"
-            >
-              Cerrar
-            </button>
-          </div>
-          
+        <div className="flex justify-end items-center space-x-4 mt-4">
+          <button
+            onClick={onCancel}
+            className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg border-2 border-gray-300 hover:bg-gray-100"
+          >
+            Cerrar
+          </button>
+          {content.some(item => item.type === 'button') && (
+            <div className="flex justify-end space-x-4">
+              {content
+                .filter(item => item.type === 'button')
+                .map((item, index) => (
+                  <button
+                    key={index}
+                    onClick={item.onClick}
+                    className="px-4 py-2 border border-black rounded-lg hover:opacity-90"
+                    style={{ backgroundColor: item.color || '#4558C8' }}
+                  >
+                    {item.value}
+                  </button>
+                ))}
+            </div>
+          )}
+        </div>
         )}
-
         {type !== 'info' && inputs.length > 0 && (
           <div className="space-y-4 mb-6">
             {inputs.map((input, index) => (

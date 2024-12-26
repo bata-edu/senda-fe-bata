@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { EXAM_BY_COURSE, EXAM_ENDPOINT, EXAM_SUBMISSIONS, EXAM_SUBMISSIONS_BY_EXAM, EXAM_SUBMIT, GET_COURSE_EXAMS, RESET_STATE } from "../../utils/constants";
+import { EXAM_BY_COURSE, EXAM_ENDPOINT, EXAM_SUBMISSIONS, EXAM_SUBMISSIONS_BY_EXAM, EXAM_SUBMIT, GET_COURSE_EXAMS, RESET_STATE, GET_MY_TASK_PROGRESS, GET_MY_GRADE } from "../../utils/constants";
 import apiClient from "../../utils/interceptors/authInterceptor";
 import { genericCreateAndUpload } from "../../utils/createObjectWithFile";
 import { buildQueryString } from "../../utils/buildQueryString";
@@ -21,6 +21,18 @@ export const createExam = createAsyncThunk(
             return { id: createdExam.id, ...createdExam };
         } catch (error) {
             return rejectWithValue(error.response?.data || "Error al crear el examen");
+        }
+    }
+);
+
+export const updateExam = createAsyncThunk(
+    "exam/updateExam",
+    async ({ examId ,exam }, { rejectWithValue }) => {
+        try {
+            const response = await apiClient.patch(`${EXAM_ENDPOINT}/${examId}`, exam);
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response.data);
         }
     }
 );
@@ -60,7 +72,6 @@ export const gradeSubmission = createAsyncThunk(
     "exam/gradeSubmission",
     async ({id, score}, { rejectWithValue }) => {
         try {
-            console.log(score, id);
             const response = await apiClient.patch(`${EXAM_SUBMISSIONS}/${id}`, {score});
             return response.data;
         } catch (error) {
@@ -134,6 +145,42 @@ export const setActivateExamToCorrect = createAsyncThunk(
     }
   );
 
+export const getExamById = createAsyncThunk(
+    "exam/getExamById",
+    async (examId, { rejectWithValue }) => {
+        try {
+            const response = await apiClient.get(`${EXAM_ENDPOINT}/${examId}`);
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response.data);
+        }
+    }
+);
+
+export const myTaskProgress = createAsyncThunk(
+    "exam/myTaskProgress",
+    async ({examId, courseId}, { rejectWithValue }) => {
+        try {
+            const response = await apiClient.get(`${GET_MY_TASK_PROGRESS}/${examId}/${courseId}`);
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response.data);
+        }
+    }
+);
+
+export const myGrade = createAsyncThunk(
+    "exam/myGrade",
+    async (examId, { rejectWithValue }) => {
+        try {
+            const response = await apiClient.get(`${GET_MY_GRADE}/${examId}`);
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response.data);
+        }
+    }
+);
+
 
 // Creación del slice para los examenes
 const examSlice = createSlice({
@@ -144,7 +191,8 @@ const examSlice = createSlice({
         submissions: null,
         error: null,
         exams: [],
-        examToCorrect: null
+        examToCorrect: null,
+        studentGrade: null
     },
     reducers: {},
     extraReducers: (builder) => {
@@ -210,6 +258,20 @@ const examSlice = createSlice({
                 state.error = null;
             })
             .addCase(getSubmissionById.rejected, (state, action) => {
+                state.error = action.payload;
+            })
+            .addCase(getExamById.fulfilled, (state, action) => {
+                state.exam = action.payload;
+                state.error = null;
+            })
+            .addCase(getExamById.rejected, (state, action) => {
+                state.error = action.payload;
+            })
+            .addCase(myGrade.fulfilled, (state, action) => {
+                state.studentGrade = action.payload;
+                state.error = null;
+            })
+            .addCase(myGrade.rejected, (state, action) => {
                 state.error = action.payload;
             })
             .addCase(RESET_STATE, (state) => {

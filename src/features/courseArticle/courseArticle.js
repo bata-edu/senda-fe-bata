@@ -39,7 +39,6 @@ export const createCourseArticle = createAsyncThunk(
         try {
             const postUrl = `${COURSE_ARTICLE_ENDPOINT}/${courseId}`;
             const response = await genericCreateAndUpload({body: article, createUrl: postUrl, file, fileKey: "photo", updateUrl: COURSE_ARTICLE_DETAIL});
-            console.log(response)
             return { id: response.id, ...response };
         } catch (error) {
             return rejectWithValue(error.response.data);
@@ -117,8 +116,8 @@ const courseArticleSlice = createSlice({
         })
         .addCase(editCourseArticle.fulfilled, (state, action) => {
             state.loading = false;
-            const index = state.articles.findIndex((article) => article.id === action.payload.id);
-            state.articles[index] = action.payload;
+            /* const index = state.articles.findIndex((article) => article.id === action.payload.id);
+            state.articles[index] = action.payload; */
         })
         .addCase(editCourseArticle.rejected, (state, action) => {
             state.loading = false;
