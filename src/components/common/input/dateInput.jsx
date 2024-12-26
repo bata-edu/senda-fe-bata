@@ -26,7 +26,7 @@ const DatePickerInput = ({ label, value, onChange, placeholder }) => {
                 type="date"
                 ref={dateInputRef} 
                 value={value}
-                onChange={(e) => onChange(e.target.value)}
+                onChange={(e) =>  onChange(e.target.value)}
                 placeholder={placeholder}
                 className="absolute top-0 left-0 w-40 opacity-0 pointer-events-none"
                 style={{ transform: 'translateY(calc(-100% - 4px))' }}

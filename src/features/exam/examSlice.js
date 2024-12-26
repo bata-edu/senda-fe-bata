@@ -25,6 +25,18 @@ export const createExam = createAsyncThunk(
     }
 );
 
+export const updateExam = createAsyncThunk(
+    "exam/updateExam",
+    async ({ examId ,exam }, { rejectWithValue }) => {
+        try {
+            const response = await apiClient.patch(`${EXAM_ENDPOINT}/${examId}`, exam);
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response.data);
+        }
+    }
+);
+
 
 // Thunk para obtener las entregas de un examen
 export const getExamSubmissions = createAsyncThunk(
