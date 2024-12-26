@@ -8,6 +8,8 @@ import {
 import LoadingPage from "../../pages/LoadingPage";
 import "../../styles/exercise.css";
 import { fetchExercise } from "../../features/section/sectionSlice";
+import MultipleChoice from "../exercises/MultipleChoice";
+import DragNDrop from "../exercises/DragNDrop/DragNDrop";
 
 const Exercise = ({ advance, completedExercise, loadingNextAction }) => {
   const navigate = useNavigate();
@@ -23,6 +25,22 @@ const Exercise = ({ advance, completedExercise, loadingNextAction }) => {
   const [currentExercise, setCurrentExercise] = useState(null);
   const [hasFetchedInitialData, setHasFetchedInitialData] = useState(false);
 
+  const selectedModule = localStorage.getItem("selectedModule");
+
+  const courseColors = {
+    "67190a2ecc62ee9e8f06c57b": {
+      primary: "#D9B9F3",
+      secondary: "#D9B9F3",
+    },
+    "67190a2ecc62ee9e8f06c57b": {
+      primary: "#E0F47E",
+      secondary: "#F6FCCB",
+    },
+
+    "67190a2ecc62ee9e8f06c57b": { primary: "#4558C8", secondary: "#7B97DF" },
+    "67190a2ecc62ee9e8f06c57b": { primary: "#EE5E37", secondary: "#F9C5AF" },
+  };
+
   useEffect(() => {
     if (!hasFetchedInitialData && currentProgress?.course) {
       const fetchInfo = async () => {
@@ -33,7 +51,13 @@ const Exercise = ({ advance, completedExercise, loadingNextAction }) => {
 
       fetchInfo();
     }
-  }, [dispatch, currentProgress, completedExercise, myExercise, hasFetchedInitialData]);
+  }, [
+    dispatch,
+    currentProgress,
+    completedExercise,
+    myExercise,
+    hasFetchedInitialData,
+  ]);
 
   useEffect(() => {
     if (currentExercise) {
@@ -54,7 +78,9 @@ const Exercise = ({ advance, completedExercise, loadingNextAction }) => {
         if (option === exe?.answer) {
           setChildrenIndex(childrenIndex + 1);
           if (childrenIndex + 1 < currentExercise.childrens.length) {
-            await dispatch(fetchExercise(currentExercise.childrens[childrenIndex + 1]));
+            await dispatch(
+              fetchExercise(currentExercise.childrens[childrenIndex + 1])
+            );
             return;
           } else {
             setIsChildren();
@@ -84,7 +110,9 @@ const Exercise = ({ advance, completedExercise, loadingNextAction }) => {
         if (option === exe?.answer) {
           setChildrenIndex(childrenIndex + 1);
           if (childrenIndex + 1 < currentExercise.childrens.length) {
-            await dispatch(fetchExercise(currentExercise.childrens[childrenIndex + 1]));
+            await dispatch(
+              fetchExercise(currentExercise.childrens[childrenIndex + 1])
+            );
             return;
           } else {
             setIsChildren();
@@ -130,32 +158,17 @@ const Exercise = ({ advance, completedExercise, loadingNextAction }) => {
         </div>
       )}
       {!loading && (
-        <div>
-          <div className="header">
-            <button className="close-button" onClick={() => navigate("/home")}>X</button>
-            <div className="progress-bar">
-              <div className="progress"></div>
-            </div>
-            <div className="heart-icon">❤️</div>
-          </div>
-          <div className="laptop-container">
-            <div className="laptop-screen">
-              <h2 className="question">{exe?.content}</h2>
-              <div className="options">
-                {exe?.options.map((option, index) => (
-                  <button
-                    key={index}
-                    className={`option-button ${
-                      option === completedExercise?.answer ? "correct-answer" : ""
-                    }`}
-                    onClick={() => advanceExercise(option)}
-                  >
-                    {option}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
+        <div className="w-full">
+          {exe.template === 1 ? (
+            <DragNDrop
+              completedExercise={completedExercise}
+              advance={advanceExercise}
+              exercise={exe}
+              colors={courseColors[selectedModule]}
+            />
+          ) : (
+            ""
+          )}
         </div>
       )}
     </div>

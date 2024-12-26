@@ -38,6 +38,7 @@ import FreeCodeList from "../pages/student/FreeCodeList";
 import TeacherAndStudentGuard from "../utils/guards/teacherAndStudentGuard";
 import ClassRoomDetail from "../components/classRoom/classRoomDetail";
 import StudentGrades from "../components/classRoom/StudentGrades";
+import SectionPage from "../pages/student/SectionPage";
 
 const AppRoutes = () => {
   useEffect(() => {
@@ -86,9 +87,17 @@ const AppRoutes = () => {
           <Route path="sections" element={<Sections />} />
           <Route path="levels" element={<Levels />} />
           <Route path="profile" element={<Profile />} />
+          <Route
+            path="section/:id"
+            element={
+              <AuthGuard>
+                <SectionPage />
+              </AuthGuard>
+            }
+          ></Route>
         </Route>
         <Route
-          path="/progress"
+          path="learn/progress"
           element={
             <AuthGuard>
               <StudentGuard>
@@ -249,7 +258,7 @@ const AppRoutes = () => {
             </AuthGuard>
           }
         />
-        <Route 
+        <Route
           path="/exam-form/:courseId"
           element={
             <AuthGuard>
