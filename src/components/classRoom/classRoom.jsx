@@ -21,8 +21,7 @@ const ClassRoom = () => {
 
   useEffect(() => {
     if(user.schoolData.courses.length > 0) {
-      console.log("holaa")
-      navigate(`/classroom/${user.schoolData.courses[1]}`);
+      navigate(`/classroom/${user.schoolData.courses[0]}`);
     } 
   
   }, []);

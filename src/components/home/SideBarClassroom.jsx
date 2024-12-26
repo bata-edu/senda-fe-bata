@@ -17,7 +17,7 @@ const SideBarClassroom = () => {
   const user = getUser();
 
   const handleNavigation = (path) => {
-    navigate(path + `/${user.schoolData.courses[1]}`);
+    navigate(path + `/${user.schoolData.courses[0]}`);
   };
 
   return (
