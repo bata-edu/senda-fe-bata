@@ -10,7 +10,7 @@ import {
   updateUserFreeModeProgress,
 } from "../../features/user/userSlice";
 import { toast } from "react-toastify";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useLocation } from 'react-router-dom';
 import { getUser } from "../../features/auth/authService";
 import { getExamById, getSubmissionById, gradeSubmission, submitExam } from "../../features/exam/examSlice";
@@ -22,15 +22,18 @@ import sendIcon from "../../assets/icons/send.svg";
 import readIcon from "../../assets/icons/read.svg";
 import PdfViewer from "../../utils/PdfViewer";
 import GenericDialog from "../../components/common/dialog/dialog";
+import SuccessDialog from "../../components/common/dialog/successDialog";
+import { getCourseLocalStorage } from "../../features/school/schoolSlice";
 
 const EditorPage = () => {
   const dispatch = useDispatch();
   const location = useLocation();
+  const navigate = useNavigate();
   const {id} = useParams();
   const [htmlCode, setHtmlCode] = useState("");
   const [cssCode, setCssCode] = useState("");
   const [jsCode, setJsCode] = useState("");
-  const [activeTab, setActiveTab] = useState("html");
+  const [activeTab, setActiveTab] = useState("index.html");
   const [play, setPlay] = useState(false);
   const [showSaveOptions, setShowSaveOptions] = useState(false);
   const { freeModeProgress } = useSelector((state) => state.user);
@@ -38,6 +41,8 @@ const EditorPage = () => {
   const [showCorrectDialog, setShowCorrectDialog] = useState(false);
   const [score, setScore] = useState(0);
   const [showConsigna, setShowConsigna] = useState(false);
+  const [showSubmitExamDialog, setShowSubmitExamDialog] = useState(false);
+  const user = getUser();
   
   const handleClear = () => {
     setHtmlCode("");
@@ -143,7 +148,7 @@ const EditorPage = () => {
         exam: examId,
       };
       await dispatch(submitExam({body}));
-      toast.success("Examen entregado con éxito");
+      setShowSubmitExamDialog(true);
     } catch (error) {
       console.error("Error al entregar el examen:", error);
     }
@@ -154,6 +159,8 @@ const EditorPage = () => {
       await dispatch((gradeSubmission({id: (examToCorrect.id || examToCorrect._id), score})));
       toast.success("Examen corregido con éxito");
       setShowCorrectDialog(false);
+      const courseId = getCourseLocalStorage();
+      navigate("/exam-califications/" + courseId);
     } catch (error) {
       console.error("Error al corregir el examen:", error);
   }
@@ -174,6 +181,14 @@ const EditorPage = () => {
         cancelButtonText="Cancelar"
         confirmButtonText="Corregir"
         inputs={[{type: "number", placeholder: "Calificación", value: score, onChange: (e) => setScore(e.target.value)}]}
+        />
+      }
+      {showSubmitExamDialog &&
+        <SuccessDialog
+          title={"Examen entregado con éxito"}
+          description={"Le avisaremos a su profesor que ha entregado el examen"}
+          buttonText={"Ver en calificaciones"}
+          onConfirm={() => {setShowSubmitExamDialog(false); navigate(`/grades/${user.schoolData.courses[0]}`)}}
         />
       }
         <nav className="bg-[#1D2B33] text-white flex justify-between items-center p-3 shadow-md">

@@ -116,7 +116,7 @@ const LoginForm = () => {
             <p className="text-sm text-center text-gray-500 mb-6">
               ¡Bienvenido! Por favor, ingresa tus datos.
             </p>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-4">
               <TextInput
                 label={"Email"}
                 id="email"
@@ -154,10 +154,11 @@ const LoginForm = () => {
                     : "bg-strongBlue hover:strongBlue-600"
                 }`}
                 disabled={isLoading}
+                onClick={handleSubmit}
               >
                 {isLoading ? "Cargando..." : "Iniciar sesión"}
               </button>
-            </form>
+            </div>
             <div className="mt-3 flex flex-col space-y-2">
               <GoogleLogin
                 onSuccess={handleGoogleLogin}

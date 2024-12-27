@@ -30,7 +30,7 @@ const ExamCalifications = () => {
     useEffect(() => {
         const fetchExams = async () => {
             try {
-                const query = { limit : 999, sortBy: "updatedAt:desc"};
+                const query = { limit : 999, sortBy: "updatedAt:desc", type: '!TASK'};
                 await dispatch(getExamsByCourse({ courseId: courseInfo.id, query })).unwrap();
             } catch (error) {
                 console.error("Error al cargar exámenes:", error);

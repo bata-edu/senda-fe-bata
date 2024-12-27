@@ -39,6 +39,9 @@ import TeacherAndStudentGuard from "../utils/guards/teacherAndStudentGuard";
 import ClassRoomDetail from "../components/classRoom/classRoomDetail";
 import StudentGrades from "../components/classRoom/StudentGrades";
 import SectionPage from "../pages/student/SectionPage";
+import ClassRoomExams from "../components/classRoom/classRoomExams";
+import ClassRoomAssigments from "../components/classRoom/classRoomAssigments";
+import TaskForm from "../components/exam/TaskForm";
 
 const AppRoutes = () => {
   useEffect(() => {
@@ -122,6 +125,28 @@ const AppRoutes = () => {
             <AuthGuard>
               <StudentGuard>
                 <ClassRoomDetail />
+              </StudentGuard>
+            </AuthGuard>
+          }
+        />
+
+        <Route
+          path="/classroom/exams/:id"
+          element={
+            <AuthGuard>
+              <StudentGuard>
+                <ClassRoomExams/>
+              </StudentGuard>
+            </AuthGuard>
+          }
+        />
+
+        <Route
+          path="/classroom/practices/:id"
+          element={
+            <AuthGuard>
+              <StudentGuard>
+                <ClassRoomAssigments/>
               </StudentGuard>
             </AuthGuard>
           }
@@ -264,6 +289,16 @@ const AppRoutes = () => {
             <AuthGuard>
               <TeacherGuard>
                 <ExamForm />
+              </TeacherGuard>
+            </AuthGuard>
+          }
+        />
+          <Route
+          path="/task-form/:courseId"
+          element={
+            <AuthGuard>
+              <TeacherGuard>
+                <TaskForm />
               </TeacherGuard>
             </AuthGuard>
           }

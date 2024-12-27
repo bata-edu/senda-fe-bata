@@ -40,10 +40,6 @@ const ExamForm = () => {
             value: 'ASSIGNMENT',
             label: 'Trabajo Práctico',
         },
-        {
-            value: 'TASK',
-            label: 'Tarea',
-        }
     ]
     const [examTypeIndex, setExamTypeIndex] = useState(0);
 
