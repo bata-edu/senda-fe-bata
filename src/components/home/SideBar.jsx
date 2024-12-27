@@ -12,6 +12,8 @@ import { getCourseLocalStorage } from "../../features/school/schoolSlice";
 import calificationIcon from "../../assets/icons/califications.svg";
 import pizzaronIcon from "../../assets/icons/pizzaron.svg";
 import formIcon from "../../assets/icons/form.svg";
+import taskIcon from "../../assets/icons/task.svg";
+
 
 const Sidebar = () => {
   const navigate = useNavigate();
@@ -43,6 +45,10 @@ const handleNavigateCalifications = () => {
 
 const handleNavigateTeacherHome = () => {
     navigate(`/teacher/course/${course.id}`);
+}
+
+const handleNavigateTask = () => {
+    navigate(`/task-form/${course.id}`);
 }
 
   return (
@@ -88,6 +94,15 @@ const handleNavigateTeacherHome = () => {
               onClick={() => handleNavigateExam()}
             >
               Formularios
+            </span>
+          </div>
+          <div className="flex">
+            <img src={taskIcon} alt="Form icon" />
+            <span
+              className="text-lg font-sans font-medium ml-4"
+              onClick={() => handleNavigateTask()}
+            >
+              Tareas
             </span>
           </div>
           <div className="flex">

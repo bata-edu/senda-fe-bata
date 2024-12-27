@@ -32,12 +32,27 @@ export const fetchExercise = createAsyncThunk(
   }
 );
 
+// Thunk para obtener las secciones de un nivel
+
+export const fetchSections = createAsyncThunk(
+  "section/fetchSections",
+  async (levelId, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.get(`${SECTION_ENDPOINT}/${levelId}`);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 const sectionSlice = createSlice({
     name: "section",
     initialState: {
         section: {},
         error: null,
         exercise: null,
+        sections: [],
     },
     reducers: {},
     extraReducers: (builder) => {
@@ -57,11 +72,20 @@ const sectionSlice = createSlice({
             })
             .addCase(fetchExercise.rejected, (state, action) => {
                 state.error = action.payload;
+            });
+        builder
+            .addCase(fetchSections.fulfilled, (state, action) => {
+                state.sections = action.payload;
+                state.error = null;
+            })
+            .addCase(fetchSections.rejected, (state, action) => {
+                state.error = action.payload;
             })
             .addCase(RESET_STATE, (state) => {
                 state.section = {};
                 state.loading = false;
                 state.error = null;
+                state.sections = [];
             });
     }
     });
