@@ -60,6 +60,7 @@ export const COURSE_ENDPOINT = `${API_BASE_URL}/v1/course`;
 export const GET_INTO_COURSE = `${COURSE_ENDPOINT}/getIntoCourse`;
 export const GET_STUDENTS_IN_COURSE = `${COURSE_ENDPOINT}/getStudents`;
 export const GET_STUDENTS_PROGRESS = `${COURSE_ENDPOINT}/getStudentsProgress`;
+export const GET_COURSE_AND_SCHOOL = `${COURSE_ENDPOINT}/getCourseAndSchool`;
 
 export const EXAM_ENDPOINT = `${API_BASE_URL}/v1/exam`;
 export const EXAM_SUBMIT = `${EXAM_ENDPOINT}/submit`;
@@ -67,6 +68,11 @@ export const EXAM_SUBMISSIONS = `${EXAM_ENDPOINT}/submissions`;
 export const EXAM_SUBMISSIONS_BY_EXAM = `${EXAM_SUBMISSIONS}ByExam`;
 export const EXAM_BY_COURSE = `${EXAM_ENDPOINT}/byCourse`;
 export const GET_LAST = `${EXAM_ENDPOINT}/getLast`;
+export const GET_COURSE_EXAMS = `${EXAM_ENDPOINT}/studentsExamSubmissions`;
+export const GET_MY_TASK_PROGRESS = `${EXAM_ENDPOINT}/getTaskProgressByStudent`;
+export const GET_MY_GRADE = `${EXAM_ENDPOINT}/getExamSubmissionByStudent`;
+
+export const SUBMIT_EXAM = `${EXAM_ENDPOINT}/submit`;
 
 export const COURSE_ARTICLE_ENDPOINT = `${API_BASE_URL}/v1/courseArticle`;
 export const COURSE_ARTICLE_DETAIL = `${COURSE_ARTICLE_ENDPOINT}/detail`;

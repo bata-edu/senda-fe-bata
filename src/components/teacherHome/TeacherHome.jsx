@@ -6,6 +6,7 @@ import right from '../../assets/icons/corchete-derecho.svg';
 import { getIntoSchool } from '../../features/teacher/teacherSlice';
 import { useDispatch } from 'react-redux';
 import GenericDialog from '../common/dialog/dialog';
+import { saveSchoolLocalStorage } from '../../features/school/schoolSlice';
 
 const TeacherHome = () => {
   const dispatch = useDispatch();
@@ -16,7 +17,8 @@ const TeacherHome = () => {
   const navigate = useNavigate();
 
   const handleSchoolClick = (school) => {
-    navigate(`/courses/${school.id}`, {state: {schoolInfo: school}});
+    saveSchoolLocalStorage(school);
+    navigate(`/courses/${school.id}`);
   };
 
   const handleJoin = async () => {

@@ -2,13 +2,15 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import apiClient from "../../utils/interceptors/authInterceptor";
 import { COURSE_ARTICLE_ENDPOINT, COURSE_ARTICLE_DETAIL, RESET_STATE } from "../../utils/constants";
 import { genericCreateAndUpload } from "../../utils/createObjectWithFile";
+import { buildQueryString } from "../../utils/buildQueryString";
 
 // Thunk para obtener los articulos de un curso
 export const getCourseArticles = createAsyncThunk(
     "courseArticle/getCourseArticles",
-    async (courseId, { rejectWithValue }) => {
+    async ({courseId, query}, { rejectWithValue }) => {
         try {
-            const response = await apiClient.get(`${COURSE_ARTICLE_ENDPOINT}/${courseId}`);
+            const queryString = query ? `?${buildQueryString(query)}` : '';
+            const response = await apiClient.get(`${COURSE_ARTICLE_ENDPOINT}/${courseId}${queryString}`);
             return response.data;
         } catch (error) {
             return rejectWithValue(error.response.data);
@@ -37,7 +39,6 @@ export const createCourseArticle = createAsyncThunk(
         try {
             const postUrl = `${COURSE_ARTICLE_ENDPOINT}/${courseId}`;
             const response = await genericCreateAndUpload({body: article, createUrl: postUrl, file, fileKey: "photo", updateUrl: COURSE_ARTICLE_DETAIL});
-            console.log(response)
             return { id: response.id, ...response };
         } catch (error) {
             return rejectWithValue(error.response.data);
@@ -115,8 +116,8 @@ const courseArticleSlice = createSlice({
         })
         .addCase(editCourseArticle.fulfilled, (state, action) => {
             state.loading = false;
-            const index = state.articles.findIndex((article) => article.id === action.payload.id);
-            state.articles[index] = action.payload;
+            /* const index = state.articles.findIndex((article) => article.id === action.payload.id);
+            state.articles[index] = action.payload; */
         })
         .addCase(editCourseArticle.rejected, (state, action) => {
             state.loading = false;

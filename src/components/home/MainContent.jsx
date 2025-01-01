@@ -56,6 +56,18 @@ const MainContent = () => {
       barCurrent: "#B72017",
       barUnfilled: "#F59D7C",
     },
+    "67190a2ecc62ee9e8f06c57b": {
+      image: <img src={Html} alt="Html logo" />,
+      course: "Html",
+      backgroundCurrent: "#EE5E37",
+      backgroundDone: "#F59D7C",
+      borderCurrent: "#B72017",
+      borderDone: "#EB4624",
+      borderDisable: "#C8C8C8",
+      barDone: "#EB4624",
+      barCurrent: "#B72017",
+      barUnfilled: "#F59D7C",
+    },
     CSS: { image: <img src={Html} alt="Html logo" />, course: "Python" },
     "66fc2fb14c227e973f81b4d1": {
       image: <img src={Html} alt="Html logo" />,

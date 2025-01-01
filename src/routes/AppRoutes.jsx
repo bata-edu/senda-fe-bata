@@ -33,6 +33,15 @@ import { useEffect } from "react";
 import ClassRoom from "../components/classRoom/classRoom";
 import Modules from "../components/home/CourseSelector";
 import Sections from "../components/home/Sections";
+import ExamCalifications from "../components/exam/examCalifications";
+import FreeCodeList from "../pages/student/FreeCodeList";
+import TeacherAndStudentGuard from "../utils/guards/teacherAndStudentGuard";
+import ClassRoomDetail from "../components/classRoom/classRoomDetail";
+import StudentGrades from "../components/classRoom/StudentGrades";
+import SectionPage from "../pages/student/SectionPage";
+import ClassRoomExams from "../components/classRoom/classRoomExams";
+import ClassRoomAssigments from "../components/classRoom/classRoomAssigments";
+import TaskForm from "../components/exam/TaskForm";
 import SectionPage from "../pages/student/SectionPage";
 
 const AppRoutes = () => {
@@ -71,9 +80,9 @@ const AppRoutes = () => {
           path="/learn"
           element={
             <AuthGuard>
-              <StudentGuard>
+              <TeacherAndStudentGuard>
                 <Home />
-              </StudentGuard>
+              </TeacherAndStudentGuard>
             </AuthGuard>
           }
         >
@@ -81,7 +90,6 @@ const AppRoutes = () => {
           <Route path="modules" element={<Modules />} />
           <Route path="sections" element={<Sections />} />
           <Route path="levels" element={<Levels />} />
-          <Route path="editor" element={<EditorPage />} />
           <Route path="profile" element={<Profile />} />
           <Route
             path="section/:id"
@@ -107,8 +115,72 @@ const AppRoutes = () => {
           element={
             <AuthGuard>
               <StudentGuard>
-                <ClassRoom /> {/* Crear componente page */}
+                <ClassRoom />
               </StudentGuard>
+            </AuthGuard>
+          }
+        />
+        <Route
+          path="/classroom/:id"
+          element={
+            <AuthGuard>
+              <StudentGuard>
+                <ClassRoomDetail />
+              </StudentGuard>
+            </AuthGuard>
+          }
+        />
+
+        <Route
+          path="/classroom/exams/:id"
+          element={
+            <AuthGuard>
+              <StudentGuard>
+                <ClassRoomExams />
+              </StudentGuard>
+            </AuthGuard>
+          }
+        />
+
+        <Route
+          path="/classroom/practices/:id"
+          element={
+            <AuthGuard>
+              <StudentGuard>
+                <ClassRoomAssigments />
+              </StudentGuard>
+            </AuthGuard>
+          }
+        />
+
+        <Route
+          path="/grades/:id"
+          element={
+            <AuthGuard>
+              <StudentGuard>
+                <StudentGrades />
+              </StudentGuard>
+            </AuthGuard>
+          }
+        />
+
+        <Route
+          path="/editor"
+          element={
+            <AuthGuard>
+              <TeacherAndStudentGuard>
+                <FreeCodeList />
+              </TeacherAndStudentGuard>
+            </AuthGuard>
+          }
+        />
+        <Route
+          path="/editor/:id"
+          element={
+            <AuthGuard>
+              <TeacherAndStudentGuard>
+                <EditorPage />
+              </TeacherAndStudentGuard>
             </AuthGuard>
           }
         />
@@ -218,6 +290,26 @@ const AppRoutes = () => {
             <AuthGuard>
               <TeacherGuard>
                 <ExamForm />
+              </TeacherGuard>
+            </AuthGuard>
+          }
+        />
+        <Route
+          path="/task-form/:courseId"
+          element={
+            <AuthGuard>
+              <TeacherGuard>
+                <TaskForm />
+              </TeacherGuard>
+            </AuthGuard>
+          }
+        />
+        <Route
+          path="/exam-califications/:courseId"
+          element={
+            <AuthGuard>
+              <TeacherGuard>
+                <ExamCalifications />
               </TeacherGuard>
             </AuthGuard>
           }

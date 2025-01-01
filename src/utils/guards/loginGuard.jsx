@@ -20,7 +20,7 @@ const LoginGuard = ({ children }) => {
     } else if (dayjs(refreshExpires).isAfter(now)) {
       refreshAccessToken()
         .then(() => {
-          navigate("/learn/modules");
+          navigateToDashboard(user.role);
         })
         .catch(() => {
           // Manejar error si falla el refresco del token

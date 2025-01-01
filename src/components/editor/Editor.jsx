@@ -6,30 +6,27 @@ import { css } from '@codemirror/lang-css';
 import { javascript } from '@codemirror/lang-javascript';
 
 const Editor = ({ activeTab, htmlCode, setHtmlCode, cssCode, setCssCode, jsCode, setJsCode }) => {
-
-  const handleChange = React.useCallback((value) => {
-    if (activeTab === 'html') {
-      setHtmlCode(value);
-    } else if (activeTab === 'css') {
-      setCssCode(value);
-    } else if (activeTab === 'javascript') {
-      setJsCode(value);
-    }
-  }, [activeTab, setHtmlCode, setCssCode, setJsCode]);
+  const handleChange = React.useCallback(
+    (value) => {
+      if (activeTab === 'index.html') setHtmlCode(value);
+      if (activeTab === 'style.css') setCssCode(value);
+      if (activeTab === 'script.js') setJsCode(value);
+    },
+    [activeTab, setHtmlCode, setCssCode, setJsCode]
+  );
 
   const extensions = React.useMemo(() => {
-    if (activeTab === 'html') return [html()];
-    if (activeTab === 'css') return [css()];
-    if (activeTab === 'javascript') return [javascript()];
+    if (activeTab === 'index.html') return [html()];
+    if (activeTab === 'style.css') return [css()];
+    if (activeTab === 'script.js') return [javascript()];
     return [];
   }, [activeTab]);
 
   return (
-    <div className="editor-container">
+    <div className="flex-grow overflow-hidden">
       <CodeMirror
-        value={activeTab === 'html' ? htmlCode : activeTab === 'css' ? cssCode : jsCode}
-        height="300px"
-        width='100%'
+        value={activeTab === 'index.html' ? htmlCode : activeTab === 'style.css' ? cssCode : jsCode}
+        height="100%"
         theme={oneDark}
         extensions={extensions}
         onChange={handleChange}
