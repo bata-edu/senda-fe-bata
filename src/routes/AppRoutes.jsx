@@ -42,7 +42,6 @@ import SectionPage from "../pages/student/SectionPage";
 import ClassRoomExams from "../components/classRoom/classRoomExams";
 import ClassRoomAssigments from "../components/classRoom/classRoomAssigments";
 import TaskForm from "../components/exam/TaskForm";
-import SectionPage from "../pages/student/SectionPage";
 
 const AppRoutes = () => {
   useEffect(() => {

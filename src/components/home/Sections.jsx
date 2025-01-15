@@ -9,6 +9,7 @@ import {
   fetchUserProgressById,
   startCourse,
 } from "../../features/userProgress/userProgressSlice";
+import MouseWhite from "../../assets/icons/mouse-white.svg";
 
 const Sections = () => {
   const dispatch = useDispatch();
@@ -20,9 +21,7 @@ const Sections = () => {
 
   const [hasMoreLevels, setHasMoreLevels] = useState(true);
   const [showNoMoreLevels, setShowNoMoreLevels] = useState(false);
-  const sentinelRef = useRef(null);
   const levelRefs = useRef({});
-  const [loading, setLoading] = useState(false);
   const [level, setLevel] = useState(false);
 
   const [userCurrentInfo, setUserCurrentInfo] = useState({
@@ -33,14 +32,45 @@ const Sections = () => {
   const selectedModule = localStorage.getItem("selectedModule");
 
   const courseImage = {
-    Python: { course: "Python" },
-    JavaScript: { course: "Python" },
-    CSS: { course: "Python" },
+    "671909eecc62ee9e8f06c578": {
+      course: "Python",
+      border: "#C694EC",
+      backgroundCurrent: "#9B4CD1",
+      backgroundDone: "#FBF6FE",
+      text: "white",
+      icons: [
+        <img src={MouseWhite} alt="Logo Bata" className="h-16 mx-auto " />,
+      ],
+    },
     "67190a2ecc62ee9e8f06c57b": {
+      course: "JavaScript",
+      border: "#EBF99D",
+      backgroundCurrent: "#EBF99D",
+      backgroundDone: "#C6E635",
+      text: "white",
+      icons: [
+        <img src={MouseWhite} alt="Logo Bata" className="h-16 mx-auto " />,
+      ],
+    },
+    "6749b2b80a8216bdad69e17b": {
+      course: "Css",
+      border: "#7B97DF",
+      backgroundCurrent: "#3D48B8",
+      backgroundDone: "#3D48B8",
+      text: "white",
+      icons: [
+        <img src={MouseWhite} alt="Logo Bata" className="h-16 mx-auto " />,
+      ],
+    },
+    "66fc2fb14c227e973f81b4d1": {
       course: "Html",
       border: "#F59D7C",
-      progress: "#DD2E19B2",
-      background: "#FEF5F2",
+      backgroundCurrent: "#EB4624",
+      backgroundDone: "#FEF5F2",
+      text: "white",
+      icons: [
+        <img src={MouseWhite} alt="Logo Bata" className="h-16 mx-auto " />,
+      ],
     },
   };
   useEffect(() => {
@@ -69,7 +99,7 @@ const Sections = () => {
   };
 
   useEffect(() => {
-    if (selectedModule) {
+    if (selectedModule && !levelsInfo) {
       fetchData(selectedModule);
     }
   }, []);
@@ -79,57 +109,6 @@ const Sections = () => {
       setLevelInfo();
     }
   }, [levelsInfo]);
-
-  const getImageSrc = (index) => {
-    const sectionNumber = (index % 6) + 1;
-    return require(`../../assets/sections-icons-enabled/seccion ${sectionNumber}.png`);
-  };
-
-  const getMarginStyle = (index) => {
-    return (index + 1) % 2 === 0
-      ? { marginRight: "120px" }
-      : { marginLeft: "120px" };
-  };
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      async ([entry]) => {
-        if (entry.isIntersecting && hasMoreLevels) {
-          try {
-            if (window.location.hash) {
-              window.history.replaceState(null, null, window.location.pathname);
-            }
-
-            const response = await dispatch(
-              fetchLevelInfo({ courseId: selectedModule, page, limit: 3 })
-            ).unwrap();
-            if (response.levels.length === 0) {
-              setHasMoreLevels(false);
-              setShowNoMoreLevels(true);
-            }
-          } catch (error) {
-            console.error("Error loading more levels:", error);
-          } finally {
-          }
-        }
-      },
-      {
-        root: null,
-        rootMargin: "100px",
-        threshold: 0.5,
-      }
-    );
-
-    if (sentinelRef.current) {
-      observer.observe(sentinelRef.current);
-    }
-
-    return () => {
-      if (sentinelRef.current) {
-        observer.unobserve(sentinelRef.current);
-      }
-    };
-  }, [page, hasMoreLevels]);
 
   useEffect(() => {
     const handleHashChange = async () => {
@@ -193,20 +172,26 @@ const Sections = () => {
       dispatch(fetchAllLevels({ courseId: moduleId })),
     ]);
   };
-
   return (
-    <div>
-      <div className="flex flex-col py-4 px-6 bg-[#EE5E37] mt-4 rounded-xl border-2 border-[#F9BEA8]">
-        <div onClick={() => navigate(`/learn/levels`)}>Volver a Niveles</div>
+    <div className="flex flex-col w-full h-full items-center">
+      <div
+        style={{
+          background: courseImage[selectedModule].backgroundCurrent,
+          border: `2px solid ${courseImage[selectedModule].border}`,
+        }}
+        className="flex flex-col py-4 px-6  mt-4 rounded-xl  w-[480px]"
+      >
+        <div onClick={() => navigate(`/learn/levels`)}>
+          <span className={`text-${courseImage[selectedModule].text}`}>
+            Volver a Niveles
+          </span>
+        </div>
       </div>
       <div className="relative w-full h-auto flex justify-center items-start mt-12">
         {level?.sections?.map((section, index) => {
-          // Calcula la posición relativa dentro del bloque (0 a 4)
           const position = index % 5;
-          // Calcula el desplazamiento vertical para el bloque actual
-          const rowOffset = Math.floor(index / 5) * 300; // Ajusta la separación vertical entre bloques
+          const rowOffset = Math.floor(index / 5) * 300;
 
-          // Define las posiciones y estilos para cada posición en el patrón
           const positions = [
             {
               className:
@@ -214,20 +199,22 @@ const Sections = () => {
               top: "0px",
               extra: (
                 <div
-                  className="w-1 h-20 relative ml-[70px]"
+                  className="w-1 h-20 relative ml-[58px]"
                   style={{
-                    borderLeft: "3px dashed gray", // Borde izquierdo
-                    borderBottom: "3px dashed gray", // Borde inferior
+                    borderLeft: "4px dashed gray", // Borde izquierdo
+                    borderBottom: "4px dashed gray", // Borde inferior
                     borderTop: "none",
                     borderRight: "none",
-                    width: "75px", // Ajusta el ancho para la base de la "L"
-                    height: "75px", // Ajusta la altura para la parte vertical de la "L"
+                    borderColor: courseImage[selectedModule].border,
+                    width: "60px", // Ajusta el ancho para la base de la "L"
+                    height: "60px", // Ajusta la altura para la parte vertical de la "L"
                   }}
                 ></div>
               ),
             },
             {
-              className: "absolute left-[55%] flex flex-col items-center",
+              className:
+                "absolute left-[55%] flex flex-col items-center -mt-[14px]",
               top: "110px",
               extra: (
                 <div
@@ -236,60 +223,52 @@ const Sections = () => {
                     top: "50%", // Centrado verticalmente dentro del contenedor
                     left: "100%", // Justo a la derecha del contenido
                     width: "60px", // Longitud de la línea horizontal
-                    height: "0px", // Altura 0 ya que es solo una línea
-                    borderBottom: "3px dashed gray", // Línea discontinua usando border
+                    height: "60px", // Altura 0 ya que es solo una línea
+                    borderTop: "4px dashed gray", // Línea discontinua usando border
+                    borderRight: "4px dashed gray", // Línea discontinua usando border
+                    borderColor: courseImage[selectedModule].border,
                   }}
                 ></div>
               ),
             },
             {
               className:
-                "absolute mt-16 left-[60.2%] flex flex-col items-center",
-              top: "90px",
-              extra: (
-                <>
-                  <div
-                    style={{
-                      marginBottom: "-20px",
-                      borderRight: "3px dashed gray",
-                      marginRight: "70px",
-                      width: "75px",
-                      height: "75px",
-                    }}
-                  ></div>
-                </>
-              ),
+                "absolute mt-16 left-[63.3%] flex flex-col items-center",
+              top: "132px",
+              extra: <></>,
             },
 
             {
               className:
-                "absolute left-[55%] flex flex-col items-center z-[10]",
-              top: "320px",
+                "absolute left-[55.5%] flex flex-col items-center z-[10]",
+              top: "295px",
               extra: (
                 <div
-                  className="w-1 h-20 absolute ml-32 -mt-8"
+                  className="w-1 h-20 absolute ml-32 -mt-4"
                   style={{
-                    borderRight: "3px dashed gray",
-                    borderBottom: "3px dashed gray",
+                    borderRight: "4px dashed gray",
+                    borderBottom: "4px dashed gray",
                     borderTop: "none",
-                    width: "75px",
-                    height: "75px",
+                    width: "60px",
+                    height: "60px",
+                    borderColor: courseImage[selectedModule].border,
                   }}
                 ></div>
               ),
             },
             {
               className:
-                "absolute left-1/2 transform -translate-x-1/2 flex flex-col items-center",
-              top: "430px",
+                "absolute left-[50%] transform -translate-x-1/2 flex flex-col items-center",
+              top: "390px",
               extra: (
                 <div
-                  className="w-1 h-20 absolute ml-[75px] -mt-[70px]"
+                  className="w-1 h-20 absolute ml-[70px] -mt-[55px]"
                   style={{
-                    borderLeft: "3px dashed gray",
-                    borderTop: "3px dashed gray",
-                    width: "75px",
-                    height: "75px",
+                    borderLeft: "4px dashed gray",
+                    borderTop: "4px dashed gray",
+                    width: "60px",
+                    height: "60px",
+                    borderColor: courseImage[selectedModule].border,
                   }}
                 ></div>
               ),
@@ -311,12 +290,15 @@ const Sections = () => {
               {extra}
               <div
                 style={{
-                  background: courseImage[selectedModule]?.background,
+                  background:
+                    index === userCurrentInfo.currentSectionIndex
+                      ? courseImage[selectedModule]?.backgroundCurrent
+                      : courseImage[selectedModule]?.backgroundDone,
                   border: `2px solid ${courseImage[selectedModule]?.border}`,
                 }}
                 className="w-20 h-20 text-white py-2 px-4 rounded-lg shadow-md"
               >
-                {section.name}
+                {courseImage[selectedModule]?.icons[0]}
               </div>
             </div>
           );

@@ -1,18 +1,23 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import GenericTable from "../../components/common/table/GenericTable";
-import { fetchUserFreeModeProgress, createUserFreeModeProgress, setActiveFreeModeProgress } from "../../features/user/userSlice";
+import {
+  fetchUserFreeModeProgress,
+  createUserFreeModeProgress,
+  setActiveFreeModeProgress,
+} from "../../features/user/userSlice";
 import Header from "../../components/common/header/Header";
 import htmlIcon from "../../assets/icons/html.svg";
 import cssIcon from "../../assets/icons/css.svg";
 import jsIcon from "../../assets/icons/js.svg";
-import left from '../../assets/icons/corchete-izquierdo.svg';
+import left from "../../assets/icons/corchete-izquierdo.svg";
 import right from "../../assets/icons/corchete-derecho.svg";
-import GenericDialog from "../../components/common/dialog/dialog"
+import GenericDialog from "../../components/common/dialog/dialog";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Loading from "../LoadingPage"
+import Loading from "../LoadingPage";
 import { useNavigate } from "react-router-dom";
+import { TextInput } from "../../components/common/input/Input";
 
 const SearchIcon = () => (
   <svg
@@ -47,7 +52,9 @@ const PlusIcon = () => (
 const FreeCodeList = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const freeModeProgressList = useSelector((state) => state.user.freeModeProgressList);
+  const freeModeProgressList = useSelector(
+    (state) => state.user.freeModeProgressList
+  );
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [openDialog, setOpenDialog] = useState(false);
@@ -55,7 +62,6 @@ const FreeCodeList = () => {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
-  
 
   const debounce = (func, delay) => {
     let timer;
@@ -68,7 +74,7 @@ const FreeCodeList = () => {
   const handleSearch = useCallback(
     debounce((name) => {
       setDebouncedSearchTerm(name);
-    }, 500), 
+    }, 500),
     []
   );
 
@@ -77,16 +83,21 @@ const FreeCodeList = () => {
   }, [dispatch, debouncedSearchTerm]);
 
   const fetchData = async (currentPage) => {
-    const query = { limit: 5,page: currentPage ,sortBy: "updatedAt:desc", name: debouncedSearchTerm };
-    await dispatch(fetchUserFreeModeProgress({query}));
+    const query = {
+      limit: 5,
+      page: currentPage,
+      sortBy: "updatedAt:desc",
+      name: debouncedSearchTerm,
+    };
+    await dispatch(fetchUserFreeModeProgress({ query }));
 
     setLoading(false);
   };
 
   useEffect(() => {
-      if (freeModeProgressList) {
-          setTotalPages(freeModeProgressList.totalPages)
-      }
+    if (freeModeProgressList) {
+      setTotalPages(freeModeProgressList.totalPages);
+    }
   }, [freeModeProgressList]);
 
   const columns = [
@@ -97,15 +108,14 @@ const FreeCodeList = () => {
 
   const navigateToProject = async (row) => {
     await dispatch(setActiveFreeModeProgress(row));
-  
-    const url = row.examId 
-      ? `/editor/${row.id}?examId=${row.examId}` 
+
+    const url = row.examId
+      ? `/editor/${row.id}?examId=${row.examId}`
       : `/editor/${row.id}`;
-  
+
     navigate(url);
   };
-  
-  
+
   const actions = [
     {
       label: "Ir al proyecto",
@@ -114,9 +124,8 @@ const FreeCodeList = () => {
     },
   ];
 
-
   const handleCreateProject = async () => {
-    await dispatch(createUserFreeModeProgress({body: {name}}));
+    await dispatch(createUserFreeModeProgress({ body: { name } }));
     toast.success("Proyecto creado exitosamente");
     setOpenDialog(false);
     await fetchData(page);
@@ -125,10 +134,11 @@ const FreeCodeList = () => {
   const handlePageChange = async (next) => {
     setPage(next);
     await fetchData(next);
-};
+  };
 
-  return (
-    (loading) ? <Loading/> :
+  return loading ? (
+    <Loading />
+  ) : (
     <div>
       <Header />
       <div className="p-6 min-h-screen bg-[#141F25] text-white">
@@ -147,7 +157,7 @@ const FreeCodeList = () => {
             <div className="flex justify-between w-full  p-4">
               <div className="flex items-center bg-gray-800 p-2 rounded-lg">
                 <SearchIcon />
-                <input
+                <TextInput
                   type="text"
                   placeholder="Buscar proyecto"
                   className="bg-transparent outline-none text-white ml-2"
@@ -158,7 +168,10 @@ const FreeCodeList = () => {
                   }}
                 />
               </div>
-              <button className="flex items-center gap-2 bg-[#E0F47E] text-black px-4 py-2 rounded-lg hover:bg-[#CDEA3D]" onClick={() => setOpenDialog(true)}>
+              <button
+                className="flex items-center gap-2 bg-[#E0F47E] text-black px-4 py-2 rounded-lg hover:bg-[#CDEA3D]"
+                onClick={() => setOpenDialog(true)}
+              >
                 <PlusIcon />
                 Nuevo proyecto
               </button>
@@ -176,16 +189,24 @@ const FreeCodeList = () => {
           </div>
         </div>
       </div>
-            {(openDialog) && 
-            <GenericDialog 
-            type="form"
-            title={"Crear nuevo proyecto"}
-            inputs={[{placeholder: "Ingresa el nombre", type: "text" ,value: name, onChange: (e) => setName(e.target.value),}]} 
-            confirmButtonText={"Enviar"}
-            cancelButtonText={"Cancelar"}
-            onCancel={() => setOpenDialog(false)} 
-            onConfirm={handleCreateProject}/>
-            }
+      {openDialog && (
+        <GenericDialog
+          type="form"
+          title={"Crear nuevo proyecto"}
+          inputs={[
+            {
+              placeholder: "Ingresa el nombre",
+              type: "text",
+              value: name,
+              onChange: (e) => setName(e.target.value),
+            },
+          ]}
+          confirmButtonText={"Enviar"}
+          cancelButtonText={"Cancelar"}
+          onCancel={() => setOpenDialog(false)}
+          onConfirm={handleCreateProject}
+        />
+      )}
     </div>
   );
 };

@@ -1,20 +1,20 @@
 import React from "react";
 
-export const CardItem = ({ data, handleDragging }) => {
+export const DraggableItem = ({ option, handleDragging }) => {
   const handleDragStart = (e) => {
-    e.dataTransfer.setData("text", `${data.id}`);
+    e.dataTransfer.setData("text", `${option}`);
     handleDragging(true);
   };
   const handleDragEnd = () => handleDragging(false);
 
   return (
     <div
-      className="card-container"
+      className="border-[#F4F5F7] border-2 bg-[#FAFAFA] px-3 py-2 rounded-lg flex items-center"
       draggable
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
-      <p>{data.content}</p>
+      <span>{option}</span>
     </div>
   );
 };

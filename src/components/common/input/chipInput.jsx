@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import { TextInput } from "./Input";
 
 const ChipInput = ({ chips, setChips, placeholder }) => {
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState("");
 
   const handleAddChip = (e) => {
-    if (e.key === 'Enter' && inputValue.trim()) {
+    if (e.key === "Enter" && inputValue.trim()) {
       e.preventDefault();
       setChips([...chips, inputValue.trim()]);
-      setInputValue('');
+      setInputValue("");
     }
   };
 
@@ -32,12 +33,12 @@ const ChipInput = ({ chips, setChips, placeholder }) => {
             </button>
           </div>
         ))}
-        <input
+        <TextInput
           type="text"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleAddChip}
-          placeholder={placeholder || 'Add a value...'}
+          placeholder={placeholder || "Add a value..."}
           className="flex-1 outline-none "
         />
       </div>
