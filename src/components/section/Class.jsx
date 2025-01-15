@@ -44,35 +44,20 @@ const SectionClass = ({ advance, completedClass, loadingNextAction }) => {
           <LoadingPage />
         </div>
       )}
-      <div className="header">
-        <div className="header-buttons">
-          <button className="skip-button">SALTAR</button>
-          <button className="advance-button" onClick={() => advanceClass()}>
-            AVANZAR
+
+      <div className="border-2 border-[#E4E7EC] rounded-xl p-6 w-96">
+        <div>
+          <h2 className="text-lg">{currentLesson?.name}</h2>
+          {/* <p>{currentLesson?.description}</p> */}
+          <p>{currentLesson?.content}</p>
+          <button
+            onClick={() => advanceClass()}
+            className="bg-[#4558C8] text-white py-2 w-full rounded-xl"
+          >
+            Siguiente
           </button>
         </div>
-      </div>
-      <div className="progress-bar">
-        <div className="progress"></div>
-      </div>
-      <div className="content">
-        <div className="text-container">
-          <h2>{currentLesson?.name}</h2>
-          <p>{currentLesson?.description}</p>
-        </div>
-        <div className="images-container">
-          <div className="message-container">
-            <div className="speech-bubble">
-              <p>{currentLesson?.content}</p>
-            </div>
-            <div className="robot-image-class">
-              <img src={robotImage} alt="Robot" />
-            </div>
-          </div>
-          <div className="books-image">
-            <img src={booksImage} alt="Books" />
-          </div>
-        </div>
+        <div></div>
       </div>
     </div>
   );

@@ -11,6 +11,7 @@ export const TextInput = ({
   value,
   onChange,
   id,
+  onKeyDown,
 }) => {
   return (
     <Input.Wrapper
@@ -26,6 +27,7 @@ export const TextInput = ({
         placeholder={placeHolder}
         value={value}
         onChange={onChange}
+        onKeyDown={onKeyDown}
         classNames={{
           placeHolder: "font-mono",
           input: `border-gray-200 border-[1px]  rounded-lg h-[44px] px-3.5 ${

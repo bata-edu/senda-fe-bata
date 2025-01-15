@@ -1,4 +1,4 @@
-import { CardItem } from "./CardItem";
+import { DraggableItem } from "./DraggableItem";
 
 export const ContainerCards = ({
   items = [],
@@ -25,7 +25,7 @@ export const ContainerCards = ({
       {items.map(
         (item) =>
           status === item.status && (
-            <CardItem
+            <DraggableItem
               data={item}
               key={item.id}
               handleDragging={handleDragging}

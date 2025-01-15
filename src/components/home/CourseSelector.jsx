@@ -6,11 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import ArrowRight from "../../assets/icons/arrowRight";
 import Left from "../../assets/icons/corchete-izquierdo.svg";
 import Right from "../../assets/icons/corchete-derecho.svg";
-import { fetchUserProgressById } from "../../features/userProgress/userProgressSlice.js";
-import {
-  fetchAllLevels,
-  fetchLevelInfo,
-} from "../../features/level/levelSlice.js";
+
 import { useNavigate } from "react-router-dom";
 
 const Modules = () => {
@@ -21,16 +17,17 @@ const Modules = () => {
   // Colores asignados a cada curso
   const courseColors = {
     Python: {
-      primary: "#D9B9F3",
+      primary: "#C694EC",
       secondary: "#D9B9F3",
+      text: "black",
     },
     JavaScript: {
-      primary: "#E0F47E",
-      secondary: "#F6FCCB",
+      primary: "#C6E635",
+      secondary: "#E0F47E",
+      text: "black",
     },
-
-    CSS: { primary: "#4558C8", secondary: "#7B97DF" },
-    Html: { primary: "#EE5E37", secondary: "#F9C5AF" },
+    CSS: { primary: "#3D48B8", secondary: "#4558C8", text: "white" },
+    Html: { primary: "#EB4624", secondary: "#EE5E37", text: "white" },
   };
 
   useEffect(() => {
@@ -48,11 +45,6 @@ const Modules = () => {
   };
 
   const fetchData = async (moduleId) => {
-    await Promise.all([
-      dispatch(fetchUserProgressById(moduleId)),
-      dispatch(fetchLevelInfo({ courseId: moduleId, page: 0, limit: 3 })),
-      dispatch(fetchAllLevels({ courseId: moduleId })),
-    ]);
     navigate("/learn/levels");
   };
 
@@ -68,10 +60,11 @@ const Modules = () => {
         </div>
         <section className="w-2/3 relative">
           {modules?.map((module) => {
-            const moduleColor = courseColors[module.name].primary;
+            const moduleColor = courseColors[module.name]?.primary;
             const percentage =
               module.progress[0]?.courseProgress.toFixed(0) || 59;
-            const transparentModuleColor = courseColors[module.name].secondary;
+            const transparentModuleColor = courseColors[module.name]?.secondary;
+            const textColor = courseColors[module.name]?.text;
 
             return (
               <motion.div
@@ -106,7 +99,7 @@ const Modules = () => {
                 <div className="flex justify-between w-full">
                   <span
                     onClick={() => updateSelectedModule(module.id)}
-                    className="font-mono text-7xl text-white"
+                    className={`font-mono text-7xl text-${textColor}`}
                   >
                     {module.name}
                   </span>
@@ -126,7 +119,7 @@ const Modules = () => {
                     ))}
                   </div>
                   <div>
-                    <ArrowRight color={"white"} />
+                    <ArrowRight color={textColor} />
                   </div>
                 </div>
               </motion.div>

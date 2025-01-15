@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-
-import { fetchUser } from "../../features/user/userSlice";
-import { fetchRank } from "../../features/user/userSlice";
+import { fetchUser, fetchRank } from "../../features/user/userSlice";
 import Sidebar from "../../components/home/SideBar";
-import SidebarRight from "../../components/home/SideBarRight";
 import "../../styles/home.css";
 import { Outlet } from "react-router-dom";
 import LoadingPage from "../LoadingPage";
@@ -28,13 +25,6 @@ const Home = () => {
         if (!selectedModule) return;
         setLoading(true);
 
-        // await Promise.all([
-        //   dispatch(
-        //     fetchLevelInfo({ courseId: selectedModule, page, limit: 3 })
-        //   ),
-        //   dispatch(fetchAllLevels({ courseId: selectedModule })),
-        // ]);
-
         dispatch(fetchUser());
         setLoading(false);
       } catch (error) {
@@ -51,9 +41,11 @@ const Home = () => {
     return (
       <>
         <Header />
-        <div className="home-container">
-          <Sidebar />
-          <div className="main-container">
+        <div className="flex h-screen">
+          {/* Sidebar fijo */}
+          <Sidebar className="fixed top-0 left-0 h-full w-6 bg-white shadow-md z-10" />
+          {/* Contenedor principal con margen para el Sidebar */}
+          <div className="ml-6 w-full bg-gray-100 min-h-[90vh] h-full overflow-y-auto">
             <Outlet />
           </div>
         </div>

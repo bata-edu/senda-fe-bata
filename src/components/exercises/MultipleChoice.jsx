@@ -1,13 +1,19 @@
 import React from "react";
 
-const MultipleChoice = ({ exercise, advance, completedExercise, colors }) => {
+const MultipleChoice = ({
+  exercise,
+  setSelectedOption,
+  completedExercise,
+  colors,
+  selectedOption,
+}) => {
   const getLetterPrefix = (index) => String.fromCharCode(97 + index);
 
   return (
     <div className="border-[#F4F5F7] border-8 rounded-lg w-1/2 mx-auto">
       <div className="p-4 border-b border-b-[#F4F5F7] border-b-4 flex justify-center">
         <span
-          className={`text-lg font-medium text-[${colors.primary}] font-sans`}
+          className={`text-lg font-medium text-[${colors?.primary}] font-sans`}
         >
           Selecciona la respuesta correcta
         </span>
@@ -27,9 +33,11 @@ const MultipleChoice = ({ exercise, advance, completedExercise, colors }) => {
               )})`}</span>
               <button
                 className={` ${
-                  option === completedExercise?.answer ? "bg-green" : ""
+                  option === selectedOption ? "bg-green-500" : ""
                 } border-[#F4F5F7] border-2 py-2 px-3  bg-[#FAFAFA] rounded-lg font-sans`}
-                onClick={() => advance(option)}
+                onClick={() => {
+                  setSelectedOption(option);
+                }}
               >
                 {option}
               </button>

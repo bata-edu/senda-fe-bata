@@ -135,7 +135,7 @@ const AppRoutes = () => {
           element={
             <AuthGuard>
               <StudentGuard>
-                <ClassRoomExams/>
+                <ClassRoomExams />
               </StudentGuard>
             </AuthGuard>
           }
@@ -146,7 +146,7 @@ const AppRoutes = () => {
           element={
             <AuthGuard>
               <StudentGuard>
-                <ClassRoomAssigments/>
+                <ClassRoomAssigments />
               </StudentGuard>
             </AuthGuard>
           }
@@ -293,7 +293,7 @@ const AppRoutes = () => {
             </AuthGuard>
           }
         />
-          <Route
+        <Route
           path="/task-form/:courseId"
           element={
             <AuthGuard>
@@ -303,7 +303,7 @@ const AppRoutes = () => {
             </AuthGuard>
           }
         />
-          <Route 
+        <Route
           path="/exam-califications/:courseId"
           element={
             <AuthGuard>

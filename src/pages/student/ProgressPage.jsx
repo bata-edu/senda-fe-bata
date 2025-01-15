@@ -150,13 +150,13 @@ const ProgressPage = () => {
   return (
     <>
       <Header />
-      <div>
+      <div className=" h-[90vh] bg-[#FAFAFA] pt-4">
         {(loading || loadingSection || loadingNextAction) && (
           <div className="loading">
             <LoadingPage />
           </div>
         )}
-        <div className="w-full flex mt-4">
+        <div className="w-full flex ">
           <div className="w-12">
             <button
               className="flex items-center pl-4"
@@ -171,8 +171,8 @@ const ProgressPage = () => {
             </button>
           </div>
           <div className="w-full -ml-12">
-            <div className="flex border-[#E4E7EC] border-2 rounded-xl py-4 px-6 w-1/2 mx-auto">
-              {courseImage[selectedModule].image}
+            <div className="flex border-[#E4E7EC] border-2 rounded-xl py-2 px-3 w-1/3 mx-auto">
+              {courseImage[selectedModule]?.image}
               <span className="ml-2 font-sans text-lg font-semibold">
                 Seccion {sectionOrder}: {sectionName}
               </span>

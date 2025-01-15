@@ -16,6 +16,8 @@ import { motion } from "framer-motion";
 import StreaksNDiamonds from "../common/Streaks&Diamons/Streaks&Diamons";
 import Html from "../../assets/icons/html.svg";
 import Python from "../../assets/icons/python.svg";
+import Js from "../../assets/icons/js.svg";
+import Css from "../../assets/icons/css.svg";
 import ArrowBack from "../../assets/icons/arrowBack.svg";
 
 const MainContent = () => {
@@ -25,14 +27,7 @@ const MainContent = () => {
   const { currentProgress, courseId } = useSelector(
     (state) => state.userProgress || {}
   );
-  const [hoveredSection, setHoveredSection] = useState(null);
-  const [hoveredFinalProject, setHoveredFinalProject] = useState(false);
-
-  const [hasMoreLevels, setHasMoreLevels] = useState(true);
-  const [showNoMoreLevels, setShowNoMoreLevels] = useState(false);
-  const sentinelRef = useRef(null);
-  const levelRefs = useRef({});
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(null);
 
   const [userCurrentInfo, setUserCurrentInfo] = useState({
     currentLevelIndex: 0,
@@ -43,20 +38,30 @@ const MainContent = () => {
   const selectedModule = localStorage.getItem("selectedModule");
 
   const courseImage = {
-    Python: { image: <img src={Python} alt="Html logo" />, course: "Python" },
+    "671909eecc62ee9e8f06c578": {
+      image: <img src={Python} alt="Html logo" />,
+      course: "Python",
+      backgroundCurrent: "#4A3167",
+      backgroundDone: "#9B4CD1",
+      borderCurrent: "#C694EC",
+      borderDone: "#DDC4F0",
+      borderDisable: "#C8C8C8",
+      barDone: "#6F3396",
+      barCurrent: "#6F3396",
+      barUnfilled: "#E1B9FF",
+    },
     "67190a2ecc62ee9e8f06c57b": {
-      image: <img src={Html} alt="Html logo" />,
-      course: "Html",
-      backgroundCurrent: "#EE5E37",
-      backgroundDone: "#F59D7C",
-      borderCurrent: "#B72017",
-      borderDone: "#EB4624",
+      image: <img src={Js} alt="Html logo" />,
+      course: "JavaScript",
+      backgroundCurrent: "#C6E635",
+      backgroundDone: "#EBF99D",
+      borderCurrent: "#83A30D",
+      borderDone: "#83A30D",
       borderDisable: "#C8C8C8",
       barDone: "#EB4624",
-      barCurrent: "#B72017",
-      barUnfilled: "#F59D7C",
+      barCurrent: "#627C0F",
+      barUnfilled: "#EBF99D",
     },
-    CSS: { image: <img src={Html} alt="Html logo" />, course: "Python" },
     "66fc2fb14c227e973f81b4d1": {
       image: <img src={Html} alt="Html logo" />,
       course: "Html",
@@ -68,6 +73,18 @@ const MainContent = () => {
       barDone: "#EB4624",
       barCurrent: "#B72017",
       barUnfilled: "#F59D7C",
+    },
+    "6749b2b80a8216bdad69e17b": {
+      image: <img src={Css} alt="Html logo" />,
+      course: "Css",
+      backgroundCurrent: "#3D48B8",
+      backgroundDone: "#3D48B8",
+      borderCurrent: "#7B97DF",
+      borderDone: "#7B97DF",
+      borderDisable: "#C8C8C8",
+      barDone: "#313777",
+      barCurrent: "#313777",
+      barUnfilled: "#5B75D6",
     },
   };
 
@@ -95,116 +112,10 @@ const MainContent = () => {
   }, []);
 
   useEffect(() => {
-    if (levelsInfo && levelsInfo.length) {
+    if (levelsInfo && levelsInfo?.length) {
       setLevelInfo();
     }
   }, [levelsInfo]);
-
-  const getImageSrc = (index) => {
-    const sectionNumber = (index % 6) + 1;
-    return require(`../../assets/sections-icons-enabled/seccion ${sectionNumber}.png`);
-  };
-
-  const getMarginStyle = (index) => {
-    return (index + 1) % 2 === 0
-      ? { marginRight: "120px" }
-      : { marginLeft: "120px" };
-  };
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      async ([entry]) => {
-        if (entry.isIntersecting && hasMoreLevels) {
-          try {
-            if (window.location.hash) {
-              window.history.replaceState(null, null, window.location.pathname);
-            }
-
-            const response = await dispatch(
-              fetchLevelInfo({ courseId: selectedModule, page, limit: 3 })
-            ).unwrap();
-            if (response.levels.length === 0) {
-              setHasMoreLevels(false);
-              setShowNoMoreLevels(true);
-            }
-          } catch (error) {
-            console.error("Error loading more levels:", error);
-          } finally {
-          }
-        }
-      },
-      {
-        root: null,
-        rootMargin: "100px",
-        threshold: 0.5,
-      }
-    );
-
-    if (sentinelRef.current) {
-      observer.observe(sentinelRef.current);
-    }
-
-    return () => {
-      if (sentinelRef.current) {
-        observer.unobserve(sentinelRef.current);
-      }
-    };
-  }, [page, hasMoreLevels]);
-
-  useEffect(() => {
-    const handleHashChange = async () => {
-      const levelId = window.location.hash.replace("#", "");
-      if (levelId) {
-        let targetLevel = levelsInfo.find((level) => level._id === levelId);
-        let levelPage = 0;
-        while (!targetLevel && hasMoreLevels) {
-          try {
-            const response = await dispatch(
-              fetchLevelInfo({ courseId, page: levelPage, limit: 3 })
-            ).unwrap();
-            if (response.levels.length === 0) {
-              setHasMoreLevels(false);
-              break;
-            }
-            targetLevel = response.levels.find(
-              (level) => level._id === levelId
-            );
-            levelPage++;
-          } catch (error) {
-            console.error("Error fetching levels:", error);
-            setHasMoreLevels(false);
-            break;
-          }
-        }
-
-        if (targetLevel) {
-          const targetElement = levelRefs.current[levelId];
-          if (targetElement) {
-            targetElement.scrollIntoView({
-              behavior: "smooth",
-              block: "center",
-            });
-          }
-        }
-      }
-    };
-
-    window.addEventListener("hashchange", handleHashChange);
-    handleHashChange();
-
-    return () => {
-      window.removeEventListener("hashchange", handleHashChange);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (showNoMoreLevels) {
-      const timer = setTimeout(() => {
-        setShowNoMoreLevels(false);
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [showNoMoreLevels]);
 
   const fetchData = async (moduleId) => {
     await Promise.all([
@@ -212,30 +123,6 @@ const MainContent = () => {
       dispatch(fetchLevelInfo({ courseId: moduleId, page: 0, limit: 100 })),
       dispatch(fetchAllLevels({ courseId: moduleId })),
     ]);
-  };
-
-  const handleStartCourse = async (moduleId) => {
-    try {
-      setLoading(true);
-      const response = await dispatch(startCourse(moduleId)).unwrap();
-      await fetchData(moduleId);
-      setLevelInfo();
-      setLoading(false);
-    } catch (error) {
-      console.error("Error starting course:", error);
-    }
-  };
-
-  const isSectionEnabled = (levelIndex, sectionIndex) => {
-    if (levelIndex < userCurrentInfo.currentLevelIndex) {
-      return true;
-    } else if (
-      levelIndex === userCurrentInfo.currentLevelIndex &&
-      sectionIndex <= userCurrentInfo.currentSectionIndex
-    ) {
-      return true;
-    }
-    return false;
   };
 
   const handleSectionClick = (levelId) => {
@@ -252,6 +139,7 @@ const MainContent = () => {
       navigate(`/progress?level=${levelId}&index=${levelIndex}&current=false`);
     }
   };
+  console.log(courseImage[selectedModule].backgroundDone);
   return (
     <div className="w-2/3 mx-auto">
       {loading && (
@@ -261,91 +149,23 @@ const MainContent = () => {
       )}
       {selectedModule && levelsInfo?.length ? (
         <>
-          {/* {levelsInfo.map((level, levelIndex) => (
-              <div
-                key={level._id}
-                className={`level-info
-                ${
-                  levelIndex <= userCurrentInfo.currentLevelIndex
-                    ? "active"
-                    : "disabled"
-                }`}
-                ref={(el) => (levelRefs.current[level._id] = el)}
-              >
-                <div className="level-header">
-                  <h2>{`NIVEL ${level.order}`}</h2>
-                </div>
-                <div className="section-content">
-                  <div className="snake-path">
-                    {level.sections.map((section, sectionIndex) => {
-                      const enabled = isSectionEnabled(
-                        levelIndex,
-                        sectionIndex
-                      );
-                      return (
-                        <div
-                          key={section._id}
-                          className={`section-icon ${
-                            enabled ? "active" : "disabled"
-                          }`}
-                          style={getMarginStyle(sectionIndex)}
-                          onMouseEnter={() => setHoveredSection(section.name)}
-                          onMouseLeave={() => setHoveredSection(null)}
-                          onClick={() =>
-                            enabled &&
-                            handleSectionClick(
-                              section._id,
-                              levelIndex,
-                              sectionIndex
-                            )
-                          }
-                        >
-                          <img
-                            src={getImageSrc(sectionIndex)}
-                            alt={`Section ${sectionIndex + 1}`}
-                          />
-                        </div>
-                      );
-                    })}
-                  </div>
-                  <div className="robot">
-                    <img src={robot} alt="Robot" />
-                  </div>
-                </div>
-                <div
-                  className={`robot-final-container ${
-                    levelIndex <= userCurrentInfo.currentLevelIndex
-                      ? "active"
-                      : "disabled"
-                  }`}
-                  onMouseEnter={() => setHoveredFinalProject(level._id)}
-                  onMouseLeave={() => setHoveredFinalProject(null)}
-                  onClick={() =>
-                    levelIndex <= userCurrentInfo.currentLevelIndex &&
-                    handleFinalProjectClick(levelIndex, level._id)
-                  }
-                >
-                  <div className="robot-final">
-                    <img src={robot} alt="Robot" />
-                  </div>
-                  {hoveredFinalProject === level._id &&
-                    level.finalLevelProject[0]?.title && (
-                      <div className="final-project-title">
-                        <h3>{level.finalLevelProject[0].title}</h3>
-                      </div>
-                    )}
-                </div>
-              </div>
-            ))} */}
           <div className="flex w-full">
-            <div className="flex flex-col py-3 px-6 bg-[#EE5E37] mt-4 rounded-xl border-2 border-[#F9BEA8] w-full">
+            <div
+              style={{
+                background: courseImage[selectedModule].backgroundDone,
+                border: `2px solid ${courseImage[selectedModule].borderDone}`,
+              }}
+              className={`flex flex-col py-3 px-6  mt-4 rounded-xl border-2 border-[#F9BEA8] w-full`}
+            >
               <div>
                 <button
                   onClick={() => navigate(`/learn/modules`)}
                   className="flex items-center"
                 >
                   <img src={ArrowBack} alt="arrow back" />
-                  <span className="text-white text-lg font-sans ml-2 font-medium">
+                  <span
+                    className={`text-white  text-lg font-sans ml-2 font-medium`}
+                  >
                     Ir a Lenguajes
                   </span>
                 </button>
@@ -359,19 +179,19 @@ const MainContent = () => {
             </div>
             <StreaksNDiamonds />
           </div>
-          <div className="relative h-screen w-full mt-36">
+          <div className="relative w-full mt-36">
             {levelsInfo?.map((level, index) => {
               const progressBarColor =
                 index < userCurrentInfo.currentLevelIndex
-                  ? courseImage[selectedModule].barDone
+                  ? courseImage[selectedModule]?.barDone
                   : index === userCurrentInfo.currentLevelIndex
-                  ? courseImage[selectedModule].barCurrent
+                  ? courseImage[selectedModule]?.barCurrent
                   : "#DDDDDD";
               const remainingProgressBarColor =
                 index < userCurrentInfo.currentLevelIndex
-                  ? courseImage[selectedModule].barDone
+                  ? courseImage[selectedModule]?.barDone
                   : index === userCurrentInfo.currentLevelIndex
-                  ? courseImage[selectedModule].barUnfilled
+                  ? courseImage[selectedModule]?.barUnfilled
                   : "#DDDDDD";
               return (
                 <motion.div
@@ -472,12 +292,6 @@ const MainContent = () => {
         </>
       ) : (
         <></>
-      )}
-      {selectedModule && showNoMoreLevels && (
-        <div className="no-more-levels">No hay más niveles disponibles.</div>
-      )}
-      {selectedModule && hoveredSection && (
-        <div className="section-tooltip">{hoveredSection}</div>
       )}
     </div>
   );

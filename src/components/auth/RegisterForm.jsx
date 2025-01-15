@@ -1,5 +1,9 @@
 import React, { useState } from "react";
-import { registerUser, googleRegister, registerTeacher } from "../../features/auth/authService";
+import {
+  registerUser,
+  googleRegister,
+  registerTeacher,
+} from "../../features/auth/authService";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
@@ -7,6 +11,7 @@ import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
 import logoImage from "../../assets/logo.svg";
 import simpleLogo from "../../assets/simple-logo.svg";
 import SuccessDialog from "../common/dialog/successDialog";
+import { TextInput } from "../common/input/Input";
 
 const MySwal = withReactContent(Swal);
 
@@ -27,10 +32,23 @@ const RegisterForm = () => {
 
     try {
       if (isTeacher) {
-        await registerTeacher({ name, lastName, email, password, confirmPassword, code });
+        await registerTeacher({
+          name,
+          lastName,
+          email,
+          password,
+          confirmPassword,
+          code,
+        });
         setShowSuccessDialog(true);
       } else {
-        await registerUser({ email, password, name, lastName, confirmPassword });
+        await registerUser({
+          email,
+          password,
+          name,
+          lastName,
+          confirmPassword,
+        });
         setShowSuccessDialog(true);
       }
     } catch (err) {
@@ -58,17 +76,21 @@ const RegisterForm = () => {
 
         <div className="flex flex-1 items-center justify-center bg-grayBg">
           <div className="w-full max-w-sm bg-grayBg rounded-lg p-6">
-            <img src={simpleLogo} alt="Logo Bata" className="h-16 mx-auto my-3" />
-            <h2 className="text-xl font-bold text-center text-gray-800">Crea tu perfil</h2>
+            <img
+              src={simpleLogo}
+              alt="Logo Bata"
+              className="h-16 mx-auto my-3"
+            />
+            <h2 className="text-xl font-bold text-center text-gray-800">
+              Crea tu perfil
+            </h2>
             <p className="text-sm text-center text-gray-500 mb-6">
               Regístrate para empezar a usar Bata.
             </p>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-                  Nombre
-                </label>
-                <input
+                <TextInput
+                  label="nombre"
                   id="name"
                   type="text"
                   placeholder="Nombre"
@@ -79,10 +101,8 @@ const RegisterForm = () => {
                 />
               </div>
               <div>
-                <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">
-                  Apellido
-                </label>
-                <input
+                <TextInput
+                  label="Apellido"
                   id="lastName"
                   type="text"
                   placeholder="Apellido"
@@ -93,10 +113,8 @@ const RegisterForm = () => {
                 />
               </div>
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                  Correo
-                </label>
-                <input
+                <TextInput
+                  label="Correo"
                   id="email"
                   type="email"
                   placeholder="Correo"
@@ -107,10 +125,8 @@ const RegisterForm = () => {
                 />
               </div>
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                  Contraseña
-                </label>
-                <input
+                <TextInput
+                  label="Contraseña"
                   id="password"
                   type="password"
                   placeholder="Contraseña"
@@ -121,13 +137,8 @@ const RegisterForm = () => {
                 />
               </div>
               <div>
-                <label
-                  htmlFor="confirmPassword"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Confirmar Contraseña
-                </label>
-                <input
+                <TextInput
+                  label="Confirmar Contraseña"
                   id="confirmPassword"
                   type="password"
                   placeholder="Confirmar Contraseña"
@@ -151,10 +162,8 @@ const RegisterForm = () => {
               </div>
               {isTeacher && (
                 <div>
-                  <label htmlFor="code" className="block text-sm font-medium text-gray-700">
-                    Código de Escuela
-                  </label>
-                  <input
+                  <TextInput
+                    label="Código de Escuela"
                     id="code"
                     type="text"
                     placeholder="Código de Escuela"
@@ -168,7 +177,12 @@ const RegisterForm = () => {
               <button
                 type="submit"
                 className={`w-full py-2 text-white font-bold rounded-lg ${
-                  !email || !password || !confirmPassword || !name || !lastName || (isTeacher && !code)
+                  !email ||
+                  !password ||
+                  !confirmPassword ||
+                  !name ||
+                  !lastName ||
+                  (isTeacher && !code)
                     ? "bg-gray-400 cursor-not-allowed"
                     : "bg-strongBlue hover:bg-strongBlue-600"
                 }`}

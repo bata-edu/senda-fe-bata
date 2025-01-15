@@ -70,9 +70,7 @@ const levelSlice = createSlice({
       })
       .addCase(fetchLevelInfo.fulfilled, (state, action) => {
         state.page = state.page + 1;
-        state.levelsInfo = state.levelsInfo
-          ? [...state.levelsInfo, ...action.payload.levels]
-          : action.payload.levels;
+        state.levelsInfo = action.payload.levels;
         state.module = action.payload.module;
       })
       .addCase(fetchLevelInfo.rejected, (state, action) => {
