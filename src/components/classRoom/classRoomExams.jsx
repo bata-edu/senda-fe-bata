@@ -32,6 +32,8 @@ const ClassRoomExams = () => {
     const [taskList, setTaskList] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 5;
+    const [totalItems, setTotalItems] = useState(0);
+    
 
     useEffect(() => {
         fetchData(currentPage);
@@ -47,6 +49,7 @@ const ClassRoomExams = () => {
         }
 
         const res = await dispatch(getExamsByCourse({courseId: id, query})).unwrap();
+        setTotalItems(res.totalPages);
         setCourseData(res.results);
         setLoading(false); 
     }
@@ -161,16 +164,21 @@ const ClassRoomExams = () => {
                             </div>
                             </div>
                         ))}
-                            <div className="flex justify-center mt-4 gap-2">
-                                    {Array.from({ length: Math.ceil(courseData.length / itemsPerPage) }, (_, i) => i + 1).map((page) => (
-                                        <button
-                                            key={page}
-                                            onClick={() => handlePageChange(page)}
-                                            className={`px-4 py-2 rounded-lg ${currentPage === page ? 'bg-[#4558C8] text-white' : 'bg-white text-[#4558C8] border border-[#4558C8]'}`}
-                                        >
-                                            {page}
-                                        </button>
-                                    ))}
+                        <div className="flex justify-center mt-4 gap-4">
+                                <button
+                                    onClick={() => handlePageChange(currentPage - 1)}
+                                    disabled={currentPage === 1}
+                                    className="px-4 py-2 rounded-lg bg-white text-[#4558C8] border border-[#4558C8] disabled:opacity-50"
+                                >
+                                    Atrás
+                                </button>
+                                <button
+                                    onClick={() => handlePageChange(currentPage + 1)}
+                                    disabled={currentPage === totalItems}
+                                    className="px-4 py-2 rounded-lg bg-white text-[#4558C8] border border-[#4558C8] disabled:opacity-50"
+                                >
+                                    Siguiente
+                                </button>
                             </div>
                         </div>
                     </div>
