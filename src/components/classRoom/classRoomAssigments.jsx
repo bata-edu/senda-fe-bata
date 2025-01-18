@@ -30,23 +30,32 @@ const ClassRoomAssigments = () => {
     const [articleSelected, setArticleSelected] = useState();
     const { freeModeProgress } = useSelector((state) => state.user);
     const [taskList, setTaskList] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 5;
+    
 
     useEffect(() => {
-        fetchData();
+        fetchData(currentPage);
     }, [id]);
 
-    const fetchData = async () => {
+    const fetchData = async (page) => {
         await dispatch(getCourseAndSchool(id));
         const query = {
             limit: 5,
             sortBy: "updatedAt:desc",
-            type: 'ASSIGNMENT'
+            type: 'ASSIGNMENT',
+            page: page || 1
         }
 
         const res = await dispatch(getExamsByCourse({courseId: id, query})).unwrap();
         setCourseData(res.results);
         setLoading(false); 
     }
+
+    const handlePageChange = (nextPage) => {
+        setCurrentPage(nextPage);
+        fetchData(nextPage);
+    };
 
     const handleNavigateToFreeCode = async () => {
         const body = {
@@ -153,6 +162,17 @@ const ClassRoomAssigments = () => {
                             </div>
                             </div>
                         ))}
+                            <div className="flex justify-center mt-4 gap-2">
+                                    {Array.from({ length: Math.ceil(courseData.length / itemsPerPage) }, (_, i) => i + 1).map((page) => (
+                                        <button
+                                            key={page}
+                                            onClick={() => handlePageChange(page)}
+                                            className={`px-4 py-2 rounded-lg ${currentPage === page ? 'bg-[#4558C8] text-white' : 'bg-white text-[#4558C8] border border-[#4558C8]'}`}
+                                        >
+                                            {page}
+                                        </button>
+                                    ))}
+                            </div>
                         </div>
                     </div>
                     <div className="w-1/5">

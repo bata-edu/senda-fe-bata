@@ -137,6 +137,15 @@ const Sidebar = () => {
                 Calificaciones
               </span>
             </div>
+            <div className="flex">
+            <img src={Trophy} alt="Book icon" />
+            <span
+              className="text-lg font-sans font-medium ml-4"
+              onClick={() => handleNavigation("/teacher/league")}
+            >
+              Ligas
+            </span>
+          </div>
           </div>
         )}
         {/* {user && user.role === "student" && (
@@ -166,33 +175,7 @@ const Sidebar = () => {
             </div>
           </div>
         )} */}
-          <div className="flex">
-            <img src={taskIcon} alt="Form icon" />
-            <span
-              className="text-lg font-sans font-medium ml-4"
-              onClick={() => handleNavigateTask()}
-            >
-              Tareas
-            </span>
-          </div>
-          <div className="flex">
-            <img src={calificationIcon} alt="Calification icon" />
-            <span
-              className="text-lg font-sans font-medium ml-4"
-              onClick={() => handleNavigateCalifications()}
-            >
-              Calificaciones
-            </span>
-          </div>
-          <div className="flex">
-            <img src={Trophy} alt="Book icon" />
-            <span
-              className="text-lg font-sans font-medium ml-4"
-              onClick={() => handleNavigation("/teacher/league")}
-            >
-              Ligas
-            </span>
-          </div>
+
       </div>
     </div>
   );

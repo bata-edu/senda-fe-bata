@@ -46,36 +46,55 @@ const CourseDashboard = () => {
   const [chips, setChips] = useState([]);
   const [showUpdateDialog, setShowUpdateDialog] = useState(false);
   const [selectedData, setSelectedData] = useState();
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
 
   useEffect(() => {
-    fetchCourseInfo();
+    fetchCourseInfo(currentPage);
   }, []);
 
-  const fetchCourseInfo = async () => {
+  const fetchCourseInfo = async (page) => {
     setLoading(true);
     const m = await dispatch(fetchModulesInfo());
     const moduleA = m.payload.results[selectedModuleIndex];
     setSelectedModule(moduleA);
+    fetchExams(page);
+    const progress = await dispatch(
+      getStudentsProgress({ courseId: courseInfo.id, moduleId: moduleA.id })
+    ).unwrap();
+    setStudentsProgress([...progress]);
+    setLoading(false);
+  };
+
+  const fetchExams = async (page) => {
     const query = {
       limit: 5,
       sortBy: "updatedAt:desc",
+      page: page || 1,
     };
+
+    const queryExams = {
+      ...query,
+      type: "!TASK"
+    }
+
     const res = await Promise.all([
-      dispatch(getExamsByCourse({ courseId: courseInfo.id, query })),
+      dispatch(getExamsByCourse({ courseId: courseInfo.id, queryExams })),
       dispatch(getCourseArticles({ courseId: courseInfo.id, query })),
-      dispatch(
-        getStudentsProgress({ courseId: courseInfo.id, moduleId: moduleA.id })
-      ),
     ]);
+
     const exams = res[0].payload.results;
     const articles = res[1].payload.results;
-    const progress = res[2].payload;
-    setStudentsProgress([...progress]);
+
     const data = [...exams, ...articles];
     data.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
     setCourseData(data);
-    setLoading(false);
-  };
+  }
+
+  const handlePageChange = (nextPage) => {
+    setCurrentPage(nextPage);
+    fetchExams(nextPage);
+};
 
   const changeModule = async () => {
     const index =
@@ -430,6 +449,17 @@ const CourseDashboard = () => {
                   </div>
                 </div>
               ))}
+              <div className="flex justify-center mt-4 gap-2">
+                {Array.from({ length: Math.ceil(courseData.length / itemsPerPage) }, (_, i) => i + 1).map((page) => (
+                    <button
+                        key={page}
+                        onClick={() => handlePageChange(page)}
+                        className={`px-4 py-2 rounded-lg ${currentPage === page ? 'bg-[#4558C8] text-white' : 'bg-white text-[#4558C8] border border-[#4558C8]'}`}
+                    >
+                        {page}
+                    </button>
+                ))}
+              </div>
             </div>
           </div>
 
