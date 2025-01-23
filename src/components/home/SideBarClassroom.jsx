@@ -34,15 +34,6 @@ const SideBarClassroom = () => {
             </span>
           </div>
           <div className="flex">
-            <img src={taskIcon} alt="Tareas icon" />
-            <span
-              className="text-lg font-sans font-medium ml-4"
-              onClick={() => handleNavigation("/classroom/tasks")}
-            >
-              Tareas
-            </span>
-          </div>
-          <div className="flex">
             <img src={formIcon} alt="Trabajos prácticos icon" />
             <span
               className="text-lg font-sans font-medium ml-4"

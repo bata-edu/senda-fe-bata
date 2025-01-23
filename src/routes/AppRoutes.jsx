@@ -42,6 +42,7 @@ import SectionPage from "../pages/student/SectionPage";
 import ClassRoomExams from "../components/classRoom/classRoomExams";
 import ClassRoomAssigments from "../components/classRoom/classRoomAssigments";
 import TaskForm from "../components/exam/TaskForm";
+import CourseLeague from "../components/courses/CourseLeague";
 
 const AppRoutes = () => {
   useEffect(() => {
@@ -309,6 +310,16 @@ const AppRoutes = () => {
             <AuthGuard>
               <TeacherGuard>
                 <ExamCalifications />
+              </TeacherGuard>
+            </AuthGuard>
+          }
+        />
+        <Route
+          path="/teacher/league"
+          element={
+            <AuthGuard>
+              <TeacherGuard>
+                <CourseLeague />
               </TeacherGuard>
             </AuthGuard>
           }

@@ -19,6 +19,7 @@ const GenericTable = ({
 
   const resolveAccessor = (row, accessor) => {
     if (!accessor) return '-';
+    if(accessor.includes('self')) return row[accessor.split('.')[1]];
     try {
       const keys = accessor.split('.');
       let value = row;

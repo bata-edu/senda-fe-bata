@@ -30,23 +30,34 @@ const ClassRoomAssigments = () => {
     const [articleSelected, setArticleSelected] = useState();
     const { freeModeProgress } = useSelector((state) => state.user);
     const [taskList, setTaskList] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 5;
+    const [totalItems, setTotalItems] = useState(0);
+    
 
     useEffect(() => {
-        fetchData();
+        fetchData(currentPage);
     }, [id]);
 
-    const fetchData = async () => {
+    const fetchData = async (page) => {
         await dispatch(getCourseAndSchool(id));
         const query = {
             limit: 5,
             sortBy: "updatedAt:desc",
-            type: 'ASSIGNMENT'
+            type: 'ASSIGNMENT',
+            page: page || 1
         }
 
         const res = await dispatch(getExamsByCourse({courseId: id, query})).unwrap();
         setCourseData(res.results);
+        setTotalItems(res.totalPages);
         setLoading(false); 
     }
+
+    const handlePageChange = (nextPage) => {
+        setCurrentPage(nextPage);
+        fetchData(nextPage);
+    };
 
     const handleNavigateToFreeCode = async () => {
         const body = {
@@ -153,6 +164,22 @@ const ClassRoomAssigments = () => {
                             </div>
                             </div>
                         ))}
+                            <div className="flex justify-center mt-4 gap-4">
+                                <button
+                                    onClick={() => handlePageChange(currentPage - 1)}
+                                    disabled={currentPage === 1}
+                                    className="px-4 py-2 rounded-lg bg-white text-[#4558C8] border border-[#4558C8] disabled:opacity-50"
+                                >
+                                    Atrás
+                                </button>
+                                <button
+                                    onClick={() => handlePageChange(currentPage + 1)}
+                                    disabled={currentPage === totalItems}
+                                    className="px-4 py-2 rounded-lg bg-white text-[#4558C8] border border-[#4558C8] disabled:opacity-50"
+                                >
+                                    Siguiente
+                                </button>
+                            </div>
                         </div>
                     </div>
                     <div className="w-1/5">

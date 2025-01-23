@@ -4,6 +4,7 @@ import {
   RESET_STATE,
   RANK,
   USER_DETAIL,
+  ADMIN_ENDPOINT,
 } from "../../utils/constants";
 import apiClient from "../../utils/interceptors/authInterceptor";
 import { getUser } from "../auth/authService";
@@ -114,6 +115,21 @@ export const fetchRank = createAsyncThunk(
   }
 );
 
+export const fetchUsers = createAsyncThunk(
+  "user/fetchUserCourse",
+  async ({query}, { rejectWithValue }) => {
+    try {
+      const queryString = query ? `?${buildQueryString(query)}` : '';
+      const response = await apiClient.get(
+        `${ADMIN_ENDPOINT}${queryString}`
+      );
+      return response;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 const userSlice = createSlice({
   name: "user",
   initialState: {
@@ -122,6 +138,7 @@ const userSlice = createSlice({
     freeModeProgressList: null,
     freeModeProgress: null,
     rank: null,
+    users: null,
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -194,6 +211,13 @@ const userSlice = createSlice({
       })
       .addCase(fetchRank.rejected, (state, action) => {
         state.error = action.payload;
+      });
+    builder
+      .addCase(fetchUsers.pending, (state) => {
+        state.error = null;
+      })
+      .addCase(fetchUsers.fulfilled, (state, action) => {
+        state.users = action.payload.data;
       })
       .addCase(RESET_STATE, (state) => {
         return {
@@ -201,6 +225,7 @@ const userSlice = createSlice({
           error: null,
           freeModeProgress: null,
           rank: null,
+          users: null
         };
       });
   },

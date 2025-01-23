@@ -76,3 +76,5 @@ export const SUBMIT_EXAM = `${EXAM_ENDPOINT}/submit`;
 
 export const COURSE_ARTICLE_ENDPOINT = `${API_BASE_URL}/v1/courseArticle`;
 export const COURSE_ARTICLE_DETAIL = `${COURSE_ARTICLE_ENDPOINT}/detail`;
+
+export const ADMIN_ENDPOINT = `${API_BASE_URL}/v1/admin`;

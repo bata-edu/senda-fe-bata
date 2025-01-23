@@ -30,6 +30,11 @@ const ClassRoomDetail = () => {
     const [articleSelected, setArticleSelected] = useState();
     const { freeModeProgress } = useSelector((state) => state.user);
     const [taskList, setTaskList] = useState(false);
+    const [loadingTask, setLoadingTask] = useState(true);
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 5;
+    const [totalItems, setTotalItems] = useState(0);
+
 
     useEffect(() => {
         fetchData();
@@ -37,13 +42,26 @@ const ClassRoomDetail = () => {
 
     const fetchData = async () => {
         await dispatch(getCourseAndSchool(id));
-        const query = {
-            limit: 5,
-            sortBy: "updatedAt:desc"
-        }
         const queryTask = {
-            ...query,
+            limit: 5,
+            sortBy: "updatedAt:desc",
             type: 'TASK'
+        }
+        await fetchCourseData();
+        const tasks = await dispatch(getExamsByCourse({courseId: id, query: queryTask})).unwrap();
+        await parseTaskProgress(tasks.results);
+    }
+
+    const handlePageChange = (nextPage) => {
+        setCurrentPage(nextPage);
+        fetchCourseData(nextPage);
+    };
+
+    const fetchCourseData = async (page) => {
+        const query = {
+            limit: itemsPerPage,
+            sortBy: "updatedAt:desc",
+            page: page || 1
         }
         const queryExams = {
             ...query,
@@ -53,18 +71,17 @@ const ClassRoomDetail = () => {
             [
                 dispatch(getExamsByCourse({courseId: id, query: queryExams})),
                 dispatch(getCourseArticles({courseId: id, query})),
-                dispatch(getExamsByCourse({courseId: id, query: queryTask})),
             ]
         )
         const exams = res[0].payload.results;
         const articles = res[1].payload.results;
-        const tasks = res[2].payload.results;
         const data = [...exams, ...articles];
+        setTotalItems((res[0].payload.totalResults + res[1].payload.totalResults) / itemsPerPage);
         data.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
         setCourseData(data);
-        await parseTaskProgress(tasks);
         setLoading(false); 
     }
+
 
     const handleNavigateToFreeCode = async () => {
         const body = {
@@ -101,8 +118,8 @@ const ClassRoomDetail = () => {
             updatedTaskList.push({ ...task });
           }
         }
-      
         setTaskList(updatedTaskList);
+        setLoadingTask(false);
       };
       
 
@@ -211,6 +228,22 @@ const ClassRoomDetail = () => {
                             </div>
                             </div>
                         ))}
+                        <div className="flex justify-center mt-4 gap-4">
+                                <button
+                                    onClick={() => handlePageChange(currentPage - 1)}
+                                    disabled={currentPage === 1}
+                                    className="px-4 py-2 rounded-lg bg-white text-[#4558C8] border border-[#4558C8] disabled:opacity-50"
+                                >
+                                    Atrás
+                                </button>
+                                <button
+                                    onClick={() => handlePageChange(currentPage + 1)}
+                                    disabled={currentPage === totalItems}
+                                    className="px-4 py-2 rounded-lg bg-white text-[#4558C8] border border-[#4558C8] disabled:opacity-50"
+                                >
+                                    Siguiente
+                                </button>
+                            </div>
                         </div>
                     </div>
                     <div className="w-1/5">
@@ -221,24 +254,26 @@ const ClassRoomDetail = () => {
                             Aquí podrás ver tu progreso de tareas en "Cursos"
                         </p>
                         <hr className="border-t border-gray-800 my-4" />
-                        <ul className="mt-6 space-y-4 p-0">
-                            {taskList.map((task, idx) => (
-                                <li key={idx}>
-                                    <div className="flex justify-between items-center mb-2">
-                                    <span className="font-medium">{task.name}</span>
-                                    <span className="text-sm text-[#4558C8]">Nivel: {task.levelOrder}</span>
-                                    </div>
-                                    <div className="w-full bg-gray-200 rounded-full h-2">
-                                    <div
-                                        className="bg-[#4558C8] h-2 rounded-full"
-                                        style={{ width: `${task.progress || 0}%` }}
-                                    ></div>
-                                    </div>
-                                    <hr className="border-t border-gray-800 my-4" />
+                        {loadingTask ? <LoadingPage/> :
+                            <ul className="mt-6 space-y-4 p-0">
+                                {taskList.map((task, idx) => (
+                                    <li key={idx}>
+                                        <div className="flex justify-between items-center mb-2">
+                                        <span className="font-medium">{task.name}</span>
+                                        <span className="text-sm text-[#4558C8]">Nivel: {task.levelOrder}</span>
+                                        </div>
+                                        <div className="w-full bg-gray-200 rounded-full h-2">
+                                        <div
+                                            className="bg-[#4558C8] h-2 rounded-full"
+                                            style={{ width: `${task.progress || 0}%` }}
+                                        ></div>
+                                        </div>
+                                        <hr className="border-t border-gray-800 my-4" />
 
-                                </li>
-                            ))}
-                        </ul>
+                                    </li>
+                                ))}
+                            </ul>
+                            }
                         </div>
                     </div>
                 </div>
