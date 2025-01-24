@@ -41,9 +41,11 @@ const SectionPage = () => {
   }, [dispatch, sectionId, progress]);
 
   const handleAdvance = () => {
+    console.log("hola");
     dispatch(fetchNextAction(progress.course));
   };
 
+  //hola
   return (
     <div>
       {!progress?.id && (

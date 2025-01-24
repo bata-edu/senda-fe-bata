@@ -8,6 +8,7 @@ export default function DragNDrop({
   exercise,
   advance,
   completedExercise,
+  setSelectedOption,
   colors,
 }) {
   const [dropped, setDropped] = useState();
@@ -15,6 +16,7 @@ export default function DragNDrop({
     e.preventDefault();
     handleDragging(false);
     setDropped(e.dataTransfer.getData("text"));
+    setSelectedOption(e.dataTransfer.getData("text"));
   };
   const handleDragOver = (e) => e.preventDefault();
   const { isDragging, handleDragging } = useDragAndDrop();

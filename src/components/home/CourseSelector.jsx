@@ -28,6 +28,7 @@ const Modules = () => {
     },
     CSS: { primary: "#3D48B8", secondary: "#4558C8", text: "white" },
     Html: { primary: "#EB4624", secondary: "#EE5E37", text: "white" },
+    "HTML V2": { primary: "#EB4624", secondary: "#EE5E37", text: "white" },
   };
 
   useEffect(() => {

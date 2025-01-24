@@ -27,7 +27,7 @@ const MainContent = () => {
   const { currentProgress, courseId } = useSelector(
     (state) => state.userProgress || {}
   );
-  const [loading, setLoading] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const [userCurrentInfo, setUserCurrentInfo] = useState({
     currentLevelIndex: 0,
@@ -61,6 +61,18 @@ const MainContent = () => {
       barDone: "#EB4624",
       barCurrent: "#627C0F",
       barUnfilled: "#EBF99D",
+    },
+    "676ee8640324ad0b3cda0bc6": {
+      image: <img src={Html} alt="Html logo" />,
+      course: "Html",
+      backgroundCurrent: "#EE5E37",
+      backgroundDone: "#F59D7C",
+      borderCurrent: "#B72017",
+      borderDone: "#EB4624",
+      borderDisable: "#C8C8C8",
+      barDone: "#EB4624",
+      barCurrent: "#B72017",
+      barUnfilled: "#F59D7C",
     },
     "66fc2fb14c227e973f81b4d1": {
       image: <img src={Html} alt="Html logo" />,
@@ -114,6 +126,7 @@ const MainContent = () => {
   useEffect(() => {
     if (levelsInfo && levelsInfo?.length) {
       setLevelInfo();
+      setLoading(false);
     }
   }, [levelsInfo]);
 
@@ -139,11 +152,11 @@ const MainContent = () => {
       navigate(`/progress?level=${levelId}&index=${levelIndex}&current=false`);
     }
   };
-  console.log(courseImage[selectedModule].backgroundDone);
+
   return (
     <div className="w-2/3 mx-auto">
       {loading && (
-        <div className="loading">
+        <div className="w-full h-[90vh] flex justify-center items-center">
           <LoadingPage />
         </div>
       )}
