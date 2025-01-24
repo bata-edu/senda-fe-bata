@@ -67,6 +67,18 @@ const ProgressPage = () => {
       barCurrent: "#B72017",
       barUnfilled: "#F59D7C",
     },
+    "676ee8640324ad0b3cda0bc6": {
+      image: <img src={Html} alt="Html logo" />,
+      course: "Html",
+      backgroundCurrent: "#EE5E37",
+      backgroundDone: "#F59D7C",
+      borderCurrent: "#B72017",
+      borderDone: "#EB4624",
+      borderDisable: "#C8C8C8",
+      barDone: "#EB4624",
+      barCurrent: "#B72017",
+      barUnfilled: "#F59D7C",
+    },
   };
   const [searchParams] = useSearchParams();
   let sectionId = searchParams.get("section");

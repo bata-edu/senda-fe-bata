@@ -10,11 +10,15 @@ import {
   startCourse,
 } from "../../features/userProgress/userProgressSlice";
 import MouseWhite from "../../assets/icons/mouse-white.svg";
+import KeyBoardWhite from "../../assets/icons/keyboard-white.svg";
+import DisplayWhite from "../../assets/icons/display-white.svg";
+import BookWhite from "../../assets/icons/book-white.svg";
 
 const Sections = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { levelsInfo = [], page } = useSelector((state) => state.level || {});
+
   const { currentProgress, courseId } = useSelector(
     (state) => state.userProgress || {}
   );
@@ -24,11 +28,6 @@ const Sections = () => {
   const levelRefs = useRef({});
   const [level, setLevel] = useState(false);
 
-  const [userCurrentInfo, setUserCurrentInfo] = useState({
-    currentLevelIndex: 0,
-    currentSectionIndex: 0,
-    lastSectionIndex: 0,
-  });
   const selectedModule = localStorage.getItem("selectedModule");
 
   const courseImage = {
@@ -40,6 +39,9 @@ const Sections = () => {
       text: "white",
       icons: [
         <img src={MouseWhite} alt="Logo Bata" className="h-16 mx-auto " />,
+        <img src={KeyBoardWhite} alt="Logo Bata" className="h-16 mx-auto " />,
+        <img src={DisplayWhite} alt="Logo Bata" className="h-16 mx-auto " />,
+        <img src={BookWhite} alt="Logo Bata" className="h-16 mx-auto " />,
       ],
     },
     "67190a2ecc62ee9e8f06c57b": {
@@ -50,6 +52,9 @@ const Sections = () => {
       text: "white",
       icons: [
         <img src={MouseWhite} alt="Logo Bata" className="h-16 mx-auto " />,
+        <img src={KeyBoardWhite} alt="Logo Bata" className="h-16 mx-auto " />,
+        <img src={DisplayWhite} alt="Logo Bata" className="h-16 mx-auto " />,
+        <img src={BookWhite} alt="Logo Bata" className="h-16 mx-auto " />,
       ],
     },
     "6749b2b80a8216bdad69e17b": {
@@ -60,8 +65,25 @@ const Sections = () => {
       text: "white",
       icons: [
         <img src={MouseWhite} alt="Logo Bata" className="h-16 mx-auto " />,
+        <img src={KeyBoardWhite} alt="Logo Bata" className="h-16 mx-auto " />,
+        <img src={DisplayWhite} alt="Logo Bata" className="h-16 mx-auto " />,
+        <img src={BookWhite} alt="Logo Bata" className="h-16 mx-auto " />,
       ],
     },
+    "676ee8640324ad0b3cda0bc6": {
+      course: "Html",
+      border: "#F59D7C",
+      backgroundCurrent: "#EB4624",
+      backgroundDone: "#FEF5F2",
+      text: "white",
+      icons: [
+        <img src={MouseWhite} alt="Logo Bata" className="h-16 mx-auto " />,
+        <img src={KeyBoardWhite} alt="Logo Bata" className="h-16  mx-auto " />,
+        <img src={DisplayWhite} alt="Logo Bata" className="h-16 mx-auto " />,
+        <img src={BookWhite} alt="Logo Bata" className="h-16 mx-auto " />,
+      ],
+    },
+
     "66fc2fb14c227e973f81b4d1": {
       course: "Html",
       border: "#F59D7C",
@@ -70,6 +92,9 @@ const Sections = () => {
       text: "white",
       icons: [
         <img src={MouseWhite} alt="Logo Bata" className="h-16 mx-auto " />,
+        <img src={KeyBoardWhite} alt="Logo Bata" className="h-16 mx-auto " />,
+        <img src={DisplayWhite} alt="Logo Bata" className="h-16 mx-auto " />,
+        <img src={BookWhite} alt="Logo Bata" className="h-16 mx-auto " />,
       ],
     },
   };
@@ -81,34 +106,11 @@ const Sections = () => {
     setLevel(selectedLevel);
   }, [levelsInfo]);
 
-  const setLevelInfo = async () => {
-    if (courseId) {
-      const currentLevel = levelsInfo?.find(
-        (level) => level._id === currentProgress.currentLevel
-      );
-      const currentLevelIndex = levelsInfo?.findIndex(
-        (level) => level._id === currentProgress.currentLevel
-      );
-      const currentSectionIndex =
-        currentLevel?.sections.findIndex(
-          (section) => section._id === currentProgress.currentSection
-        ) || 0;
-
-      setUserCurrentInfo({ currentLevelIndex, currentSectionIndex });
-    }
-  };
-
   useEffect(() => {
     if (selectedModule && !levelsInfo) {
       fetchData(selectedModule);
     }
   }, []);
-
-  useEffect(() => {
-    if (levelsInfo && levelsInfo.length) {
-      setLevelInfo();
-    }
-  }, [levelsInfo]);
 
   useEffect(() => {
     const handleHashChange = async () => {
@@ -172,6 +174,7 @@ const Sections = () => {
       dispatch(fetchAllLevels({ courseId: moduleId })),
     ]);
   };
+  console.log(currentProgress);
   return (
     <div className="flex flex-col w-full h-full items-center">
       <div
@@ -191,6 +194,15 @@ const Sections = () => {
         {level?.sections?.map((section, index) => {
           const position = index % 5;
           const rowOffset = Math.floor(index / 5) * 300;
+          const currentSectionIndex = level?.sections?.findIndex(
+            (sec) => sec._id === currentProgress?.currentSection
+          );
+          const sectionIndex = index;
+
+          const borderColor =
+            currentSectionIndex > sectionIndex
+              ? courseImage[selectedModule].border
+              : "#C8C8C8";
 
           const positions = [
             {
@@ -205,7 +217,7 @@ const Sections = () => {
                     borderBottom: "4px dashed gray", // Borde inferior
                     borderTop: "none",
                     borderRight: "none",
-                    borderColor: courseImage[selectedModule].border,
+                    borderColor: borderColor,
                     width: "60px", // Ajusta el ancho para la base de la "L"
                     height: "60px", // Ajusta la altura para la parte vertical de la "L"
                   }}
@@ -226,7 +238,7 @@ const Sections = () => {
                     height: "60px", // Altura 0 ya que es solo una línea
                     borderTop: "4px dashed gray", // Línea discontinua usando border
                     borderRight: "4px dashed gray", // Línea discontinua usando border
-                    borderColor: courseImage[selectedModule].border,
+                    borderColor: borderColor,
                   }}
                 ></div>
               ),
@@ -251,7 +263,7 @@ const Sections = () => {
                     borderTop: "none",
                     width: "60px",
                     height: "60px",
-                    borderColor: courseImage[selectedModule].border,
+                    borderColor: borderColor,
                   }}
                 ></div>
               ),
@@ -268,12 +280,13 @@ const Sections = () => {
                     borderTop: "4px dashed gray",
                     width: "60px",
                     height: "60px",
-                    borderColor: courseImage[selectedModule].border,
+                    borderColor: borderColor,
                   }}
                 ></div>
               ),
             },
           ];
+          const randomIndex = Math.floor(Math.random() * 4);
 
           const { className, top, extra } = positions[position];
           return (
@@ -290,15 +303,20 @@ const Sections = () => {
               {extra}
               <div
                 style={{
-                  background:
-                    index === userCurrentInfo.currentSectionIndex
-                      ? courseImage[selectedModule]?.backgroundCurrent
-                      : courseImage[selectedModule]?.backgroundDone,
+                  background: (() => {
+                    if (sectionIndex < currentSectionIndex) {
+                      return courseImage[selectedModule]?.backgroundDone; // Antes de la sección actual
+                    } else if (sectionIndex === currentSectionIndex) {
+                      return courseImage[selectedModule]?.backgroundCurrent; // Sección actual
+                    } else {
+                      return "#d3d3d3"; // Después de la sección actual
+                    }
+                  })(),
                   border: `2px solid ${courseImage[selectedModule]?.border}`,
                 }}
                 className="w-20 h-20 text-white py-2 px-4 rounded-lg shadow-md"
               >
-                {courseImage[selectedModule]?.icons[0]}
+                {courseImage[selectedModule]?.icons[randomIndex]}
               </div>
             </div>
           );

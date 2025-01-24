@@ -10,12 +10,11 @@ import {
 } from "../../features/userProgress/userProgressSlice";
 import { useDispatch, useSelector } from "react-redux";
 import LoadingPage from "../../pages/LoadingPage";
-import BackLogo from "../../assets/icons/back.png";
 
 const SectionClass = ({ advance, completedClass, loadingNextAction }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const { myClass, currentProgress, nextAction } = useSelector(
     (state) => state.userProgress || {}
   );
@@ -27,38 +26,43 @@ const SectionClass = ({ advance, completedClass, loadingNextAction }) => {
   }, [dispatch, completedClass, nextAction]);
 
   const advanceClass = async () => {
+    setLoading(true);
     if (!completedClass) {
-      setLoading(true);
       await dispatch(completeClass(myClass.id));
-      setLoading(false);
     }
     advance();
   };
 
   const currentLesson = completedClass || myClass;
 
+  useEffect(() => {
+    if (currentLesson) {
+      setLoading(false);
+    }
+  }, [currentLesson]);
+
   return (
-    <div className="clase-container">
-      {loading && (
-        <div className="loading">
+    <div className="flex h-[70vh] justify-center items-center">
+      {loading ? (
+        <div>
           <LoadingPage />
         </div>
-      )}
-
-      <div className="border-2 border-[#E4E7EC] rounded-xl p-6 w-96">
-        <div>
-          <h2 className="text-lg">{currentLesson?.name}</h2>
-          {/* <p>{currentLesson?.description}</p> */}
-          <p>{currentLesson?.content}</p>
-          <button
-            onClick={() => advanceClass()}
-            className="bg-[#4558C8] text-white py-2 w-full rounded-xl"
-          >
-            Siguiente
-          </button>
+      ) : (
+        <div className="border-2 border-[#E4E7EC] rounded-xl p-6 w-96">
+          <div>
+            <h2 className="text-lg">{currentLesson?.name}</h2>
+            {/* <p>{currentLesson?.description}</p> */}
+            <p>{currentLesson?.content}</p>
+            <button
+              onClick={() => advanceClass()}
+              className="bg-[#4558C8] text-white py-2 w-full rounded-xl"
+            >
+              Siguiente
+            </button>
+          </div>
+          <div></div>
         </div>
-        <div></div>
-      </div>
+      )}
     </div>
   );
 };
