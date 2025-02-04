@@ -157,7 +157,7 @@ const FreeCodeList = () => {
             <div className="flex justify-between w-full  p-4">
               <div className="flex items-center bg-gray-800 p-2 rounded-lg">
                 <SearchIcon />
-                <TextInput
+                <input
                   type="text"
                   placeholder="Buscar proyecto"
                   className="bg-transparent outline-none text-white ml-2"

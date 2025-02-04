@@ -63,7 +63,7 @@ const Modules = () => {
           {modules?.map((module) => {
             const moduleColor = courseColors[module.name]?.primary;
             const percentage =
-              module.progress[0]?.courseProgress.toFixed(0) || 59;
+              module.progress[0]?.courseProgress.toFixed(0) || 0;
             const transparentModuleColor = courseColors[module.name]?.secondary;
             const textColor = courseColors[module.name]?.text;
 
