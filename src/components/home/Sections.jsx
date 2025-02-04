@@ -297,7 +297,7 @@ const Sections = () => {
                 localStorage.setItem("sectionOrder", section.order);
               }}
               key={index}
-              className={`${className}`}
+              className={`${className} ${sectionIndex > currentSectionIndex ? "pointer-events-none" : ""}`}
               style={{ top: `calc(${top} + ${rowOffset}px)` }}
             >
               {extra}
@@ -314,7 +314,7 @@ const Sections = () => {
                   })(),
                   border: `2px solid ${courseImage[selectedModule]?.border}`,
                 }}
-                className="w-20 h-20 text-white py-2 px-4 rounded-lg shadow-md"
+                className={`w-20 h-20 text-white py-2 px-4 rounded-lg shadow-md`}
               >
                 {courseImage[selectedModule]?.icons[randomIndex]}
               </div>

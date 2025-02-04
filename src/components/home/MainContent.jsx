@@ -131,8 +131,8 @@ const MainContent = () => {
   }, [levelsInfo]);
 
   const fetchData = async (moduleId) => {
+    await dispatch(fetchUserProgressById(moduleId))
     await Promise.all([
-      dispatch(fetchUserProgressById(moduleId)),
       dispatch(fetchLevelInfo({ courseId: moduleId, page: 0, limit: 100 })),
       dispatch(fetchAllLevels({ courseId: moduleId })),
     ]);
@@ -210,8 +210,9 @@ const MainContent = () => {
                 <motion.div
                   onClick={() => handleSectionClick(level._id)}
                   key={level.id}
-                  className={`absolute w-full rounded-[50px] h-[400px] flex  items-startf justify-start py-10 px-12 `}
-                  style={{
+                  className={`absolute w-full rounded-[50px] h-[400px] flex items-start justify-start py-10 px-12 ${
+                    index > userCurrentInfo.currentLevelIndex ? "pointer-events-none" : ""
+                  }`}                  style={{
                     top: `${index * 250}px`,
                     zIndex: index,
                     border: `2px solid ${

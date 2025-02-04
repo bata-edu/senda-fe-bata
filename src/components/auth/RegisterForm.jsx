@@ -25,11 +25,32 @@ const RegisterForm = () => {
   const [isTeacher, setIsTeacher] = useState(false);
   const [code, setCode] = useState("");
   const [error, setError] = useState(null);
+  const [passwordError, setPasswordError] = useState("");
+  const [confirmPasswordError, setConfirmPasswordError] = useState("");
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+
+  const validatePassword = (value) => {
+    if (value.length < 8) {
+      setPasswordError("La contraseña debe tener al menos 8 caracteres");
+    } else if (!/\d/.test(value) || !/[a-zA-Z]/.test(value)) {
+      setPasswordError("Debe contener al menos una letra y un número");
+    } else {
+      setPasswordError("");
+    }
+    setPassword(value);
+  };
+
+  const validateConfirmPassword = (value) => {
+    if (value !== password) {
+      setConfirmPasswordError("Las contraseñas no coinciden");
+    } else {
+      setConfirmPasswordError("");
+    }
+    setConfirmPassword(value);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
       if (isTeacher) {
         await registerTeacher({
@@ -65,6 +86,16 @@ const RegisterForm = () => {
     }
   };
 
+  const isFormInvalid =
+    !email ||
+    !password ||
+    !confirmPassword ||
+    !name ||
+    !lastName ||
+    (isTeacher && !code) ||
+    passwordError ||
+    confirmPasswordError;
+
   return (
     <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
       <div className="min-h-screen flex flex-col bg-white">
@@ -88,42 +119,33 @@ const RegisterForm = () => {
               Regístrate para empezar a usar Bata.
             </p>
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <TextInput
-                  label="nombre"
-                  id="name"
-                  type="text"
-                  placeholder="Nombre"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="w-full mt-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-500"
-                  required
-                />
-              </div>
-              <div>
-                <TextInput
-                  label="Apellido"
-                  id="lastName"
-                  type="text"
-                  placeholder="Apellido"
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                  className="w-full mt-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-500"
-                  required
-                />
-              </div>
-              <div>
-                <TextInput
-                  label="Correo"
-                  id="email"
-                  type="email"
-                  placeholder="Correo"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full mt-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-500"
-                  required
-                />
-              </div>
+              <TextInput
+                label="Nombre"
+                id="name"
+                type="text"
+                placeholder="Nombre"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+              />
+              <TextInput
+                label="Apellido"
+                id="lastName"
+                type="text"
+                placeholder="Apellido"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                required
+              />
+              <TextInput
+                label="Correo"
+                id="email"
+                type="email"
+                placeholder="Correo"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
               <div>
                 <TextInput
                   label="Contraseña"
@@ -131,10 +153,12 @@ const RegisterForm = () => {
                   type="password"
                   placeholder="Contraseña"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full mt-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-500"
+                  onChange={(e) => validatePassword(e.target.value)}
                   required
                 />
+                {passwordError && (
+                  <p className="text-sm text-red-500 mt-1">{passwordError}</p>
+                )}
               </div>
               <div>
                 <TextInput
@@ -143,10 +167,14 @@ const RegisterForm = () => {
                   type="password"
                   placeholder="Confirmar Contraseña"
                   value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-full mt-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-500"
+                  onChange={(e) => validateConfirmPassword(e.target.value)}
                   required
                 />
+                {confirmPasswordError && (
+                  <p className="text-sm text-red-500 mt-1">
+                    {confirmPasswordError}
+                  </p>
+                )}
               </div>
               <div className="flex items-center">
                 <input
@@ -161,39 +189,24 @@ const RegisterForm = () => {
                 </label>
               </div>
               {isTeacher && (
-                <div>
-                  <TextInput
-                    label="Código de Escuela"
-                    id="code"
-                    type="text"
-                    placeholder="Código de Escuela"
-                    value={code}
-                    onChange={(e) => setCode(e.target.value)}
-                    className="w-full mt-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-500"
-                    required
-                  />
-                </div>
+                <TextInput
+                  label="Código de Escuela"
+                  id="code"
+                  type="text"
+                  placeholder="Código de Escuela"
+                  value={code}
+                  onChange={(e) => setCode(e.target.value)}
+                  required
+                />
               )}
               <button
                 type="submit"
                 className={`w-full py-2 text-white font-bold rounded-lg ${
-                  !email ||
-                  !password ||
-                  !confirmPassword ||
-                  !name ||
-                  !lastName ||
-                  (isTeacher && !code)
+                  isFormInvalid
                     ? "bg-gray-400 cursor-not-allowed"
                     : "bg-strongBlue hover:bg-strongBlue-600"
                 }`}
-                disabled={
-                  !email ||
-                  !password ||
-                  !confirmPassword ||
-                  !name ||
-                  !lastName ||
-                  (isTeacher && !code)
-                }
+                disabled={isFormInvalid}
               >
                 Crear cuenta
               </button>
@@ -206,26 +219,16 @@ const RegisterForm = () => {
               />
             </div>
             {error && <p className="text-sm text-red-500 mt-4">{error}</p>}
-            <div className="mt-6 text-center">
-              <p className="text-sm text-gray-500">
-                ¿Ya tienes cuenta?{" "}
-                <a href="/login" className="text-strongBlue hover:underline">
-                  Inicia sesión
-                </a>
-              </p>
-            </div>
           </div>
         </div>
-        <div>
-          {showSuccessDialog && (
-            <SuccessDialog
-              title="Cuenta registrada con éxito"
-              description="Comenzá tu camino en Bata"
-              buttonText="Ok"
-              onConfirm={() => navigate("/login")}
-            />
-          )}
-        </div>
+        {showSuccessDialog && (
+          <SuccessDialog
+            title="Cuenta registrada con éxito"
+            description="Comenzá tu camino en Bata"
+            buttonText="Ok"
+            onConfirm={() => navigate("/login")}
+          />
+        )}
       </div>
     </GoogleOAuthProvider>
   );
