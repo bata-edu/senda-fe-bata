@@ -4,13 +4,13 @@ import { Button } from "../common/button/button";
 
 export default function HeroHome() {
   return (
-    <section className="relative overflow-x-hidden">
+    <section className="relative overflow-x-hidden dark:bg-black transition-colors duration-300">
       <PageIllustration />
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="pb-12 pt-32 md:pb-20 md:pt-40">
           <div className="pb-12 text-center md:pb-16">
             <h1
-              className="mb-6 border-y text-5xl font-bold text-black md:text-6xl font-sans"
+              className="mb-6 border-y text-5xl font-bold text-black dark:text-white md:text-6xl font-sans"
               data-aos="zoom-y-out"
               data-aos-delay={150}
             >
@@ -18,7 +18,7 @@ export default function HeroHome() {
             </h1>
             <div className="mx-auto max-w-3xl">
               <p
-                className="mb-8 text-lg text-gray-700 font-mono"
+                className="mb-8 text-lg text-gray-700 dark:text-gray-300 font-mono"
                 data-aos="zoom-y-out"
                 data-aos-delay={300}
               >

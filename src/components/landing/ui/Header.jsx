@@ -4,6 +4,17 @@ import MobileMenu from "./MobileMenu";
 import { Link } from "react-router-dom";
 import Logo from "../Logo";
 import { Button } from "../../common/button/button";
+import useDarkMode from "../../../hooks/useDarkMode";
+
+function DarkModeToggle() {
+  const [darkMode, setDarkMode] = useDarkMode();
+
+  return (
+    <button className="mx-2" onClick={() => setDarkMode(!darkMode)}>
+      {darkMode ? "☀️" : "🌙"}
+    </button>
+  );
+}
 
 export default function Header() {
   const [top, setTop] = useState(true);
@@ -21,17 +32,18 @@ export default function Header() {
   return (
     <header className="fixed top-2 z-30 w-full md:top-6">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <div className="relative flex h-16 items-center justify-between gap-3 rounded-2xl bg-white/90 px-3 shadow-lg shadow-black/[0.03] backdrop-blur-sm before:pointer-events-none before:absolute before:inset-0 before:rounded-[inherit] before:border before:border-transparent before:[background:linear-gradient(theme(colors.gray.100),theme(colors.gray.200))_border-box] before:[mask-composite:exclude_!important] before:[mask:linear-gradient(white_0_0)_padding-box,_linear-gradient(white_0_0)]">
+        <div className="relative flex h-16 items-center justify-between gap-3 rounded-2xl transition-colors duration-300 bg-white/90 dark:bg-black/90 px-3 shadow-lg shadow-black/[0.03] dark:shadow-gray-300/[0.1] backdrop-blur-sm before:pointer-events-none ">
           <div className="flex flex-1 items-center">
             <Logo />
+            <DarkModeToggle />
           </div>
 
           <nav className="hidden md:flex md:grow">
             <ul className="flex grow items-center justify-center gap-4 text-sm lg:gap-8 mb-0 ">
-              <li className="px-3 py-1">
+              <li className="px-3 py-1 ">
                 <Link
                   to="/pricing"
-                  className="flex items-center text-gray-700 transition hover:text-gray-900 no-underline"
+                  className="flex items-center text-gray-700 dark:text-gray-300 dark:hover:text-white transition hover:text-gray-900 no-underline"
                 >
                   Beneficios
                 </Link>
@@ -39,7 +51,7 @@ export default function Header() {
               <li className="px-3 py-1">
                 <Link
                   to="/customers"
-                  className="flex items-center text-gray-700 transition hover:text-gray-900 no-underline"
+                  className="flex items-center text-gray-700 dark:text-gray-300 dark:hover:text-white transition hover:text-gray-900 no-underline"
                 >
                   Planes
                 </Link>
@@ -47,7 +59,7 @@ export default function Header() {
               <li className="px-3 py-1">
                 <Link
                   to="/blog"
-                  className="flex items-center text-gray-700 transition hover:text-gray-900 no-underline"
+                  className="flex items-center text-gray-700 dark:text-gray-300 dark:hover:text-white transition hover:text-gray-900 no-underline"
                 >
                   FAQ
                 </Link>
