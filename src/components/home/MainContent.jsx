@@ -218,14 +218,14 @@ const MainContent = () => {
                     border: `2px solid ${
                       index < userCurrentInfo.currentLevelIndex
                         ? courseImage[selectedModule].borderDone
-                        : index == userCurrentInfo.currentLevelIndex
+                        : index === userCurrentInfo.currentLevelIndex
                         ? courseImage[selectedModule].borderCurrent
                         : courseImage[selectedModule].borderDisable
                     }`,
                     backgroundColor:
                       index < userCurrentInfo.currentLevelIndex
                         ? courseImage[selectedModule].backgroundDone
-                        : index == userCurrentInfo.currentLevelIndex
+                        : index === userCurrentInfo.currentLevelIndex
                         ? courseImage[selectedModule].backgroundCurrent
                         : "white",
                   }}
@@ -260,7 +260,7 @@ const MainContent = () => {
                       <span className="font-mono text-3xl text-white ml-12">
                         {index < userCurrentInfo.currentLevelIndex
                           ? "100%"
-                          : index == userCurrentInfo.currentLevelIndex
+                          : index === userCurrentInfo.currentLevelIndex
                           ? currentProgress?.levelProgress + "%"
                           : "0%"}
                       </span>
