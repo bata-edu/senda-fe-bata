@@ -15,7 +15,7 @@ import right from "../../assets/icons/corchete-derecho.svg";
 import GenericDialog from "../../components/common/dialog/dialog";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Loading from "../LoadingPage";
+import { LoadingFullScreen } from "../LoadingPage";
 import { useNavigate } from "react-router-dom";
 import { TextInput } from "../../components/common/input/Input";
 
@@ -137,7 +137,7 @@ const FreeCodeList = () => {
   };
 
   return loading ? (
-    <Loading />
+    <LoadingFullScreen />
   ) : (
     <div>
       <Header />
