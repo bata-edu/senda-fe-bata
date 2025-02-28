@@ -41,11 +41,11 @@ const Home = () => {
     return (
       <>
         <Header />
-        <div className="flex h-screen">
+        <div className="flex h-[90vh]">
           {/* Sidebar fijo */}
           <Sidebar className="fixed top-0 left-0 h-full w-6 bg-white shadow-md z-10" />
           {/* Contenedor principal con margen para el Sidebar */}
-          <div className="ml-6 w-full bg-gray-100 min-h-[90vh] h-full overflow-y-auto">
+          <div className="ml-6 w-full bg-gray-100 h-full overflow-y-auto">
             <Outlet />
           </div>
         </div>
