@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ["./src/**/*.{js,jsx,ts,tsx}"],
+  content: ["./src/**/* .{js,jsx,ts,tsx}"],
   theme: {
     extend: {
       keyframes: {
@@ -65,10 +65,13 @@ module.exports = {
       },
       colors: {
         strongBlue: "rgba(69, 88, 200, 1)",
+        lightGray: "#F2F7F9",
         grayBg: "#FAFAFA",
         borderGray: "#E4E7EC",
         darkGrayText: "#46505E",
-        darkBlue: '#4558C8'
+        darkBlue: '#4558C8',
+        darkHeader: "#1D2B33",
+        
       },
       'bounce-in-down': {
         '0%': {

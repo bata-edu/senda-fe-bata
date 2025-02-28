@@ -8,7 +8,7 @@ import Settings from "../../../assets/icons/settings.svg";
 import Bell from "../../../assets/icons/bell.svg";
 import { getAuthData, logoutUser } from "../../../features/auth/authService";
 
-const Header = () => {
+const Header = ({className}) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = getAuthData();
@@ -25,8 +25,13 @@ const Header = () => {
     navigate("/login");
   };
 
+  let activeButtonClassName = "bg-grayBg border-borderGray border-1"
+  if (isActive("/editor")) {
+    activeButtonClassName = "bg-[#2F414A] border-[#385966] border-1"
+  }
+
   return (
-    <header className="w-full bg-white shadow-sm border-b border-borderGray flex items-center p-4 h-[10vh]">
+    <header className={`w-full ${isActive("/editor") ? "bg-darkHeader border-[#535D67] text-lightGray" : "bg-white border-borderGray"} shadow-sm border-b  flex items-center p-4 h-[10vh]`}>
       <div className="flex items-center w-24">
         <img src={logoImage} alt="Logo Bata" className="h-8" />
       </div>
@@ -36,7 +41,7 @@ const Header = () => {
             <button
               className={`flex items-center mx-1 p-2 rounded ${
                 isActive("/learn/modules")
-                  ? "bg-grayBg border-borderGray border-1"
+                  ? activeButtonClassName
                   : ""
               }`}
               onClick={() => navigateTo("/learn/modules")}
@@ -60,7 +65,7 @@ const Header = () => {
             <button
               className={`flex items-center mx-1 p-2 rounded ${
                 isActive("/editor")
-                  ? "bg-grayBg border-borderGray border-1"
+                  ? activeButtonClassName
                   : ""
               }`}
               onClick={() => navigateTo("/editor")}
@@ -72,7 +77,7 @@ const Header = () => {
               <button
                 className={`flex items-center mx-1 p-2 rounded ${
                   isActive("/teacher")
-                    ? "bg-grayBg border-borderGray border-1"
+                    ? activeButtonClassName
                     : ""
                 }`}
                 onClick={() => {

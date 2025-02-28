@@ -141,7 +141,7 @@ const FreeCodeList = () => {
   ) : (
     <div>
       <Header />
-      <div className="p-6 min-h-screen bg-[#141F25] text-white">
+      <div className="p-6 h-[90vh] bg-[#141F25] text-white">
         <div className="flex flex-col items-center">
           <div>
             <h1 className="text-6xl flex items-center space-x-2 mt-32 mb-4">
