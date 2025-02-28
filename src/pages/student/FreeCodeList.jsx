@@ -142,9 +142,9 @@ const FreeCodeList = () => {
     <div>
       <Header />
       <div className="p-6 h-[90vh] bg-[#141F25] text-white">
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col h-full w-full items-center justify-center">
           <div>
-            <h1 className="text-6xl flex items-center space-x-2 mt-32 mb-4">
+            <h1 className="text-6xl flex items-center space-x-2">
               <img src={left} alt="Corchete izquierdo" className="h-10" />
               <span>Tus proyectos</span>
               <img src={right} alt="Corchete derecho" className="h-10" />
