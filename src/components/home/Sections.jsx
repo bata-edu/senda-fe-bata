@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   fetchLevelInfo,
   fetchAllLevels,
@@ -9,26 +9,26 @@ import {
   fetchUserProgressById,
   startCourse,
 } from "../../features/userProgress/userProgressSlice";
-import MouseWhite from "../../assets/icons/mouse-white.svg";
-import KeyBoardWhite from "../../assets/icons/keyboard-white.svg";
-import DisplayWhite from "../../assets/icons/display-white.svg";
-import BookWhite from "../../assets/icons/book-white.svg";
+import MouseWhite from "../../assets/icons/white/mouse-white.svg";
+import KeyBoardWhite from "../../assets/icons/white/keyboard-white.svg";
+import DisplayWhite from "../../assets/icons/white/display-white.svg";
+import BookWhite from "../../assets/icons/white/book-white.svg";
+import { clearSections } from '../../features/section/sectionSlice';
+import LoadingPage from "../../pages/LoadingPage";
 
 const Sections = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { levelsInfo = [], page } = useSelector((state) => state.level || {});
 
-  const { currentProgress, courseId } = useSelector(
+  const { currentProgress } = useSelector(
     (state) => state.userProgress || {}
   );
-
+  const [loading, setLoading] = useState(false);
   const [hasMoreLevels, setHasMoreLevels] = useState(true);
   const [showNoMoreLevels, setShowNoMoreLevels] = useState(false);
   const levelRefs = useRef({});
   const [level, setLevel] = useState(false);
-
-  const selectedModule = localStorage.getItem("selectedModule");
 
   const courseImage = {
     "671909eecc62ee9e8f06c578": {
@@ -98,30 +98,58 @@ const Sections = () => {
       ],
     },
   };
+  const { moduleId, levelId } = useParams();
   useEffect(() => {
-    const selectedLevelId = localStorage.getItem("selectedLevel");
-    const selectedLevel = levelsInfo?.find(
-      (level) => level?._id === selectedLevelId
-    );
-    setLevel(selectedLevel);
-  }, [levelsInfo]);
+    if (levelsInfo?.length && levelId) {
+      const selectedLevel = levelsInfo.find(level => level?._id === levelId);
+      if (selectedLevel) {
+        setLevel(selectedLevel);
+      }
+    }
+  }, [levelsInfo, levelId]);
+
+  const fetchData = async (moduleId) => {
+    setLoading(true);
+      try {
+        // Primero obtén el progreso del usuario
+        await dispatch(fetchUserProgressById(moduleId)).unwrap();
+        // Luego carga la información de niveles
+        const levelResponse = await dispatch(fetchLevelInfo({ courseId: moduleId, page, limit: 3 })).unwrap();
+        // Carga todos los niveles si es necesario
+        await dispatch(fetchAllLevels({ courseId: moduleId })).unwrap();
+        
+        // Si hay levelsInfo y levelId después de la carga, establece el nivel seleccionado
+        if (levelId && levelResponse.levels?.length) {
+          const selectedLevel = levelResponse.levels.find(lvl => lvl._id === levelId);
+          if (selectedLevel) {
+            setLevel(selectedLevel);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+  };
+
 
   useEffect(() => {
-    if (selectedModule && !levelsInfo) {
-      fetchData(selectedModule);
+  
+    if (moduleId) {
+      fetchData(moduleId);
     }
-  }, []);
+  }, [moduleId]);
 
   useEffect(() => {
     const handleHashChange = async () => {
       const levelId = window.location.hash.replace("#", "");
-      if (levelId) {
+      if (levelId && levelId) {
         let targetLevel = levelsInfo.find((level) => level._id === levelId);
         let levelPage = 0;
         while (!targetLevel && hasMoreLevels) {
           try {
             const response = await dispatch(
-              fetchLevelInfo({ courseId, page: levelPage, limit: 3 })
+              fetchLevelInfo({ levelId, page: levelPage, limit: 3 })
             ).unwrap();
             if (response.levels.length === 0) {
               setHasMoreLevels(false);
@@ -156,7 +184,7 @@ const Sections = () => {
     return () => {
       window.removeEventListener("hashchange", handleHashChange);
     };
-  }, []);
+  }, [levelsInfo, hasMoreLevels, levelId, dispatch]);
 
   useEffect(() => {
     if (showNoMoreLevels) {
@@ -166,27 +194,24 @@ const Sections = () => {
       return () => clearTimeout(timer);
     }
   }, [showNoMoreLevels]);
+  
+  if (loading) return (        
+    <div className="w-full h-[90vh] flex justify-center items-center">
+      <LoadingPage />
+    </div>)
 
-  const fetchData = async (moduleId) => {
-    await Promise.all([
-      dispatch(fetchUserProgressById(moduleId)),
-      dispatch(fetchLevelInfo({ courseId: moduleId, page, limit: 3 })),
-      dispatch(fetchAllLevels({ courseId: moduleId })),
-    ]);
-  };
-  console.log(currentProgress);
-  return (
+  return(
     <div className="flex flex-col w-full h-full items-center">
       <div
         style={{
-          background: courseImage[selectedModule].backgroundCurrent,
-          border: `2px solid ${courseImage[selectedModule].border}`,
+          background: courseImage[moduleId].backgroundCurrent,
+          border: `2px solid ${courseImage[moduleId].border}`,
         }}
         className="flex flex-col py-4 px-6  mt-4 rounded-xl  w-[480px]"
       >
-        <div onClick={() => navigate(`/learn/levels`)}>
-          <span className={`text-${courseImage[selectedModule].text}`}>
-            Volver a Niveles
+        <div onClick={() => navigate(`/learn/modules/${moduleId}`)}>
+          <span className={`text-${courseImage[moduleId].text}`}>
+            Volver
           </span>
         </div>
       </div>
@@ -201,7 +226,7 @@ const Sections = () => {
 
           const borderColor =
             currentSectionIndex > sectionIndex
-              ? courseImage[selectedModule].border
+              ? courseImage[moduleId].border
               : "#C8C8C8";
 
           const positions = [
@@ -286,8 +311,7 @@ const Sections = () => {
               ),
             },
           ];
-          const randomIndex = Math.floor(Math.random() * 4);
-
+          const iconIndex = index % 4;
           const { className, top, extra } = positions[position];
           return (
             <div
@@ -305,18 +329,18 @@ const Sections = () => {
                 style={{
                   background: (() => {
                     if (sectionIndex < currentSectionIndex) {
-                      return courseImage[selectedModule]?.backgroundDone; // Antes de la sección actual
+                      return courseImage[moduleId]?.backgroundDone; // Antes de la sección actual
                     } else if (sectionIndex === currentSectionIndex) {
-                      return courseImage[selectedModule]?.backgroundCurrent; // Sección actual
+                      return courseImage[moduleId]?.backgroundCurrent; // Sección actual
                     } else {
                       return "#d3d3d3"; // Después de la sección actual
                     }
                   })(),
-                  border: `2px solid ${courseImage[selectedModule]?.border}`,
+                  border: `2px solid ${courseImage[moduleId]?.border}`,
                 }}
                 className={`w-20 h-20 text-white py-2 px-4 rounded-lg shadow-md`}
               >
-                {courseImage[selectedModule]?.icons[randomIndex]}
+                {courseImage[moduleId]?.icons[iconIndex]}
               </div>
             </div>
           );

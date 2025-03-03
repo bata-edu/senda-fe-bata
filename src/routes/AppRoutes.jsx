@@ -1,7 +1,7 @@
 import AOS from "aos";
 import "aos/dist/aos.css";
 
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import LoginPage from "../pages/LoginPage";
 import RegisterPage from "../pages/RegisterPage";
 import Home from "../pages/student/HomePage";
@@ -86,10 +86,11 @@ const AppRoutes = () => {
             </AuthGuard>
           }
         >
-          <Route path="levels" element={<MainContent />} />
+          <Route index element={<Navigate to="modules" replace />} />
           <Route path="modules" element={<Modules />} />
-          <Route path="sections" element={<Sections />} />
-          <Route path="levels" element={<Levels />} />
+          <Route path="modules/:moduleId" element={<MainContent />} />
+          <Route path="modules/:moduleId/levels/:levelId" element={<Sections />} />
+          <Route path="modules/:moduleId/levels/:levelId/sections/:sectionId" element={<SectionPage />} />
           <Route path="profile" element={<Profile />} />
           <Route
             path="section/:id"

@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
   fetchLevelInfo,
   fetchAllLevels,
+  clearLevels,
 } from "../../features/level/levelSlice";
 import {
   fetchUserProgressById,
@@ -19,8 +20,10 @@ import Python from "../../assets/icons/python.svg";
 import Js from "../../assets/icons/js.svg";
 import Css from "../../assets/icons/css.svg";
 import ArrowBack from "../../assets/icons/arrowBack.svg";
+import { useParams } from 'react-router-dom';
 
 const MainContent = () => {
+  const { moduleId } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { levelsInfo = [], page } = useSelector((state) => state.level || {});
@@ -28,14 +31,11 @@ const MainContent = () => {
     (state) => state.userProgress || {}
   );
   const [loading, setLoading] = useState(true);
-
   const [userCurrentInfo, setUserCurrentInfo] = useState({
     currentLevelIndex: 0,
     currentSectionIndex: 0,
     lastSectionIndex: 0,
   });
-
-  const selectedModule = localStorage.getItem("selectedModule");
 
   const courseImage = {
     "671909eecc62ee9e8f06c578": {
@@ -51,7 +51,7 @@ const MainContent = () => {
       barUnfilled: "#E1B9FF",
     },
     "67190a2ecc62ee9e8f06c57b": {
-      image: <img src={Js} alt="Html logo" />,
+      image: <img src={Js} alt="JS logo" />,
       course: "JavaScript",
       backgroundCurrent: "#C6E635",
       backgroundDone: "#EBF99D",
@@ -64,7 +64,7 @@ const MainContent = () => {
     },
     "676ee8640324ad0b3cda0bc6": {
       image: <img src={Html} alt="Html logo" />,
-      course: "Html",
+      course: "HTML V2",
       backgroundCurrent: "#EE5E37",
       backgroundDone: "#F59D7C",
       borderCurrent: "#B72017",
@@ -76,7 +76,7 @@ const MainContent = () => {
     },
     "66fc2fb14c227e973f81b4d1": {
       image: <img src={Html} alt="Html logo" />,
-      course: "Html",
+      course: "HTML",
       backgroundCurrent: "#EE5E37",
       backgroundDone: "#F59D7C",
       borderCurrent: "#B72017",
@@ -118,10 +118,11 @@ const MainContent = () => {
   };
 
   useEffect(() => {
-    if (selectedModule) {
-      fetchData(selectedModule);
+    if (moduleId) {
+      setLoading(true);
+      fetchData(moduleId);
     }
-  }, []);
+  }, [moduleId]);
 
   useEffect(() => {
     if (levelsInfo && levelsInfo?.length) {
@@ -136,22 +137,22 @@ const MainContent = () => {
       dispatch(fetchLevelInfo({ courseId: moduleId, page: 0, limit: 100 })),
       dispatch(fetchAllLevels({ courseId: moduleId })),
     ]);
+    setLoading(false)
   };
 
   const handleSectionClick = (levelId) => {
-    localStorage.setItem("selectedLevel", levelId);
-    navigate(`/learn/sections`);
+    navigate(`/learn/modules/${moduleId}/levels/${levelId}`);
   };
 
-  const handleFinalProjectClick = (levelIndex, levelId) => {
-    let current = levelIndex === userCurrentInfo.currentLevelIndex;
-    if (!current && currentProgress.courseCompleted) current = false;
-    if (current) {
-      navigate(`/progress?current=true`);
-    } else {
-      navigate(`/progress?level=${levelId}&index=${levelIndex}&current=false`);
-    }
-  };
+  // const handleFinalProjectClick = (levelIndex, levelId) => {
+  //   let current = levelIndex === userCurrentInfo.currentLevelIndex;
+  //   if (!current && currentProgress.courseCompleted) current = false;
+  //   if (current) {
+  //     navigate(`/progress?current=true`);
+  //   } else {
+  //     navigate(`/progress?level=${levelId}&index=${levelIndex}&current=false`);
+  //   }
+  // };
 
   return (
     <div className="w-2/3 mx-auto">
@@ -160,13 +161,13 @@ const MainContent = () => {
           <LoadingPage />
         </div>
       )}
-      {selectedModule && levelsInfo?.length ? (
+      {moduleId && levelsInfo?.length ? (
         <>
           <div className="flex w-full">
             <div
               style={{
-                background: courseImage[selectedModule].backgroundDone,
-                border: `2px solid ${courseImage[selectedModule].borderDone}`,
+                background: courseImage[moduleId].backgroundDone,
+                border: `2px solid ${courseImage[moduleId].borderDone}`,
               }}
               className={`flex flex-col py-3 px-6  mt-4 rounded-xl border-2 border-[#F9BEA8] w-full`}
             >
@@ -179,13 +180,13 @@ const MainContent = () => {
                   <span
                     className={`text-white  text-lg font-sans ml-2 font-medium`}
                   >
-                    Ir a Lenguajes
+                    Volver
                   </span>
                 </button>
                 <div className="flex mt-3">
-                  {courseImage[selectedModule]?.image}
+                  {courseImage[moduleId]?.image}
                   <span className="ml-2 text-white font-sans text-xl font-medium">
-                    {courseImage[selectedModule]?.course}
+                    {courseImage[moduleId]?.course}
                   </span>
                 </div>
               </div>
@@ -196,15 +197,15 @@ const MainContent = () => {
             {levelsInfo?.map((level, index) => {
               const progressBarColor =
                 index < userCurrentInfo.currentLevelIndex
-                  ? courseImage[selectedModule]?.barDone
+                  ? courseImage[moduleId]?.barDone
                   : index === userCurrentInfo.currentLevelIndex
-                  ? courseImage[selectedModule]?.barCurrent
+                  ? courseImage[moduleId]?.barCurrent
                   : "#DDDDDD";
               const remainingProgressBarColor =
                 index < userCurrentInfo.currentLevelIndex
-                  ? courseImage[selectedModule]?.barDone
+                  ? courseImage[moduleId]?.barDone
                   : index === userCurrentInfo.currentLevelIndex
-                  ? courseImage[selectedModule]?.barUnfilled
+                  ? courseImage[moduleId]?.barUnfilled
                   : "#DDDDDD";
               return (
                 <motion.div
@@ -217,16 +218,16 @@ const MainContent = () => {
                     zIndex: index,
                     border: `2px solid ${
                       index < userCurrentInfo.currentLevelIndex
-                        ? courseImage[selectedModule].borderDone
+                        ? courseImage[moduleId].borderDone
                         : index === userCurrentInfo.currentLevelIndex
-                        ? courseImage[selectedModule].borderCurrent
-                        : courseImage[selectedModule].borderDisable
+                        ? courseImage[moduleId].borderCurrent
+                        : courseImage[moduleId].borderDisable
                     }`,
                     backgroundColor:
                       index < userCurrentInfo.currentLevelIndex
-                        ? courseImage[selectedModule].backgroundDone
+                        ? courseImage[moduleId].backgroundDone
                         : index === userCurrentInfo.currentLevelIndex
-                        ? courseImage[selectedModule].backgroundCurrent
+                        ? courseImage[moduleId].backgroundCurrent
                         : "white",
                   }}
                   whileHover={{
@@ -268,9 +269,9 @@ const MainContent = () => {
                         style={{
                           background:
                             index < userCurrentInfo.currentLevelIndex
-                              ? courseImage[selectedModule].barUnfilled
+                              ? courseImage[moduleId].barUnfilled
                               : index === userCurrentInfo.currentLevelIndex
-                              ? courseImage[selectedModule].barUnfilled
+                              ? courseImage[moduleId].barUnfilled
                               : "#DDDDDD",
                         }}
                         className="w-full rounded-md h-4 "

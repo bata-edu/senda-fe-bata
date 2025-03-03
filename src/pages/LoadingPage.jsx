@@ -4,7 +4,7 @@ import Loading from "../assets//loading.gif";
 const LoadingPage = () => {
   return (
     <div className="mx-auto">
-      <img className="w-48" src={Loading} alt="Loading..." />
+      <img className="w-48 mx-auto" src={Loading} alt="Loading..." />
     </div>
   );
 };

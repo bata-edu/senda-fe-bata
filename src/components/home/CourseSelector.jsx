@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import ArrowRight from "../../assets/icons/arrowRight";
 import Left from "../../assets/icons/corchete-izquierdo.svg";
 import Right from "../../assets/icons/corchete-derecho.svg";
-
+import { clearLevels } from "../../features/level/levelSlice";
 import { useNavigate } from "react-router-dom";
 
 const Modules = () => {
@@ -20,15 +20,27 @@ const Modules = () => {
       primary: "#C694EC",
       secondary: "#D9B9F3",
       text: "black",
+      svg: "#5B2B78",
     },
     JavaScript: {
       primary: "#C6E635",
       secondary: "#E0F47E",
       text: "black",
+      svg: "#425314",
     },
-    CSS: { primary: "#3D48B8", secondary: "#4558C8", text: "white" },
-    Html: { primary: "#EB4624", secondary: "#EE5E37", text: "white" },
-    "HTML V2": { primary: "#EB4624", secondary: "#EE5E37", text: "white" },
+    CSS: { 
+      primary: "#3D48B8", 
+      secondary: "#4558C8", 
+      text: "white", 
+      svg: "#222449",
+    },
+    HTML: { 
+      primary: "#EB4624", 
+      secondary: "#EE5E37", 
+      text: "white",
+      svg: "#761A18" 
+    },
+    "HTML V2": { primary: "#EB4624", secondary: "#EE5E37", text: "white", svg: "#761A18" },
   };
 
   useEffect(() => {
@@ -40,13 +52,9 @@ const Modules = () => {
     fetchData();
   }, [dispatch]);
 
-  const updateSelectedModule = async (moduleId) => {
-    localStorage.setItem("selectedModule", moduleId);
-    fetchData(moduleId);
-  };
-
-  const fetchData = async (moduleId) => {
-    navigate("/learn/levels");
+  const handleModuleClick = async (moduleId) => {
+    dispatch(clearLevels());
+    navigate(`/learn/modules/${moduleId}`);
   };
 
   return (
@@ -55,7 +63,7 @@ const Modules = () => {
         <div className="text-5xl font-semibold text-gray-800 flex items-center space-x-2 my-12">
           <img src={Left} alt="Corchete izquierdo" className="h-10" />
           <span className="font-mono text-3xl font-medium">
-            Comenzá tu curso
+            Comienza tu curso
           </span>
           <img src={Right} alt="Corchete derecho" className="h-10" />
         </div>
@@ -66,12 +74,13 @@ const Modules = () => {
               module.progress[0]?.courseProgress.toFixed(0) || 0;
             const transparentModuleColor = courseColors[module.name]?.secondary;
             const textColor = courseColors[module.name]?.text;
+            const svgColor = courseColors[module.name]?.svg;
 
             return (
               <motion.div
-                onClick={() => updateSelectedModule(module.id)}
+                onClick={() => handleModuleClick(module.id)}
                 key={module.id}
-                className={`absolute w-full rounded-[50px] h-[320px] flex flex-col items-center justify-start py-10 px-12`}
+                className={`absolute w-full cursor-pointer rounded-[50px] h-[300px] flex flex-col items-center justify-start py-10 px-12`}
                 initial={{
                   background: `linear-gradient(
           to right,
@@ -99,12 +108,12 @@ const Modules = () => {
               >
                 <div className="flex justify-between w-full">
                   <span
-                    onClick={() => updateSelectedModule(module.id)}
-                    className={`font-mono text-7xl text-${textColor}`}
+                    onClick={() => handleModuleClick(module.id)}
+                    className={`font-mono text-7xl`} style={{ color: textColor}}
                   >
                     {module.name}
                   </span>
-                  <span className="font-mono text-3xl text-white">
+                  <span className={`font-mono text-3xl`} style={{ color: svgColor}}>
                     {percentage}%
                   </span>
                 </div>
@@ -120,7 +129,7 @@ const Modules = () => {
                     ))}
                   </div>
                   <div>
-                    <ArrowRight color={textColor} />
+                    <ArrowRight color={svgColor} />
                   </div>
                 </div>
               </motion.div>

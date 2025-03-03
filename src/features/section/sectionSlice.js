@@ -54,7 +54,14 @@ const sectionSlice = createSlice({
         exercise: null,
         sections: [],
     },
-    reducers: {},
+    reducers: {
+      clearSections: (state) => {
+        state.sections = [];
+        state.error = null
+        state.exercise =  null;
+        state.section = {};
+      }
+    },
     extraReducers: (builder) => {
         builder
             .addCase(fetchSection.fulfilled, (state, action) => {
@@ -89,5 +96,6 @@ const sectionSlice = createSlice({
             });
     }
     });
-
+    
+export const { clearSections } = sectionSlice.actions;
 export default sectionSlice.reducer;

@@ -62,7 +62,12 @@ const levelSlice = createSlice({
     page: 0,
     finalLevelProyect: null,
   },
-  reducers: {},
+  reducers: {
+    clearLevels: (state) => {
+      state.levelsInfo = null;
+      state.page = 0;
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchLevelInfo.pending, (state) => {
@@ -111,4 +116,5 @@ const levelSlice = createSlice({
   },
 });
 
+export const { clearLevels } = levelSlice.actions;
 export default levelSlice.reducer;
