@@ -211,7 +211,7 @@ const MainContent = () => {
               return (
                 <motion.div
                   onClick={() => handleSectionClick(level._id)}
-                  key={level.id}
+                  key={level._id}
                   className={`absolute w-full rounded-[50px] h-[400px] flex items-start justify-start py-10 px-12 ${
                     index > userCurrentInfo.currentLevelIndex ? "pointer-events-none" : ""
                   }`}                  style={{
