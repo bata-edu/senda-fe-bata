@@ -170,7 +170,7 @@ const EditorPage = () => {
   return (
     <div>
       <Header />
-      <div className="flex flex-col h-screen">
+      <div className="flex flex-col h-[90vh]">
       {showCorrectDialog && 
       <GenericDialog 
         title={"Corregir examen"}
