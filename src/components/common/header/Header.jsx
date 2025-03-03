@@ -24,7 +24,7 @@ const Header = ({className}) => {
   const navigate = useNavigate();
   const { user } = getAuthData();
   const [showMenu, setShowMenu] = useState(false);
-  const isActive = (path) => location.pathname === path;
+  const isActive = (path) => location.pathname.startsWith(path);
   const isEditor = isActive("/editor")
 
   const navigateTo = (path) => {
