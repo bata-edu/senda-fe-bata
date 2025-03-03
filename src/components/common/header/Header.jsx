@@ -13,6 +13,8 @@ import whiteFreeCode from "../../../assets/icons/white/codeo-libre.svg";
 import whiteCourses from "../../../assets/icons/white/cursos.svg";
 import whiteSettings from "../../../assets/icons/white/settings.svg";
 import whiteBell from "../../../assets/icons/white/bell.svg";
+import profileSkeleton from "../../../assets/icons/profile-skel.svg"
+import profileSkeletonWhite from "../../../assets/icons/white/profile-skel-white.svg"
 
 
 import { getAuthData, logoutUser } from "../../../features/auth/authService";
@@ -101,11 +103,11 @@ const Header = ({className}) => {
             )}
           </div>
 
-          <div className="flex justify-end items-center gap-2 w-24">
+          <div className="flex justify-end items-center gap-4">
             <img
               src={isEditor ? whiteSettings : Settings}
               alt="Ajustes"
-              className="h-6 cursor-pointer"
+              className="h-5 cursor-pointer"
               onClick={() => setShowMenu(!showMenu)}
             />
             {showMenu && (
@@ -118,7 +120,8 @@ const Header = ({className}) => {
                 </button>
               </div>
             )}
-            <img src={isEditor ? whiteBell : Bell} alt="Notificaciones" className="h-6" />
+            <img src={isEditor ? whiteBell : Bell} alt="Notificaciones" className="h-5" />
+            <img  onClick={() => navigate("/learn/profile")} src={isEditor ? profileSkeletonWhite : profileSkeleton} alt="Notificaciones" className={`size-10 ${isEditor ? "fill-white" : ""}`} />
           </div>
         </>
       )}
