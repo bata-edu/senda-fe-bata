@@ -4,11 +4,11 @@ import { useNavigate } from "react-router-dom";
 import {
   fetchLevelInfo,
   fetchAllLevels,
-  clearLevels,
+  // clearLevels,
 } from "../../features/level/levelSlice";
 import {
   fetchUserProgressById,
-  startCourse,
+  // startCourse,
 } from "../../features/userProgress/userProgressSlice";
 import LoadingPage from "../../pages/LoadingPage";
 
@@ -26,7 +26,7 @@ const MainContent = () => {
   const { moduleId } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { levelsInfo = [], page } = useSelector((state) => state.level || {});
+  const { levelsInfo = [] } = useSelector((state) => state.level || {});
   const { currentProgress, courseId } = useSelector(
     (state) => state.userProgress || {}
   );
@@ -100,7 +100,25 @@ const MainContent = () => {
     },
   };
 
-  const setLevelInfo = async () => {
+
+  useEffect(() => {
+    const fetchData = async (moduleId) => {
+      await dispatch(fetchUserProgressById(moduleId))
+      await Promise.all([
+        dispatch(fetchLevelInfo({ courseId: moduleId, page: 0, limit: 100 })),
+        dispatch(fetchAllLevels({ courseId: moduleId })),
+      ]);
+      setLoading(false)
+    };
+
+      if (moduleId) {
+        setLoading(true);
+        fetchData(moduleId);
+      }
+    }, [moduleId, dispatch]);
+
+  useEffect(() => {
+      const setLevelInfo = async () => {
     if (courseId) {
       const currentLevel = levelsInfo?.find(
         (level) => level._id === currentProgress.currentLevel
@@ -117,28 +135,11 @@ const MainContent = () => {
     }
   };
 
-  useEffect(() => {
-    if (moduleId) {
-      setLoading(true);
-      fetchData(moduleId);
-    }
-  }, [moduleId]);
-
-  useEffect(() => {
     if (levelsInfo && levelsInfo?.length) {
       setLevelInfo();
       setLoading(false);
     }
-  }, [levelsInfo]);
-
-  const fetchData = async (moduleId) => {
-    await dispatch(fetchUserProgressById(moduleId))
-    await Promise.all([
-      dispatch(fetchLevelInfo({ courseId: moduleId, page: 0, limit: 100 })),
-      dispatch(fetchAllLevels({ courseId: moduleId })),
-    ]);
-    setLoading(false)
-  };
+  }, [levelsInfo, courseId, currentProgress]);
 
   const handleSectionClick = (levelId) => {
     navigate(`/learn/modules/${moduleId}/levels/${levelId}`);
