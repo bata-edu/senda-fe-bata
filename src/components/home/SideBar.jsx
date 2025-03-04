@@ -1,13 +1,17 @@
 import React from "react";
 
-import { getAuthData, logoutUser } from "../../features/auth/authService";
+import { getAuthData, 
+  // logoutUser 
+} from "../../features/auth/authService";
 import { Navigate, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { RESET_STATE } from "../../utils/constants";
+// import { useDispatch, 
+  // useSelector 
+// } from "react-redux";
+// import { RESET_STATE } from "../../utils/constants";
 import Book from "../../assets/icons/book.svg";
 import Store from "../../assets/icons/store.svg";
 import Trophy from "../../assets/icons/trophy.svg";
-import Computer from "../../assets/icons/computer.svg";
+// import Computer from "../../assets/icons/computer.svg";
 import { getCourseLocalStorage } from "../../features/school/schoolSlice";
 import calificationIcon from "../../assets/icons/califications.svg";
 import pizzaronIcon from "../../assets/icons/pizzaron.svg";
@@ -16,18 +20,18 @@ import taskIcon from "../../assets/icons/task.svg";
 
 const Sidebar = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
   // const { rank } = useSelector((state) => state.user || {});
 
   const { user } = getAuthData();
   const course = getCourseLocalStorage() || {};
 
-  const handleLogout = async () => {
-    await logoutUser();
-    dispatch({ type: RESET_STATE });
-    navigate("/login");
-  };
+  // const handleLogout = async () => {
+  //   await logoutUser();
+  //   dispatch({ type: RESET_STATE });
+  //   navigate("/login");
+  // };
 
   const handleNavigation = (path) => {
     navigate(path);
