@@ -1,7 +1,7 @@
 import React from "react";
 
 import { getAuthData, logoutUser } from "../../features/auth/authService";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { RESET_STATE } from "../../utils/constants";
 import Book from "../../assets/icons/book.svg";
@@ -18,7 +18,7 @@ const Sidebar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const { rank } = useSelector((state) => state.user || {});
+  // const { rank } = useSelector((state) => state.user || {});
 
   const { user } = getAuthData();
   const course = getCourseLocalStorage() || {};
@@ -49,12 +49,13 @@ const Sidebar = () => {
     navigate(`/task-form/${course.id}`);
   };
 
+  if (!user) return(<Navigate to={'/login'}></Navigate>)
   return (
     <div className="flex flex-col justify-between pr-24 py-4 pl-8 ">
       <div>
         {user && user.role === "student" && (
-          <div className="flex flex-col space-y-6 cursor-pointer">
-            <div className="flex ">
+          <div className="flex flex-col gap-6">
+            <div className="flex cursor-pointer">
               <img src={Book} alt="Book icon" />
               <span
                 className="text-lg font-sans font-medium ml-4 "
@@ -63,7 +64,7 @@ const Sidebar = () => {
                 Aprender
               </span>
             </div>
-            <div className="flex">
+            <div className="flex text-gray-600 opacity-25 pointer-events-none select-none">
               <img src={Store} alt="Book icon" />
               <span
                 className="text-lg font-sans font-medium ml-4"
@@ -72,7 +73,7 @@ const Sidebar = () => {
                 Tienda
               </span>
             </div>
-            <div>
+            {/* <div>
               <div className="flex mb-4">
                 <img src={Trophy} alt="Book icon" />
                 <span className="text-lg font-sans font-medium ml-4">
@@ -96,7 +97,7 @@ const Sidebar = () => {
                     ))
                   : null}
               </div>
-            </div>
+            </div> */}
           </div>
         )}
         {user.role === "teacher" && (
