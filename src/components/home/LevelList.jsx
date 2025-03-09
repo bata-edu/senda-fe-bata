@@ -102,11 +102,13 @@ export const LevelList = () => {
         currentSectionIndex: 0,
         lastSectionIndex: null,
       });
-
-      await Promise.all([
-        dispatch(fetchLevelInfo({ moduleId: moduleId, page: 0, limit: 100 })),
-        dispatch(fetchUserProgressById(moduleId)),
-      ]);
+      const progressAction = dispatch(fetchUserProgressById(moduleId));
+      progressAction.then(() => {
+        dispatch(fetchLevelInfo({ moduleId: moduleId, page: 0, limit: 100 }))
+          .finally(() => {
+            setLoading(false);
+          });
+      });
     };
 
       if (moduleId) {
@@ -132,7 +134,7 @@ export const LevelList = () => {
     setLoading(false);
   }, [levelsInfo, moduleId, currentProgress]);
 
-  const handleSectionClick = (levelId) => {
+  const handleLevelClick = (levelId) => {
     navigate(`/learn/modules/${moduleId}/levels/${levelId}`);
   };
 
@@ -201,7 +203,7 @@ export const LevelList = () => {
                   : "#DDDDDD";
               return (
                 <motion.div
-                  onClick={() => handleSectionClick(level._id)}
+                  onClick={() => handleLevelClick(level._id)}
                   key={level._id}
                   className={`absolute w-full rounded-[50px] h-[400px] flex items-start justify-start py-10 px-12 ${
                     index > userCurrentInfo.currentLevelIndex ? "pointer-events-none" : ""
