@@ -10,7 +10,6 @@ import {
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import logoImage from "../../assets/logo.svg";
 import simpleLogo from "../../assets/simple-logo.svg";
 import useNavigateToDashboard from "../../utils/userRoles";
 import GenericDialog from "../common/dialog/dialog";
@@ -27,7 +26,6 @@ const LoginForm = () => {
   const location = useLocation();
   const [showDialog, setShowDialog] = useState(false);
   const [emailForReset, setEmailForReset] = useState("");
-  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
   const navigateToDashboard = useNavigateToDashboard();
 

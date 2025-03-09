@@ -26,7 +26,7 @@ const LoginGuard = ({ children }) => {
           // Manejar error si falla el refresco del token
         });
     }
-  }, [navigate]);
+  }, [navigate, navigateToDashboard]);
 
   return children;
 };

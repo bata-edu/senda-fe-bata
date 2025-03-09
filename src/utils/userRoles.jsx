@@ -23,6 +23,9 @@ const useNavigateToDashboard = () => {
       case USER_SCHOOL_ADMIN:
         navigate("/school-admin");
         break;
+      default:
+        navigate("/")
+        break;
     }
   };
 
