@@ -1,0 +1,67 @@
+import Html from "../assets/icons/html.svg";
+import Js from "../assets/icons/js.svg";
+import Css from "../assets/icons/css.svg";
+import Python from "../assets/icons/python.svg";
+
+export const courseImageSectionPage = {
+    "671909eecc62ee9e8f06c578": {
+        image: <img src={Python} alt="Html logo" />,
+        course: "Python",
+        backgroundCurrent: "#4A3167",
+        backgroundDone: "#9B4CD1",
+        borderCurrent: "#C694EC",
+        borderDone: "#DDC4F0",
+        borderDisable: "#C8C8C8",
+        barDone: "#6F3396",
+        barCurrent: "#6F3396",
+        barUnfilled: "#E1B9FF",
+    },
+    "67190a2ecc62ee9e8f06c57b": {
+        image: <img src={Js} alt="JS logo" />,
+        course: "JavaScript",
+        backgroundCurrent: "#C6E635",
+        backgroundDone: "#EBF99D",
+        borderCurrent: "#83A30D",
+        borderDone: "#83A30D",
+        borderDisable: "#C8C8C8",
+        barDone: "#EB4624",
+        barCurrent: "#627C0F",
+        barUnfilled: "#EBF99D",
+    },
+    "676ee8640324ad0b3cda0bc6": {
+        image: <img src={Html} alt="Html logo" />,
+        course: "HTML V2",
+        backgroundCurrent: "#EE5E37",
+        backgroundDone: "#F59D7C",
+        borderCurrent: "#B72017",
+        borderDone: "#EB4624",
+        borderDisable: "#C8C8C8",
+        barDone: "#EB4624",
+        barCurrent: "#B72017",
+        barUnfilled: "#F59D7C",
+    },
+    "66fc2fb14c227e973f81b4d1": {
+        image: <img src={Html} alt="Html logo" />,
+        course: "HTML",
+        backgroundCurrent: "#EE5E37",
+        backgroundDone: "#F59D7C",
+        borderCurrent: "#B72017",
+        borderDone: "#EB4624",
+        borderDisable: "#C8C8C8",
+        barDone: "#EB4624",
+        barCurrent: "#B72017",
+        barUnfilled: "#F59D7C",
+    },
+    "6749b2b80a8216bdad69e17b": {
+        image: <img src={Css} alt="Html logo" />,
+        course: "Css",
+        backgroundCurrent: "#3D48B8",
+        backgroundDone: "#3D48B8",
+        borderCurrent: "#7B97DF",
+        borderDone: "#7B97DF",
+        borderDisable: "#C8C8C8",
+        barDone: "#313777",
+        barCurrent: "#313777",
+        barUnfilled: "#5B75D6",
+    },
+};

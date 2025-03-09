@@ -7,12 +7,11 @@ import RegisterPage from "../pages/RegisterPage";
 import Home from "../pages/student/HomePage";
 import LoginGuard from "../utils/guards/loginGuard";
 import AuthGuard from "../utils/guards/authGuard";
-import MainContent from "../components/home/MainContent";
-import Levels from "../components/home/Levels";
+import { LevelList } from "../components/home/LevelList";
 import EditorPage from "../pages/student/EditorPage";
 import ResetPasswordPage from "../pages/ResetPasswordPage";
 import LandingPage from "../pages/landing/LandingPage";
-import ProgressPage from "../pages/student/ProgressPage";
+import { SectionPage } from "../pages/student/SectionPage";
 import Profile from "../pages/student/ProfilePage";
 import AdminHomePage from "../pages/admin/AdminHomePage";
 import SchoolAdminHomePage from "../pages/school-admin/SchoolAdminHomePage";
@@ -31,14 +30,13 @@ import CombineGuard from "../utils/guards/combineGuard";
 import Teachers from "../components/teachers/Teachers";
 import { useEffect } from "react";
 import ClassRoom from "../components/classRoom/classRoom";
-import Modules from "../components/home/CourseSelector";
-import Sections from "../components/home/Sections";
+import { ModuleList } from "../components/home/ModuleList";
+import { SectionList } from "../components/home/SectionList";
 import ExamCalifications from "../components/exam/examCalifications";
 import FreeCodeList from "../pages/student/FreeCodeList";
 import TeacherAndStudentGuard from "../utils/guards/teacherAndStudentGuard";
 import ClassRoomDetail from "../components/classRoom/classRoomDetail";
 import StudentGrades from "../components/classRoom/StudentGrades";
-import SectionPage from "../pages/student/SectionPage";
 import ClassRoomExams from "../components/classRoom/classRoomExams";
 import ClassRoomAssigments from "../components/classRoom/classRoomAssigments";
 import TaskForm from "../components/exam/TaskForm";
@@ -87,30 +85,12 @@ const AppRoutes = () => {
           }
         >
           <Route index element={<Navigate to="modules" replace />} />
-          <Route path="modules" element={<Modules />} />
-          <Route path="modules/:moduleId" element={<MainContent />} />
-          <Route path="modules/:moduleId/levels/:levelId" element={<Sections />} />
+          <Route path="modules" element={<ModuleList />} />
+          <Route path="modules/:moduleId" element={<LevelList />} />
+          <Route path="modules/:moduleId/levels/:levelId" element={<SectionList />} />
           <Route path="modules/:moduleId/levels/:levelId/sections/:sectionId" element={<SectionPage />} />
           <Route path="profile" element={<Profile />} />
-          <Route
-            path="section/:id"
-            element={
-              <AuthGuard>
-                <SectionPage />
-              </AuthGuard>
-            }
-          ></Route>
         </Route>
-        <Route
-          path="learn/progress"
-          element={
-            <AuthGuard>
-              <StudentGuard>
-                <ProgressPage />
-              </StudentGuard>
-            </AuthGuard>
-          }
-        ></Route>
         <Route
           path="/classroom"
           element={

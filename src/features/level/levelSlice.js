@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import {
   ALL_LEVELS_ENDPOINT,
-  LEVEL_ENDPOINT,
   LEVEL_INFO_ENDPOINT,
   RESET_STATE,
   FINAL_LEVEL_INFO,
@@ -11,10 +10,10 @@ import apiClient from "../../utils/interceptors/authInterceptor";
 // Thunk para obtener la información de un nivel
 export const fetchLevelInfo = createAsyncThunk(
   "level/fetchLevelInfo",
-  async ({ courseId, page, limit }, { rejectWithValue }) => {
+  async ({ moduleId, page, limit }, { rejectWithValue }) => {
     try {
       const response = await apiClient.get(
-        `${LEVEL_INFO_ENDPOINT}/${courseId}?page=${page}&limit=${limit}`
+        `${LEVEL_INFO_ENDPOINT}/${moduleId}?page=${page}&limit=${limit}`
       );
       return response.data;
     } catch (error) {
@@ -26,10 +25,10 @@ export const fetchLevelInfo = createAsyncThunk(
 // Thunk para obtener todos los niveles de un módulo
 export const fetchAllLevels = createAsyncThunk(
   "level/fetchAllLevels",
-  async ({ courseId }, { rejectWithValue }) => {
+  async ({ moduleId }, { rejectWithValue }) => {
     try {
       const response = await apiClient.get(
-        `${ALL_LEVELS_ENDPOINT}/${courseId}`
+        `${ALL_LEVELS_ENDPOINT}/${moduleId}`
       );
       return response.data;
     } catch (error) {

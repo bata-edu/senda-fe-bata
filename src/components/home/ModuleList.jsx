@@ -8,13 +8,15 @@ import Left from "../../assets/icons/corchete-izquierdo.svg";
 import Right from "../../assets/icons/corchete-derecho.svg";
 import { clearLevels } from "../../features/level/levelSlice";
 import { useNavigate } from "react-router-dom";
+import { fetchUserProgress } from "../../features/userProgress/userProgressSlice";
+import LoadingPage from "../../pages/LoadingPage";
 
-const Modules = () => {
+export const ModuleList = () => {
   const dispatch = useDispatch();
   const { modules } = useSelector((state) => state.modules);
+  const { progress } = useSelector((state) => state.userProgress);
   const navigate = useNavigate();
-
-  // Colores asignados a cada curso
+  
   const courseColors = {
     Python: {
       primary: "#C694EC",
@@ -47,6 +49,7 @@ const Modules = () => {
     const fetchData = async () => {
       if (localStorage.getItem("accessToken")) {
         dispatch(fetchModulesInfo());
+        dispatch(fetchUserProgress());
       }
     };
     fetchData();
@@ -56,7 +59,8 @@ const Modules = () => {
     dispatch(clearLevels());
     navigate(`/learn/modules/${moduleId}`);
   };
-
+  
+  if ( !progress || !progress.find || !modules ) return (<LoadingPage/>)
   return (
     <>
       <div className="flex flex-col justify-start items-center min-h-screen">
@@ -69,9 +73,9 @@ const Modules = () => {
         </div>
         <section className="w-2/3 relative">
           {modules?.map((module) => {
+            const moduleProgress = progress?.find((p) => p.course === module.id) 
+            const percentage = moduleProgress?.courseProgress.toFixed(0) || 0;
             const moduleColor = courseColors[module.name]?.primary;
-            const percentage =
-              module.progress[0]?.courseProgress.toFixed(0) || 0;
             const transparentModuleColor = courseColors[module.name]?.secondary;
             const textColor = courseColors[module.name]?.text;
             const svgColor = courseColors[module.name]?.svg;
@@ -140,5 +144,3 @@ const Modules = () => {
     </>
   );
 };
-
-export default Modules;

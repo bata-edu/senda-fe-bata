@@ -3,13 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
   fetchLevelInfo,
-  fetchAllLevels,
-  // clearLevels,
 } from "../../features/level/levelSlice";
-import {
-  fetchUserProgressById,
-  // startCourse,
-} from "../../features/userProgress/userProgressSlice";
 import LoadingPage from "../../pages/LoadingPage";
 
 import ArrowRight from "../../assets/icons/arrowRight";
@@ -21,20 +15,20 @@ import Js from "../../assets/icons/js.svg";
 import Css from "../../assets/icons/css.svg";
 import ArrowBack from "../../assets/icons/arrowBack.svg";
 import { useParams } from 'react-router-dom';
+import { fetchUserProgressById } from "../../features/userProgress/userProgressSlice";
 
-const MainContent = () => {
+export const LevelList = () => {
   const { moduleId } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { levelsInfo = [] } = useSelector((state) => state.level || {});
-  const { currentProgress, courseId } = useSelector(
-    (state) => state.userProgress || {}
-  );
+  const { levelsInfo } = useSelector((state) => state.level || {});
+  const { currentProgress } = useSelector((state) => state.userProgress || {});
+
   const [loading, setLoading] = useState(true);
   const [userCurrentInfo, setUserCurrentInfo] = useState({
     currentLevelIndex: 0,
     currentSectionIndex: 0,
-    lastSectionIndex: 0,
+    lastSectionIndex: null,
   });
 
   const courseImage = {
@@ -103,12 +97,16 @@ const MainContent = () => {
 
   useEffect(() => {
     const fetchData = async (moduleId) => {
-      await dispatch(fetchUserProgressById(moduleId))
+      setUserCurrentInfo({
+        currentLevelIndex: 0,
+        currentSectionIndex: 0,
+        lastSectionIndex: null,
+      });
+
       await Promise.all([
-        dispatch(fetchLevelInfo({ courseId: moduleId, page: 0, limit: 100 })),
-        dispatch(fetchAllLevels({ courseId: moduleId })),
+        dispatch(fetchLevelInfo({ moduleId: moduleId, page: 0, limit: 100 })),
+        dispatch(fetchUserProgressById(moduleId)),
       ]);
-      setLoading(false)
     };
 
       if (moduleId) {
@@ -118,28 +116,21 @@ const MainContent = () => {
     }, [moduleId, dispatch]);
 
   useEffect(() => {
-      const setLevelInfo = async () => {
-    if (courseId) {
-      const currentLevel = levelsInfo?.find(
-        (level) => level._id === currentProgress.currentLevel
-      );
+    const setLevelInfo = async () => {
+      if (!currentProgress || !levelsInfo) return;
       const currentLevelIndex = levelsInfo?.findIndex(
         (level) => level._id === currentProgress.currentLevel
       );
+      const currentLevel = levelsInfo[currentLevelIndex] || levelsInfo[0];
       const currentSectionIndex =
-        currentLevel?.sections.findIndex(
+        currentLevel?.sections?.findIndex(
           (section) => section._id === currentProgress.currentSection
         ) || 0;
-
       setUserCurrentInfo({ currentLevelIndex, currentSectionIndex });
-    }
-  };
-
-    if (levelsInfo && levelsInfo?.length) {
-      setLevelInfo();
-      setLoading(false);
-    }
-  }, [levelsInfo, courseId, currentProgress]);
+    };
+    setLevelInfo();
+    setLoading(false);
+  }, [levelsInfo, moduleId, currentProgress]);
 
   const handleSectionClick = (levelId) => {
     navigate(`/learn/modules/${moduleId}/levels/${levelId}`);
@@ -155,13 +146,13 @@ const MainContent = () => {
   //   }
   // };
 
+  if (loading || !levelsInfo) return(
+    <div className="w-full h-[90vh] flex justify-center items-center">
+      <LoadingPage />
+    </div>
+  )
   return (
     <div className="w-2/3 mx-auto">
-      {loading && (
-        <div className="w-full h-[90vh] flex justify-center items-center">
-          <LoadingPage />
-        </div>
-      )}
       {moduleId && levelsInfo?.length ? (
         <>
           <div className="flex w-full">
@@ -312,5 +303,3 @@ const MainContent = () => {
     </div>
   );
 };
-
-export default MainContent;

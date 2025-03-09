@@ -1,32 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  fetchNextExercise,
-  completeExercise,
-} from "../../features/userProgress/userProgressSlice";
 import LoadingPage from "../../pages/LoadingPage";
 import "../../styles/exercise.css";
-import { fetchExercise } from "../../features/section/sectionSlice";
 import MultipleChoice from "../exercises/MultipleChoice";
 import DragNDrop from "../exercises/DragNDrop/DragNDrop";
 import { UnstyledButton } from "@mantine/core";
 
-const Exercise = ({ advance, completedExercise, loadingNextAction }) => {
-  const navigate = useNavigate();
+const Exercise = ({ advance, content }) => {
   const dispatch = useDispatch();
-  const { myExercise, currentProgress, nextAction } = useSelector(
+  const { currentProgress } = useSelector(
     (state) => state.userProgress || {}
   );
-  const { exercise } = useSelector((state) => state.section || {});
   const [loading, setLoading] = useState(true);
-  const [childrenIndex, setChildrenIndex] = useState(0);
-  const [isChildren, setIsChildren] = useState(false);
   const [exe, setExe] = useState(null);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
 
-  const [currentExercise, setCurrentExercise] = useState(null);
   const [hasFetchedInitialData, setHasFetchedInitialData] = useState(false);
   const [selectedOption, setSelectedOption] = useState(null);
   const selectedModule = localStorage.getItem("selectedModule");
@@ -36,132 +25,69 @@ const Exercise = ({ advance, completedExercise, loadingNextAction }) => {
       primary: "#D9B9F3",
       secondary: "#D9B9F3",
     },
-    "67190a2ecc62ee9e8f06c57b": {
+    "67190a2ecc62ee9e8f06c57c": { // Changed ID
       primary: "#E0F47E",
       secondary: "#F6FCCB",
     },
-
-    "67190a2ecc62ee9e8f06c57b": { primary: "#4558C8", secondary: "#7B97DF" },
-    "67190a2ecc62ee9e8f06c57b": { primary: "#EE5E37", secondary: "#F9C5AF" },
+    "67190a2ecc62ee9e8f06c57d": { // Changed ID
+      primary: "#4558C8", 
+      secondary: "#7B97DF" 
+    },
+    "67190a2ecc62ee9e8f06c57e": { // Changed ID
+      primary: "#EE5E37", 
+      secondary: "#F9C5AF" 
+    },
   };
 
   useEffect(() => {
+    // Fixed to check if currentProgress exists before accessing .course
     if (!hasFetchedInitialData && currentProgress?.course) {
       const fetchInfo = async () => {
-        await dispatch(fetchNextExercise(currentProgress.course));
-        setCurrentExercise(completedExercise || myExercise);
         setHasFetchedInitialData(true);
       };
-
       fetchInfo();
     }
   }, [
     dispatch,
     currentProgress,
-    completedExercise,
-    myExercise,
+    content,
     hasFetchedInitialData,
   ]);
-
   useEffect(() => {
-    if (currentExercise) {
-      parseExercise();
-    }
-  }, [currentExercise]);
-
-  useEffect(() => {
-    if (isChildren && exercise) {
-      setExe(exercise);
+    if (content) {
+      setExe(content);
       setLoading(false);
     }
-  }, [exercise, isChildren]);
+  }, [content]);
 
-  const advanceExercise = async (option) => {
-    if (!completedExercise) {
-      if (isChildren) {
+  const checkExercise = async (option) => {
+    if (content) {
         if (option === exe?.answer) {
-          setChildrenIndex(childrenIndex + 1);
           setSuccess(true);
-
-          if (childrenIndex + 1 < currentExercise.childrens.length) {
-            await dispatch(
-              fetchExercise(currentExercise.childrens[childrenIndex + 1])
-            );
-            return;
-          } else {
-            setIsChildren();
-            setFinal(currentExercise);
-            return;
-          }
         } else {
           setError(true);
           return;
         }
-      }
-      const body = {
-        userAnswer: option,
-      };
-      const exerciseId = myExercise.id;
-
-      try {
-        const response = await dispatch(completeExercise({ exerciseId, body }));
-        if (!response || response.error) {
-          return;
-        }
-        advance();
-      } catch (error) {
-        console.error("Error capturado:", error);
-      }
-    } else {
-      if (isChildren) {
-        if (option === exe?.answer) {
-          setSuccess(true);
-          setChildrenIndex(childrenIndex + 1);
-          if (childrenIndex + 1 < currentExercise.childrens.length) {
-            await dispatch(
-              fetchExercise(currentExercise.childrens[childrenIndex + 1])
-            );
-            return;
-          } else {
-            setIsChildren();
-            setFinal(currentExercise);
-            return;
-          }
-        } else {
-          setError(true);
-          return;
-        }
-      }
-      advance();
     }
   };
 
-  const parseExercise = async () => {
-    if (currentExercise?.childrens.length) {
-      if (childrenIndex < currentExercise.childrens.length) {
-        await dispatch(fetchExercise(currentExercise.childrens[childrenIndex]));
-        setIsChildren(true);
-      } else {
-        setIsChildren(false);
-        setFinal(currentExercise);
-      }
-    } else {
-      setFinal(currentExercise);
-    }
-  };
-
-  const setFinal = (exerciseData) => {
-    setExe(exerciseData);
-    setLoading(false);
-  };
 
   const handleCopy = (event) => {
     event.preventDefault();
   };
-  console.log(exercise);
+  
+  const handleClick = (option) => {
+    if (!exe) return;
+    if (success || error) {
+      advance(option)
+    } else {
+      checkExercise(option)
+    }
+  };
+
   return (
     <div
-      className="mt-24 flex flex-col justify-between h-[71vh]"
+      className="flex flex-col justify-between"
       onCopy={handleCopy}
     >
       {loading && (
@@ -169,18 +95,24 @@ const Exercise = ({ advance, completedExercise, loadingNextAction }) => {
           <LoadingPage />
         </div>
       )}
-      {!loading && (
+      {!loading && exe && (
         <div className="w-full">
           {exe.template === 1 ? (
             <DragNDrop
-              completedExercise={completedExercise}
-              exercise={exe}
+              locked={error || success}
+              exercise={content}
               selectedOption={selectedOption}
               setSelectedOption={setSelectedOption}
-              colors={courseColors[selectedModule]}
+              colors={courseColors[selectedModule] || courseColors["67190a2ecc62ee9e8f06c57b"]}
             />
           ) : (
-            ""
+            <MultipleChoice
+              exercise={content}
+              locked={error || success}
+              selectedOption={selectedOption}
+              setSelectedOption={setSelectedOption}
+              colors={courseColors[selectedModule] || courseColors["67190a2ecc62ee9e8f06c57b"]}
+            />
           )}
         </div>
       )}
@@ -195,7 +127,7 @@ const Exercise = ({ advance, completedExercise, loadingNextAction }) => {
             <div className="w-1/2 mx-auto flex justify-end h-full items-center">
               <UnstyledButton
                 disabled={!exe}
-                onClick={() => advanceExercise(selectedOption)}
+                onClick={() => handleClick(selectedOption)}
                 className="flex items-center border-[#E4E7EC] bg-[#F2F2F7] p-3 rounded-lg h-16"
               >
                 <div>
@@ -212,7 +144,7 @@ const Exercise = ({ advance, completedExercise, loadingNextAction }) => {
                     />
                   </svg>
                 </div>
-                <span className="ml-2 ">Continuar</span>
+                <span className="ml-2 ">{error || success ? "Continuar" : "Confirmar"}</span>
               </UnstyledButton>
             </div>
           </div>
@@ -222,4 +154,6 @@ const Exercise = ({ advance, completedExercise, loadingNextAction }) => {
   );
 };
 
-export default Exercise;
+
+
+export default Exercise; 

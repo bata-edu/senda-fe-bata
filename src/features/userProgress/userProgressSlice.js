@@ -180,6 +180,21 @@ export const resetNextAction = createAsyncThunk(
   }
 );
 
+// Thunk para completar seccion de un nivel
+export const advanceProgress = createAsyncThunk(
+  "userProgress/submitFinalLevel",
+  async (progressId, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.post(
+        `${USER_PROGRESS_ENDPOINT}/advance/${progressId}`,
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 const userProgressSlice = createSlice({
   name: "userProgress",
   initialState: {

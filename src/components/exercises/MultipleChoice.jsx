@@ -2,8 +2,8 @@ import React from "react";
 
 const MultipleChoice = ({
   exercise,
+  locked,
   setSelectedOption,
-  completedExercise,
   colors,
   selectedOption,
 }) => {
@@ -11,7 +11,7 @@ const MultipleChoice = ({
 
   return (
     <div className="border-[#F4F5F7] border-8 rounded-lg w-1/2 mx-auto">
-      <div className="p-4 border-b border-b-[#F4F5F7] border-b-4 flex justify-center">
+      <div className="p-4 border-b-[#F4F5F7] border-b-4 flex justify-center">
         <span
           className={`text-lg font-medium text-[${colors?.primary}] font-sans`}
         >
@@ -32,12 +32,9 @@ const MultipleChoice = ({
                 index
               )})`}</span>
               <button
-                className={` ${
-                  option === selectedOption ? "bg-green-500" : ""
-                } border-[#F4F5F7] border-2 py-2 px-3  bg-[#FAFAFA] rounded-lg font-sans`}
-                onClick={() => {
-                  setSelectedOption(option);
-                }}
+                className={` ${option === selectedOption ? "bg-green-500" : ""} border-[#F4F5F7] border-2 py-2 px-3  bg-[#FAFAFA] rounded-lg font-sans 
+                ${locked ? "pointer-events-none" : ""}`}
+                onClick={() => {setSelectedOption(option)}}
               >
                 {option}
               </button>

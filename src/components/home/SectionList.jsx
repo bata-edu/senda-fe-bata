@@ -1,35 +1,37 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   fetchLevelInfo,
-  fetchAllLevels,
+  // fetchAllLevels,
 } from "../../features/level/levelSlice";
 import {
   fetchUserProgressById,
-  startCourse,
+  // startCourse,
 } from "../../features/userProgress/userProgressSlice";
 import MouseWhite from "../../assets/icons/white/mouse-white.svg";
 import KeyBoardWhite from "../../assets/icons/white/keyboard-white.svg";
 import DisplayWhite from "../../assets/icons/white/display-white.svg";
 import BookWhite from "../../assets/icons/white/book-white.svg";
-import { clearSections } from '../../features/section/sectionSlice';
+// import { clearSections } from '../../features/section/sectionSlice';
 import LoadingPage from "../../pages/LoadingPage";
 
-const Sections = () => {
+export const SectionList = () => {
+  const { moduleId, levelId } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { levelsInfo = [], page } = useSelector((state) => state.level || {});
+
+  // const { levelsInfo = [], page } = useSelector((state) => state.level || {});
 
   const { currentProgress } = useSelector(
     (state) => state.userProgress || {}
   );
+  
   const [loading, setLoading] = useState(false);
-  const [hasMoreLevels, setHasMoreLevels] = useState(true);
+  // const [hasMoreLevels, setHasMoreLevels] = useState(true);
   const [showNoMoreLevels, setShowNoMoreLevels] = useState(false);
-  const levelRefs = useRef({});
-  const [level, setLevel] = useState(false);
-
+  // const levelRefs = useRef({});
+  const [level, setLevel] = useState(null);
   const courseImage = {
     "671909eecc62ee9e8f06c578": {
       course: "Python",
@@ -98,93 +100,78 @@ const Sections = () => {
       ],
     },
   };
-  const { moduleId, levelId } = useParams();
-  useEffect(() => {
-    if (levelsInfo?.length && levelId) {
-      const selectedLevel = levelsInfo.find(level => level?._id === levelId);
-      if (selectedLevel) {
-        setLevel(selectedLevel);
-      }
-    }
-  }, [levelsInfo, levelId]);
 
-  const fetchData = async (moduleId) => {
-    setLoading(true);
-      try {
-        // Primero obtén el progreso del usuario
-        await dispatch(fetchUserProgressById(moduleId)).unwrap();
-        // Luego carga la información de niveles
-        const levelResponse = await dispatch(fetchLevelInfo({ courseId: moduleId, page, limit: 3 })).unwrap();
-        // Carga todos los niveles si es necesario
-        await dispatch(fetchAllLevels({ courseId: moduleId })).unwrap();
-        
-        // Si hay levelsInfo y levelId después de la carga, establece el nivel seleccionado
-        if (levelId && levelResponse.levels?.length) {
-          const selectedLevel = levelResponse.levels.find(lvl => lvl._id === levelId);
-          if (selectedLevel) {
-            setLevel(selectedLevel);
+  useEffect(() => {
+    const fetchData = async (moduleId) => {
+      setLoading(true);
+        try {
+          // Primero obtén el progreso del usuario
+          await dispatch(fetchUserProgressById(moduleId)).unwrap();
+          const levelResponse = await dispatch(fetchLevelInfo({ moduleId: moduleId, page: 0, limit: 10 })).unwrap();
+          // Si hay levelsInfo y levelId después de la carga, establece el nivel seleccionado
+          if (levelId && levelResponse.levels?.length) {
+            const selectedLevel = levelResponse.levels.find(lvl => lvl._id === levelId);
+            if (selectedLevel) {
+              setLevel(selectedLevel);
+            }
           }
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        } finally {
+          setLoading(false);
         }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setLoading(false);
-      }
-  };
+    };
 
-
-  useEffect(() => {
-  
-    if (moduleId) {
+    if (moduleId && levelId) {
       fetchData(moduleId);
     }
-  }, [moduleId]);
+  }, [levelId, dispatch, moduleId]);
 
-  useEffect(() => {
-    const handleHashChange = async () => {
-      const levelId = window.location.hash.replace("#", "");
-      if (levelId && levelId) {
-        let targetLevel = levelsInfo.find((level) => level._id === levelId);
-        let levelPage = 0;
-        while (!targetLevel && hasMoreLevels) {
-          try {
-            const response = await dispatch(
-              fetchLevelInfo({ levelId, page: levelPage, limit: 3 })
-            ).unwrap();
-            if (response.levels.length === 0) {
-              setHasMoreLevels(false);
-              break;
-            }
-            targetLevel = response.levels.find(
-              (level) => level._id === levelId
-            );
-            levelPage++;
-          } catch (error) {
-            console.error("Error fetching levels:", error);
-            setHasMoreLevels(false);
-            break;
-          }
-        }
+  // useEffect(() => {
+  //   const handleHashChange = async () => {
+  //     const levelId = window.location.hash.replace("#", "");
+  //     if (levelId && levelId) {
+  //       let targetLevel = levelsInfo.find((level) => level._id === levelId);
+  //       let levelPage = 0;
+  //       while (!targetLevel && hasMoreLevels) {
+  //         try {
+  //           const response = await dispatch(
+  //             fetchLevelInfo({ levelId, page: levelPage, limit: 3 })
+  //           ).unwrap();
+  //           if (response.levels.length === 0) {
+  //             setHasMoreLevels(false);
+  //             break;
+  //           }
+  //           targetLevel = response.levels.find(
+  //             (level) => level._id === levelId
+  //           );
+  //           levelPage++;
+  //         } catch (error) {
+  //           console.error("Error fetching levels:", error);
+  //           setHasMoreLevels(false);
+  //           break;
+  //         }
+  //       }
 
-        if (targetLevel) {
-          const targetElement = levelRefs.current[levelId];
-          if (targetElement) {
-            targetElement.scrollIntoView({
-              behavior: "smooth",
-              block: "center",
-            });
-          }
-        }
-      }
-    };
+  //       if (targetLevel) {
+  //         const targetElement = levelRefs.current[levelId];
+  //         if (targetElement) {
+  //           targetElement.scrollIntoView({
+  //             behavior: "smooth",
+  //             block: "center",
+  //           });
+  //         }
+  //       }
+  //     }
+  //   };
 
-    window.addEventListener("hashchange", handleHashChange);
-    handleHashChange();
+  //   window.addEventListener("hashchange", handleHashChange);
+  //   handleHashChange();
 
-    return () => {
-      window.removeEventListener("hashchange", handleHashChange);
-    };
-  }, [levelsInfo, hasMoreLevels, levelId, dispatch]);
+  //   return () => {
+  //     window.removeEventListener("hashchange", handleHashChange);
+  //   };
+  // }, [levelsInfo, hasMoreLevels, levelId, dispatch]);
 
   useEffect(() => {
     if (showNoMoreLevels) {
@@ -198,7 +185,8 @@ const Sections = () => {
   if (loading) return (        
     <div className="w-full h-[90vh] flex justify-center items-center">
       <LoadingPage />
-    </div>)
+    </div>
+  );
 
   return(
     <div className="flex flex-col w-full h-full items-center">
@@ -316,7 +304,7 @@ const Sections = () => {
           return (
             <div
               onClick={() => {
-                navigate(`/learn/progress?section=${section._id}&current=true`);
+                navigate(`sections/${section._id}`);
                 localStorage.setItem("sectionName", section.name);
                 localStorage.setItem("sectionOrder", section.order);
               }}
@@ -328,12 +316,12 @@ const Sections = () => {
               <div
                 style={{
                   background: (() => {
-                    if (sectionIndex < currentSectionIndex) {
+                    if (sectionIndex < currentSectionIndex || currentSectionIndex === -1) {
                       return courseImage[moduleId]?.backgroundDone; // Antes de la sección actual
                     } else if (sectionIndex === currentSectionIndex) {
                       return courseImage[moduleId]?.backgroundCurrent; // Sección actual
                     } else {
-                      return "#d3d3d3"; // Después de la sección actual
+                      return ""; // Después de la sección actual
                     }
                   })(),
                   border: `2px solid ${courseImage[moduleId]?.border}`,
@@ -349,5 +337,3 @@ const Sections = () => {
     </div>
   );
 };
-
-export default Sections;
