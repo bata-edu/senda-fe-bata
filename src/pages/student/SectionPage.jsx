@@ -1,20 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { advanceProgress, completeClass, completeExercise, fetchUserProgressById } from "../../features/userProgress/userProgressSlice";
+import { advanceProgress, completeClass, completeExercise, fetchUserProgress, fetchUserProgressById } from "../../features/userProgress/userProgressSlice";
 import { fetchSection } from "../../features/section/sectionSlice";
 import SectionClass from "../../components/section/Class";
 import Exercise from "../../components/section/Exercice";
 import LoadingPage from "../LoadingPage";
 import BackLogo from "../../assets/icons/back.png";
 import { courseImageSectionPage as courseImage } from "../../utils/courseImage";
-import { ADVANCE_LEVEL, ADVANCE_SECTION } from "../../utils/constants";
+import { ADVANCE_LEVEL, ADVANCE_SECTION, NEXT_CLASS } from "../../utils/constants";
 
 export const SectionPage = () => {
   const navigate = useNavigate();
   const { moduleId, levelId, sectionId } = useParams();
   const dispatch = useDispatch();
-  
   const { currentProgress, loading: progressLoading } = useSelector(
     (state) => state.userProgress || {}
   );
@@ -52,71 +51,94 @@ export const SectionPage = () => {
   }, [dispatch, moduleId, levelId, sectionId]);
 
   // Determine what content to show based on user progress
-  const determineCurrentContent = (sectionData) => {
-    console.log(sectionData)
-    if (!sectionData || !currentProgress) return;
-    
-    const { completedClasses = [] } = currentProgress;
-    
+  const determineCurrentContent = (sectionData, prevContent) => {
+    if (!currentProgress) return;
+    setCurrentContent(null)
+    const { completedClasses, completedExercises } = currentProgress;
     // Check if there are classes to complete
     if (sectionData.sectionClasses && sectionData.sectionClasses.length > 0) {
+      console.log("Searching class")
       // Find the first non-completed class
       const nextClassIndex = sectionData.sectionClasses.findIndex(
-        cls => !completedClasses.includes(cls._id)
+        cls => {
+          // Skip the class if it matches prevContent
+          if (prevContent && prevContent._id === cls._id) {
+            return false;
+          }
+          // Skip the class if it's in completedClasses
+          return !completedClasses.some(completedClass => completedClass._id === cls._id);
+        }
       );
       
       if (nextClassIndex !== -1) {
         // Found a class to complete
+        setLoading(false)
         setCurrentContent(sectionData.sectionClasses[nextClassIndex]);
         setContentType("class");
         return;
+      } else {
+        console.log("No next class found")
       }
     };
     
     // If all classes are completed, move to exercises
     if (sectionData.sectionExercises && sectionData.sectionExercises.length > 0) {
+      console.log("Searching exercise")
       // Similar logic for exercises
-      const completedExercises = currentProgress.completedExercises || [];
       const nextExerciseIndex = sectionData.sectionExercises.findIndex(
-        ex => !completedExercises.includes(ex._id)
+        ex => {
+          // Skip the class if it matches prevContent
+          if (prevContent && prevContent._id === ex._id) {
+            return false;
+          }
+          // Skip the class if it's in completedClasses
+          return !completedExercises.some(completedExercise => completedExercise.exerciseId === ex._id);
+        }
       );
-      
+      console.log(nextExerciseIndex)
       if (nextExerciseIndex !== -1) {
+        setLoading(false)
         setCurrentContent(sectionData.sectionExercises[nextExerciseIndex]);
         setContentType("exercise");
         return;
       }
     };
-
+      console.log("Section completed")
+    
     handleSectionCompleted(currentProgress._id)
+    setLoading(false)
   };
 
-  const handleSectionCompleted = ( progressId ) => {
-    dispatch(advanceProgress(progressId))
+  const handleSectionCompleted = async( progressId ) => {
+    await dispatch(advanceProgress(progressId)).unwrap
     setContentType("section-completed")
   }
   // Handle completion of current content
   const handleCompleteContent = async () => {
     if (!currentContent || !contentType) return;
-    
+    setCurrentContent(null)
     setLoading(true);
-
     try {
       let response;
-      if (contentType === "section-completed") {
-        dispatch(advanceProgress(currentProgress._id))
-        navigate(`/learn/modules/${moduleId}/levels/${levelId}`);
+      switch (contentType) {
+        case "section-completed":
+          await dispatch(advanceProgress(currentProgress._id)).unwrap()
+          navigate(`/learn/modules/${moduleId}/levels/${levelId}`);
+          return;
+        case "class":
+          console.log(contentType)
+          response = await dispatch(completeClass(currentContent._id)).unwrap()
+          break;
+        default:
+          return;
       }
-      else if (contentType === "class") {
-        response = dispatch(completeClass(currentContent._id))
-      } else {
-        console.error("Endpoint not found for", contentType)
-      }
-      await dispatch(fetchUserProgressById(moduleId)).unwrap();
       if (response.message === ADVANCE_SECTION) {
         navigate(`/learn/modules/${moduleId}/levels/${levelId}`);
       } else {
-        determineCurrentContent(section);
+      await dispatch(fetchUserProgressById(moduleId)).unwrap();
+        determineCurrentContent(section, currentContent);
+       // Small delay to ensure state updates are processed
+      return; // Return early to avoid setting loading to false twice 
       }
     } catch (error) {
       console.error("Error completing content:", error);
@@ -135,8 +157,6 @@ export const SectionPage = () => {
       const response = await dispatch(
         completeExercise({ exerciseId: currentContent._id, body })
       ).unwrap();
-      console.log(response);
-      
       await dispatch(fetchUserProgressById(moduleId)).unwrap();
       
       // Check if section is complete

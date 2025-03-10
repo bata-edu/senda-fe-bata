@@ -1,28 +1,10 @@
-import React, { useEffect, useState } from "react";
-import "../../styles/class.css";
-import LoadingPage from "../../pages/LoadingPage";
-
 const SectionClass = ({ advance, content }) => {
-  const [loading, setLoading] = useState(true);
-
-  const advanceClass = async () => {
-    setLoading(true);
+  const advanceClass = () => {
     advance();
   };
 
-  useEffect(() => {
-    if (content) {
-      setLoading(false);
-    }
-  }, [content]);
-
   return (
     <div className="flex h-[70vh] justify-center items-center">
-      {loading ? (
-        <div>
-          <LoadingPage />
-        </div>
-      ) : (
         <div className="border-2 border-[#E4E7EC] rounded-xl p-6 w-96">
           <div>
             <h2 className="text-lg">{content?.name}</h2>
@@ -36,7 +18,6 @@ const SectionClass = ({ advance, content }) => {
           </div>
           <div></div>
         </div>
-      )}
     </div>
   );
 };
