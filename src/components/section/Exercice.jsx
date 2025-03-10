@@ -5,6 +5,7 @@ import "../../styles/exercise.css";
 import MultipleChoice from "../exercises/MultipleChoice";
 import DragNDrop from "../exercises/DragNDrop/DragNDrop";
 import { UnstyledButton } from "@mantine/core";
+import { FillBlank } from "../exercises/FillBlank";
 
 const Exercise = ({ advance, content }) => {
   const dispatch = useDispatch();
@@ -105,7 +106,7 @@ const Exercise = ({ advance, content }) => {
               setSelectedOption={setSelectedOption}
               colors={courseColors[selectedModule] || courseColors["67190a2ecc62ee9e8f06c57b"]}
             />
-          ) : (
+          ) : exe.template === 2 ? (
             <MultipleChoice
               exercise={content}
               locked={error || success}
@@ -113,6 +114,15 @@ const Exercise = ({ advance, content }) => {
               setSelectedOption={setSelectedOption}
               colors={courseColors[selectedModule] || courseColors["67190a2ecc62ee9e8f06c57b"]}
             />
+          ) :(
+            <FillBlank
+              exercise={content}
+              locked={error || success}
+              selectedOption={selectedOption}
+              setSelectedOption={setSelectedOption}
+              colors={courseColors[selectedModule] || courseColors["67190a2ecc62ee9e8f06c57b"]}
+              >
+            </FillBlank>
           )}
         </div>
       )}
