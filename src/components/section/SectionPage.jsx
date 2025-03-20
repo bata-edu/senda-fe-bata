@@ -10,9 +10,9 @@ import {
   fetchUserProgressById,
 } from "../../features/userProgress/userProgressSlice"
 import { fetchSection } from "../../features/section/sectionSlice"
-import SectionClass from "./Class"
-import Exercise from "./Exercise"
-import LoadingPage from "../LoadingPage"
+import SectionClass from "./class/Class"
+import Exercise from "./exercise/Exercise"
+import LoadingPage from "../../pages/LoadingPage"
 import BackLogo from "../../assets/icons/back.png"
 import { courseImageSectionPage as courseImage } from "../../utils/courseImage"
 import { ADVANCE_LEVEL, ADVANCE_SECTION } from "../../utils/constants"
@@ -23,8 +23,8 @@ export const SectionPage = () => {
   const dispatch = useDispatch()
 
   // Redux state
-  const { currentProgress, loading: progressLoading } = useSelector((state) => state.userProgress || {})
-  const { section, loading: sectionLoading } = useSelector((state) => state.section || {})
+  const { currentProgress } = useSelector((state) => state.userProgress || {})
+  const { section  } = useSelector((state) => state.section || {})
 
   // Local state
   const [loading, setLoading] = useState(true)
