@@ -11,7 +11,7 @@ import { LevelList } from "../components/home/LevelList";
 import EditorPage from "../pages/student/EditorPage";
 import ResetPasswordPage from "../pages/ResetPasswordPage";
 import LandingPage from "../pages/landing/LandingPage";
-import { SectionPage } from "../pages/student/SectionPage";
+import { SectionPage } from "../components/section/SectionPage";
 import Profile from "../pages/student/ProfilePage";
 import AdminHomePage from "../pages/admin/AdminHomePage";
 import SchoolAdminHomePage from "../pages/school-admin/SchoolAdminHomePage";
