@@ -9,9 +9,7 @@ import { FillBlank } from "../exercises/FillBlank";
 
 const Exercise = ({ advance, content }) => {
   const dispatch = useDispatch();
-  const { currentProgress } = useSelector(
-    (state) => state.userProgress || {}
-  );
+  const { currentProgress } = useSelector((state) => state.userProgress || {});
   const [loading, setLoading] = useState(true);
   const [exe, setExe] = useState(null);
   const [error, setError] = useState(null);
@@ -26,17 +24,20 @@ const Exercise = ({ advance, content }) => {
       primary: "#D9B9F3",
       secondary: "#D9B9F3",
     },
-    "67190a2ecc62ee9e8f06c57c": { // Changed ID
+    "67190a2ecc62ee9e8f06c57c": {
+      // Changed ID
       primary: "#E0F47E",
       secondary: "#F6FCCB",
     },
-    "67190a2ecc62ee9e8f06c57d": { // Changed ID
-      primary: "#4558C8", 
-      secondary: "#7B97DF" 
+    "67190a2ecc62ee9e8f06c57d": {
+      // Changed ID
+      primary: "#4558C8",
+      secondary: "#7B97DF",
     },
-    "67190a2ecc62ee9e8f06c57e": { // Changed ID
-      primary: "#EE5E37", 
-      secondary: "#F9C5AF" 
+    "67190a2ecc62ee9e8f06c57e": {
+      // Changed ID
+      primary: "#EE5E37",
+      secondary: "#F9C5AF",
     },
   };
 
@@ -48,12 +49,7 @@ const Exercise = ({ advance, content }) => {
       };
       fetchInfo();
     }
-  }, [
-    dispatch,
-    currentProgress,
-    content,
-    hasFetchedInitialData,
-  ]);
+  }, [dispatch, currentProgress, content, hasFetchedInitialData]);
   useEffect(() => {
     if (content) {
       setExe(content);
@@ -63,34 +59,30 @@ const Exercise = ({ advance, content }) => {
 
   const checkExercise = async (option) => {
     if (content) {
-        if (option === exe?.answer) {
-          setSuccess(true);
-        } else {
-          setError(true);
-          return;
-        }
+      if (option === exe?.answer) {
+        setSuccess(true);
+      } else {
+        setError(true);
+        return;
+      }
     }
   };
-
 
   const handleCopy = (event) => {
     event.preventDefault();
   };
-  
+
   const handleClick = (option) => {
     if (!exe) return;
     if (success || error) {
-      advance(option)
+      advance(option);
     } else {
-      checkExercise(option)
+      checkExercise(option);
     }
   };
 
   return (
-    <div
-      className="flex flex-col justify-between"
-      onCopy={handleCopy}
-    >
+    <div className="flex flex-col justify-between" onCopy={handleCopy}>
       {loading && (
         <div className="flex justify-content items-center">
           <LoadingPage />
@@ -104,7 +96,10 @@ const Exercise = ({ advance, content }) => {
               exercise={content}
               selectedOption={selectedOption}
               setSelectedOption={setSelectedOption}
-              colors={courseColors[selectedModule] || courseColors["67190a2ecc62ee9e8f06c57b"]}
+              colors={
+                courseColors[selectedModule] ||
+                courseColors["67190a2ecc62ee9e8f06c57b"]
+              }
             />
           ) : exe.template === 2 ? (
             <MultipleChoice
@@ -112,17 +107,22 @@ const Exercise = ({ advance, content }) => {
               locked={error || success}
               selectedOption={selectedOption}
               setSelectedOption={setSelectedOption}
-              colors={courseColors[selectedModule] || courseColors["67190a2ecc62ee9e8f06c57b"]}
+              colors={
+                courseColors[selectedModule] ||
+                courseColors["67190a2ecc62ee9e8f06c57b"]
+              }
             />
-          ) :(
+          ) : (
             <FillBlank
               exercise={content}
               locked={error || success}
               selectedOption={selectedOption}
               setSelectedOption={setSelectedOption}
-              colors={courseColors[selectedModule] || courseColors["67190a2ecc62ee9e8f06c57b"]}
-              >
-            </FillBlank>
+              colors={
+                courseColors[selectedModule] ||
+                courseColors["67190a2ecc62ee9e8f06c57b"]
+              }
+            ></FillBlank>
           )}
         </div>
       )}
@@ -154,7 +154,9 @@ const Exercise = ({ advance, content }) => {
                     />
                   </svg>
                 </div>
-                <span className="ml-2 ">{error || success ? "Continuar" : "Confirmar"}</span>
+                <span className="ml-2 ">
+                  {error || success ? "Continuar" : "Confirmar"}
+                </span>
               </UnstyledButton>
             </div>
           </div>
@@ -164,6 +166,4 @@ const Exercise = ({ advance, content }) => {
   );
 };
 
-
-
-export default Exercise; 
+export default Exercise;
