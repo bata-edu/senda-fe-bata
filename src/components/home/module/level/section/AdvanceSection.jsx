@@ -1,6 +1,6 @@
 import React from "react";
 import "../../styles/advanceSection.css";
-import robotImage from "../../assets/robot.png";
+import robotImage from "../../../../assets/robot.png";
 import { useDispatch } from "react-redux";
 import { advanceCourse } from "../../features/userProgress/userProgressSlice";
 

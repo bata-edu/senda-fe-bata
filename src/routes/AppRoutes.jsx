@@ -1,46 +1,27 @@
 import AOS from "aos";
 import "aos/dist/aos.css";
 
+import { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+
 import LoginPage from "../pages/LoginPage";
 import RegisterPage from "../pages/RegisterPage";
 import Home from "../pages/student/HomePage";
 import LoginGuard from "../utils/guards/loginGuard";
 import AuthGuard from "../utils/guards/authGuard";
-import { LevelList } from "../components/home/LevelList";
+
+import { ModuleList } from "../components/home/ModuleList";
+import { LevelList } from "../components/home/module/LevelList";
+import { SectionList } from "../components/home/module/level/SectionList";
+import { SectionPage } from "../components/home/module/level/section/SectionPage";
+
 import EditorPage from "../pages/student/EditorPage";
 import ResetPasswordPage from "../pages/ResetPasswordPage";
 import LandingPage from "../pages/landing/LandingPage";
-import { SectionPage } from "../components/section/SectionPage";
 import Profile from "../pages/student/ProfilePage";
-import AdminHomePage from "../pages/admin/AdminHomePage";
-import SchoolAdminHomePage from "../pages/school-admin/SchoolAdminHomePage";
-import TeacherHomePage from "../pages/teacher/TeacherHomePage";
-import StudentGuard from "../utils/guards/studentGuard";
-import AdminGuard from "../utils/guards/adminGuard";
-import AdminSchoolGuard from "../utils/guards/adminSchoolGuard";
-import TeacherGuard from "../utils/guards/teacherGuard";
-import TeacherNewSchool from "../pages/teacher/TeacherNewSchool";
-import CoursesPage from "../pages/courses/CoursesPage";
-import CreateCourseForm from "../components/courses/CourseForm";
-import CourseDashboard from "../components/courses/CourseDetail";
-import ExamForm from "../components/exam/ExamForm";
-import ExamList from "../components/exam/ExamList";
-import CombineGuard from "../utils/guards/combineGuard";
-import Teachers from "../components/teachers/Teachers";
-import { useEffect } from "react";
-import ClassRoom from "../components/classRoom/classRoom";
-import { ModuleList } from "../components/home/ModuleList";
-import { SectionList } from "../components/home/SectionList";
-import ExamCalifications from "../components/exam/examCalifications";
+
 import FreeCodeList from "../pages/student/FreeCodeList";
 import TeacherAndStudentGuard from "../utils/guards/teacherAndStudentGuard";
-import ClassRoomDetail from "../components/classRoom/classRoomDetail";
-import StudentGrades from "../components/classRoom/StudentGrades";
-import ClassRoomExams from "../components/classRoom/classRoomExams";
-import ClassRoomAssigments from "../components/classRoom/classRoomAssigments";
-import TaskForm from "../components/exam/TaskForm";
-import CourseLeague from "../components/courses/CourseLeague";
 
 const AppRoutes = () => {
   useEffect(() => {
@@ -91,59 +72,6 @@ const AppRoutes = () => {
           <Route path="modules/:moduleId/levels/:levelId/sections/:sectionId" element={<SectionPage />} />
           <Route path="profile" element={<Profile />} />
         </Route>
-        <Route
-          path="/classroom"
-          element={
-            <AuthGuard>
-              <StudentGuard>
-                <ClassRoom />
-              </StudentGuard>
-            </AuthGuard>
-          }
-        />
-        <Route
-          path="/classroom/:id"
-          element={
-            <AuthGuard>
-              <StudentGuard>
-                <ClassRoomDetail />
-              </StudentGuard>
-            </AuthGuard>
-          }
-        />
-
-        <Route
-          path="/classroom/exams/:id"
-          element={
-            <AuthGuard>
-              <StudentGuard>
-                <ClassRoomExams />
-              </StudentGuard>
-            </AuthGuard>
-          }
-        />
-
-        <Route
-          path="/classroom/practices/:id"
-          element={
-            <AuthGuard>
-              <StudentGuard>
-                <ClassRoomAssigments />
-              </StudentGuard>
-            </AuthGuard>
-          }
-        />
-
-        <Route
-          path="/grades/:id"
-          element={
-            <AuthGuard>
-              <StudentGuard>
-                <StudentGrades />
-              </StudentGuard>
-            </AuthGuard>
-          }
-        />
 
         <Route
           path="/editor"
@@ -162,146 +90,6 @@ const AppRoutes = () => {
               <TeacherAndStudentGuard>
                 <EditorPage />
               </TeacherAndStudentGuard>
-            </AuthGuard>
-          }
-        />
-        <Route
-          path="/admin"
-          element={
-            <AuthGuard>
-              <AdminGuard>
-                <AdminHomePage />
-              </AdminGuard>
-            </AuthGuard>
-          }
-        />
-        <Route
-          path="/school-admin"
-          element={
-            <AuthGuard>
-              <AdminSchoolGuard>
-                <SchoolAdminHomePage />
-              </AdminSchoolGuard>
-            </AuthGuard>
-          }
-        />
-        <Route
-          path="/teacher"
-          element={
-            <AuthGuard>
-              <TeacherGuard>
-                <TeacherHomePage />
-              </TeacherGuard>
-            </AuthGuard>
-          }
-        />
-        <Route
-          path="/teacher/new-school"
-          element={
-            <AuthGuard>
-              <TeacherGuard>
-                <TeacherNewSchool />
-              </TeacherGuard>
-            </AuthGuard>
-          }
-        />
-        <Route
-          path="/courses/:schoolId"
-          element={
-            <AuthGuard>
-              <CombineGuard>
-                <CoursesPage />
-              </CombineGuard>
-            </AuthGuard>
-          }
-        />
-        <Route
-          path="/courses/:schoolId/new"
-          element={
-            <AuthGuard>
-              <TeacherGuard>
-                <CreateCourseForm />
-              </TeacherGuard>
-            </AuthGuard>
-          }
-        />
-        <Route
-          path="/teacher/course/:courseId"
-          element={
-            <AuthGuard>
-              <CombineGuard>
-                <CourseDashboard />
-              </CombineGuard>
-            </AuthGuard>
-          }
-        />
-        <Route
-          path="/exam/create/:courseId"
-          element={
-            <AuthGuard>
-              <TeacherGuard>
-                <ExamForm />
-              </TeacherGuard>
-            </AuthGuard>
-          }
-        />
-        <Route
-          path="/exam/list/:courseId"
-          element={
-            <AuthGuard>
-              <TeacherGuard>
-                <ExamList />
-              </TeacherGuard>
-            </AuthGuard>
-          }
-        />
-        <Route
-          path="/professors/:schoolId"
-          element={
-            <AuthGuard>
-              <AdminSchoolGuard>
-                <Teachers />
-              </AdminSchoolGuard>
-            </AuthGuard>
-          }
-        />
-        <Route
-          path="/exam-form/:courseId"
-          element={
-            <AuthGuard>
-              <TeacherGuard>
-                <ExamForm />
-              </TeacherGuard>
-            </AuthGuard>
-          }
-        />
-        <Route
-          path="/task-form/:courseId"
-          element={
-            <AuthGuard>
-              <TeacherGuard>
-                <TaskForm />
-              </TeacherGuard>
-            </AuthGuard>
-          }
-        />
-        <Route
-          path="/exam-califications/:courseId"
-          element={
-            <AuthGuard>
-              <TeacherGuard>
-                <ExamCalifications />
-              </TeacherGuard>
-            </AuthGuard>
-          }
-        />
-        <Route
-          path="/teacher/league"
-          element={
-            <AuthGuard>
-              <TeacherGuard>
-                <CourseLeague />
-              </TeacherGuard>
             </AuthGuard>
           }
         />

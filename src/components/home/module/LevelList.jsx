@@ -9,11 +9,11 @@ import LoadingPage from "../../../pages/LoadingPage";
 import ArrowRight from "../../../assets/icons/arrowRight";
 import { motion } from "framer-motion";
 import StreaksNDiamonds from "../../common/Streaks&Diamons/Streaks&Diamons";
-import Html from "../../assets/icons/html.svg";
-import Python from "../../assets/icons/python.svg";
-import Js from "../../assets/icons/js.svg";
-import Css from "../../assets/icons/css.svg";
-import ArrowBack from "../../assets/icons/arrowBack.svg";
+import Html from "../../../assets/icons/html.svg";
+import Python from "../../../assets/icons/python.svg";
+import Js from "../../../assets/icons/js.svg";
+import Css from "../../../assets/icons/css.svg";
+import ArrowBack from "../../../assets/icons/arrowBack.svg";
 import { useParams } from 'react-router-dom';
 import { fetchUserProgressById } from "../../../features/userProgress/userProgressSlice";
 

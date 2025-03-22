@@ -1,4 +1,4 @@
-import FloatingRobot from "../../assets/robots/floating.mp4";
+import FloatingRobot from "../../../../assets/robots/floating.mp4";
 const SectionClass = ({ advance, content }) => {
   const advanceClass = () => {
     advance();

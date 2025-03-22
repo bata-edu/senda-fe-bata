@@ -9,10 +9,10 @@ import {
   fetchUserProgressById,
   // startCourse,
 } from "../../../../features/userProgress/userProgressSlice";
-import MouseWhite from "../../assets/icons/white/mouse-white.svg";
-import KeyBoardWhite from "../../assets/icons/white/keyboard-white.svg";
-import DisplayWhite from "../../assets/icons/white/display-white.svg";
-import BookWhite from "../../assets/icons/white/book-white.svg";
+import MouseWhite from "../../../../assets/icons/white/mouse-white.svg";
+import KeyBoardWhite from "../../../../assets/icons/white/keyboard-white.svg";
+import DisplayWhite from "../../../../assets/icons/white/display-white.svg";
+import BookWhite from "../../../../assets/icons/white/book-white.svg";
 // import { clearSections } from '../../features/section/sectionSlice';
 import LoadingPage from "../../../../pages/LoadingPage";
 import { GuideViewer } from "./section/Guide"
