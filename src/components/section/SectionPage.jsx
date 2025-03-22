@@ -16,6 +16,7 @@ import LoadingPage from "../../pages/LoadingPage"
 import BackLogo from "../../assets/icons/back.png"
 import { courseImageSectionPage as courseImage } from "../../utils/courseImage"
 import { ADVANCE_LEVEL, ADVANCE_SECTION } from "../../utils/constants"
+import { GuideViewer } from "../home/Guide"
 
 export const SectionPage = () => {
   const navigate = useNavigate()
@@ -74,7 +75,6 @@ export const SectionPage = () => {
 
     setProgress(progressPercentage)
   }
-
   // Determine what content to show based on user progress
   const determineCurrentContent = (sectionData, prevContent) => {
     if (!currentProgress || !sectionData) return
@@ -264,6 +264,11 @@ export const SectionPage = () => {
             {courseImage[moduleId]?.image}
             <span className="ml-2 font-sans text-lg font-semibold">Sección {localStorage.getItem("sectionOrder")}</span>
           </div>
+          {section.guide && (
+            <GuideViewer 
+              guide={section.guide}
+            />
+          )}
         </div>
       </div>
 

@@ -15,6 +15,7 @@ import DisplayWhite from "../../assets/icons/white/display-white.svg";
 import BookWhite from "../../assets/icons/white/book-white.svg";
 // import { clearSections } from '../../features/section/sectionSlice';
 import LoadingPage from "../../pages/LoadingPage";
+import { GuideViewer } from "../home/Guide"
 
 export const SectionList = () => {
   const { moduleId, levelId } = useParams();
@@ -197,10 +198,11 @@ export const SectionList = () => {
         }}
         className="flex flex-col py-4 px-6  mt-4 rounded-xl  w-[480px]"
       >
-        <div onClick={() => navigate(`/learn/modules/${moduleId}`)}>
-          <span className={`text-${courseImage[moduleId].text}`}>
+        <div className="flex justify-between items-center" >
+          <span className={`cursor-pointer text-${courseImage[moduleId].text}`} onClick={() => navigate(`/learn/modules/${moduleId}`)} >
             Volver
           </span>
+          <GuideViewer guide={level?.guide} />
         </div>
       </div>
       <div className="relative w-full h-auto flex justify-center items-start mt-12">
