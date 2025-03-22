@@ -1,6 +1,6 @@
 import React from "react";
 import { useParams } from "react-router-dom";
-import { getTeachers } from "../../features/school/schoolSlice";
+import { getTeachers } from "../../../features/school/schoolSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 

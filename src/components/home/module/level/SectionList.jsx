@@ -4,18 +4,18 @@ import { useNavigate, useParams } from "react-router-dom";
 import {
   fetchLevelInfo,
   // fetchAllLevels,
-} from "../../features/level/levelSlice";
+} from "../../../../features/level/levelSlice";
 import {
   fetchUserProgressById,
   // startCourse,
-} from "../../features/userProgress/userProgressSlice";
+} from "../../../../features/userProgress/userProgressSlice";
 import MouseWhite from "../../assets/icons/white/mouse-white.svg";
 import KeyBoardWhite from "../../assets/icons/white/keyboard-white.svg";
 import DisplayWhite from "../../assets/icons/white/display-white.svg";
 import BookWhite from "../../assets/icons/white/book-white.svg";
 // import { clearSections } from '../../features/section/sectionSlice';
-import LoadingPage from "../../pages/LoadingPage";
-import { GuideViewer } from "../home/Guide"
+import LoadingPage from "../../../../pages/LoadingPage";
+import { GuideViewer } from "./section/Guide"
 
 export const SectionList = () => {
   const { moduleId, levelId } = useParams();

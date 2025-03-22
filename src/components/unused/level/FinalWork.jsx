@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import '../../styles/finalWork.css';
-import CodeTabs from '../editor/CodeTabs'; 
-import Editor from '../editor/Editor';
-import Preview from '../editor/Preview';
+import CodeTabs from '../../editor/CodeTabs'; 
+import Editor from '../../editor/Editor';
+import Preview from '../../editor/Preview';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchFinalLevelInfo } from '../../features/level/levelSlice';
-import { submitFinalLevel } from '../../features/userProgress/userProgressSlice';
+import { fetchFinalLevelInfo } from '../../../features/level/levelSlice';
+import { submitFinalLevel } from '../../../features/userProgress/userProgressSlice';
 
 const FinalWork = ({ advance, progress, levelId, index, loadingNextAction }) => {
   const [htmlCode, setHtmlCode] = useState('');

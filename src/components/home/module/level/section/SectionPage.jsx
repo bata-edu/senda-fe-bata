@@ -8,15 +8,15 @@ import {
   completeClass,
   completeExercise,
   fetchUserProgressById,
-} from "../../features/userProgress/userProgressSlice"
-import { fetchSection } from "../../features/section/sectionSlice"
+} from "../../../../../features/userProgress/userProgressSlice"
+import { fetchSection } from "../../../../../features/section/sectionSlice"
 import SectionClass from "./class/Class"
 import Exercise from "./exercise/Exercise"
-import LoadingPage from "../../pages/LoadingPage"
+import LoadingPage from "../../../../../pages/LoadingPage"
 import BackLogo from "../../assets/icons/back.png"
-import { courseImageSectionPage as courseImage } from "../../utils/courseImage"
-import { ADVANCE_LEVEL, ADVANCE_SECTION } from "../../utils/constants"
-import { GuideViewer } from "../home/Guide"
+import { courseImageSectionPage as courseImage } from "../../../../../utils/courseImage"
+import { ADVANCE_LEVEL, ADVANCE_SECTION } from "../../../../../utils/constants"
+import { GuideViewer } from "./Guide"
 
 export const SectionPage = () => {
   const navigate = useNavigate()

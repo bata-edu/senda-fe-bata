@@ -3,10 +3,10 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import left from '../../assets/icons/corchete-izquierdo.svg';
 import right from '../../assets/icons/corchete-derecho.svg';
-import { getIntoSchool } from '../../features/teacher/teacherSlice';
+import { getIntoSchool } from '../../../features/teacher/teacherSlice';
 import { useDispatch } from 'react-redux';
-import GenericDialog from '../common/dialog/dialog';
-import { saveSchoolLocalStorage } from '../../features/school/schoolSlice';
+import GenericDialog from '../../common/dialog/dialog';
+import { saveSchoolLocalStorage } from '../../../features/school/schoolSlice';
 
 const TeacherHome = () => {
   const dispatch = useDispatch();

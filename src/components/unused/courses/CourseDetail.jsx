@@ -2,29 +2,29 @@ import React, { useEffect, useState } from "react";
 import pencil from "../../assets/pencil.svg";
 import pencilB from "../../assets/pencilB.svg";
 import graduationIcon from "../../assets/icons/graduation.svg";
-import { getExamsByCourse, updateExam } from "../../features/exam/examSlice";
+import { getExamsByCourse, updateExam } from "../../../features/exam/examSlice";
 import {
   getCourseArticles,
   createCourseArticle,
   editCourseArticle,
-} from "../../features/courseArticle/courseArticle";
+} from "../../../features/courseArticle/courseArticle";
 import {
   getCourseLocalStorage,
   getSchoolLocalStorage,
   getStudentsProgress,
-} from "../../features/school/schoolSlice";
+} from "../../../features/school/schoolSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
-import LoadingPage from "../../pages/LoadingPage";
-import { fetchModulesInfo } from "../../features/module/moduleSlice";
+import LoadingPage from "../../../pages/LoadingPage";
+import { fetchModulesInfo } from "../../../features/module/moduleSlice";
 import cycle from "../../assets/icons/cycle.svg";
 import maleExample from "../../assets/male-example.svg";
-import GenericDialog from "../common/dialog/dialog";
+import GenericDialog from "../../common/dialog/dialog";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Header from "../common/header/Header";
-import Sidebar from "../home/SideBar";
-import { TextInput } from "../common/input/Input";
+import Header from "../../common/header/Header";
+import Sidebar from "../../home/SideBar";
+import { TextInput } from "../../common/input/Input";
 
 const CourseDashboard = () => {
   const dispatch = useDispatch();

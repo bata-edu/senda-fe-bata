@@ -1,6 +1,6 @@
 "use client"
 import React, { useState, useEffect } from "react"
-import { useDragAndDrop } from "../../../../utils/hooks/useDragAndDrop"
+import { useDragAndDrop } from "../../../../../../../utils/hooks/useDragAndDrop"
 
 const DragNDrop = ({ exercise, setSelectedOption, colors }) => {
   const [droppedAnswers, setDroppedAnswers] = useState({})

@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { getExamsByCourse, myTaskProgress } from "../../features/exam/examSlice";
-import { getCourseAndSchool } from "../../features/school/schoolSlice";
-import { getCourseArticles } from "../../features/courseArticle/courseArticle";
-import { createUserFreeModeProgress, setActiveFreeModeProgress } from "../../features/user/userSlice";
-import GenericDialog from "../common/dialog/dialog";
-import Header from "../common/header/Header";
+import { getExamsByCourse, myTaskProgress } from "../../../features/exam/examSlice";
+import { getCourseAndSchool } from "../../../features/school/schoolSlice";
+import { getCourseArticles } from "../../../features/courseArticle/courseArticle";
+import { createUserFreeModeProgress, setActiveFreeModeProgress } from "../../../features/user/userSlice";
+import GenericDialog from "../../common/dialog/dialog";
+import Header from "../../common/header/Header";
 import { useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
-import LoadingPage from "../../pages/LoadingPage";
+import LoadingPage from "../../../pages/LoadingPage";
 import graduationIcon from '../../assets/icons/graduation.svg';
 import pencil from "../../assets/pencil.svg";
 import pencilB from "../../assets/pencilB.svg";
 import maleExample from "../../assets/male-example.svg";
-import StreaksNDiamonds from "../common/Streaks&Diamons/Streaks&Diamons";
-import SideBarClassroom from "../home/SideBarClassroom";
+import StreaksNDiamonds from "../../common/Streaks&Diamons/Streaks&Diamons";
+import SideBarClassroom from "../../home/SideBarClassroom";
 
 
 

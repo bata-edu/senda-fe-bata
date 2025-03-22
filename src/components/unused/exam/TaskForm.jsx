@@ -1,22 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { createExam } from "../../features/exam/examSlice";
-import { getUser } from "../../features/auth/authService";
+import { createExam } from "../../../features/exam/examSlice";
+import { getUser } from "../../../features/auth/authService";
 import graduationIcon from "../../assets/icons/graduation.svg";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import DatePickerInput from "../common/input/dateInput";
-import Header from "../common/header/Header";
+import DatePickerInput from "../../common/input/dateInput";
+import Header from "../../common/header/Header";
 import {
   getCourseLocalStorage,
   getSchoolLocalStorage,
-} from "../../features/school/schoolSlice";
-import Sidebar from "../home/SideBar";
-import { fetchModulesInfo } from "../../features/module/moduleSlice";
-import { fetchAllLevels } from "../../features/level/levelSlice";
-import { fetchSections } from "../../features/section/sectionSlice";
-import { TextInput } from "../common/input/Input";
+} from "../../../features/school/schoolSlice";
+import Sidebar from "../../home/SideBar";
+import { fetchModulesInfo } from "../../../features/module/moduleSlice";
+import { fetchAllLevels } from "../../../features/level/levelSlice";
+import { fetchSections } from "../../../features/section/sectionSlice";
+import { TextInput } from "../../common/input/Input";
 
 const TaskForm = () => {
   const { courseId } = useParams();
