@@ -48,9 +48,9 @@ const Header = ({className}) => {
       </div>
       {user && (
         <>
-          <div className="flex justify-center items-center mx-auto">
+          <div className="flex gap-0 sm:gap-2 justify-center items-center mx-auto">
             <button
-              className={`flex items-center mx-1 p-2 rounded border-[1.5px] ${
+              className={`flex items-center p-2 rounded border-[1.5px] ${
                 isActive("/learn/modules")
                   ? activeButtonClassName
                   : "border-transparent"
@@ -58,11 +58,11 @@ const Header = ({className}) => {
               onClick={() => navigateTo("/learn/modules")}
             >
               <img src={isEditor ? whiteCourses : Courses} alt="Cursos" className="h-6" />
-              <span className="font-semibold ml-2">Cursos</span>
+              <span className="font-semibold ml-2 hidden sm:block">Cursos</span>
             </button>
             {user.role === "student" && (
               <button
-                className={`pointer-events-none opacity-50 flex items-center mx-1 p-2 rounded ${
+                className={`pointer-events-none opacity-50 flex items-center p-2 rounded ${
                   isActive("/classroom")
                     ? activeButtonClassName
                     : ""
@@ -70,11 +70,11 @@ const Header = ({className}) => {
                 onClick={() => navigateTo("/classroom")}
               >
                 <img src={isEditor ? whiteClasroom : Clasroom} alt="Aula" className="h-6" />
-                <span className="font-semibold ml-2">Aula</span>
+                <span className="font-semibold ml-2  hidden sm:block">Aula</span>
               </button>
             )}
             <button
-              className={`flex items-center mx-1 p-2 rounded ${
+              className={`flex items-center p-2 rounded ${
                 isEditor
                   ? activeButtonClassName
                   : ""
@@ -82,11 +82,11 @@ const Header = ({className}) => {
               onClick={() => navigateTo("/editor")}
             >
               <img src={isEditor ? whiteFreeCode : FreeCode} alt="Codeo Libre" className="h-6" />
-              <span className="font-semibold ml-2">Codeo Libre</span>
+              <span className="font-semibold ml-2 hidden sm:block">Codeo Libre</span>
             </button>
             {user.role === "teacher" && (
               <button
-                className={`flex items-center mx-1 p-2 rounded ${
+                className={`flex items-center p-2 rounded ${
                   isActive("/teacher")
                     ? activeButtonClassName
                     : ""
@@ -98,12 +98,12 @@ const Header = ({className}) => {
                 }}
               >
                 <img src={isEditor ? whiteFreeCode : FreeCode} alt="Codeo Libre" className="h-6" />
-                <span className="font-semibold ml-2">Instrucciones</span>
+                <span className="font-semibold ml-2 hidden sm:block">Instrucciones</span>
               </button>
             )}
           </div>
 
-          <div className="flex justify-end items-center gap-4">
+          <div className="flex justify-end items-center gap-2 sm:gap-4">
             <img
               src={isEditor ? whiteSettings : Settings}
               alt="Ajustes"

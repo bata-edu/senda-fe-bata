@@ -65,10 +65,10 @@ export const ModuleList = () => {
 
   return (
     <>
-      <div className="flex flex-col justify-start items-center px-4 mt-12 md:mt-24 h-full">
-        <div className="font-semibold text-gray-800 flex items-center gap-5 my-12">
+      <div className="flex flex-col justify-start items-center px-4 mt-12 md:mt-32 h-full">
+        <div className="font-semibold text-gray-800 flex items-center gap-5 mb-12">
           <img src={Left} alt="Corchete izquierdo" className="h-10" />
-          <span className="font-mono text-4xl sm:text-5xl font-medium">
+          <span className="font-mono text-center text-4xl sm:text-5xl font-medium">
             Comienza tu curso
           </span>
           <img src={Right} alt="Corchete derecho" className="h-10" />
@@ -85,7 +85,7 @@ export const ModuleList = () => {
               <motion.div
                 onClick={() => handleModuleClick(module.id)}
                 key={module.id}
-                className={`absolute w-full cursor-pointer rounded-[50px] h-[300px] flex flex-col items-center justify-start py-10 px-12`}
+                className={`absolute w-full cursor-pointer rounded-[50px] h-[300px] flex flex-col items-center justify-start py-10 px-6 sm:px-12`}
                 initial={{
                   background: `linear-gradient(
           to right,
@@ -114,7 +114,7 @@ export const ModuleList = () => {
                 <div className="flex justify-between w-full">
                   <span
                     onClick={() => handleModuleClick(module.id)}
-                    className={`font-mono text-7xl`} style={{ color: textColor}}
+                    className={`font-mono text-5xl sm:text-7xl max-w-[6ch] sm:max-w-full truncate`} style={{ color: textColor}}
                   >
                     {module.name}
                   </span>
@@ -122,13 +122,13 @@ export const ModuleList = () => {
                     {percentage}%
                   </span>
                 </div>
-                <div className="flex justify-between w-full mt-4">
-                  <div className="flex">
+                <div className="flex justify-between w-full mt-4 gap-2">
+                  <div className="flex gap-1 sm:gap-3">
                     {["Label", "Label"].map((tag, i) => (
                       <div
                         style={{ borderColor: textColor, color: textColor }}
                         key={i}
-                        className="border-2 rounded-full flex items-center px-4 mr-3"
+                        className="border-2 rounded-full flex items-center px-4"
                       >
                         <span className="text-xl">{tag}</span>
                       </div>
