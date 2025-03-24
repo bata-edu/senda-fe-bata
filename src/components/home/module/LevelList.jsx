@@ -148,11 +148,7 @@ export const LevelList = () => {
   //   }
   // };
 
-  if (loading || !levelsInfo) return(
-    <div className="w-full h-[90vh] flex justify-center items-center">
-      <LoadingPage />
-    </div>
-  )
+  if (loading || !levelsInfo) return(<LoadingPage message={"Cargando niveles..."}/>)
   return (
     <div className="w-2/3 mx-auto">
       {moduleId && levelsInfo?.length ? (

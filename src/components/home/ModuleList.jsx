@@ -59,8 +59,9 @@ export const ModuleList = () => {
     dispatch(clearLevels());
     navigate(`/learn/modules/${moduleId}`);
   };
-  
-  if ( !progress || !progress.find || !modules ) return (<LoadingPage/>)
+  if (!modules) return (<LoadingPage message={"Cargando módulos..."}/>)
+  if (!progress || !progress.find) return (<LoadingPage message={"Cargando progreso..."}/>)
+
   return (
     <>
       <div className="flex flex-col justify-start items-center min-h-screen">
