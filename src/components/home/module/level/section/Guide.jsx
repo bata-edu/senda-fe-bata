@@ -2,8 +2,9 @@ import React, { useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { dracula } from "react-syntax-highlighter/dist/esm/styles/prism";
+import Icon from "../../../../../assets/icons/guide.svg"
 
-export const GuideViewer = ({ guide, buttonText = "Ver Guía" }) => {
+export const GuideViewer = ({ guide, text, icon }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
 
@@ -38,10 +39,11 @@ export const GuideViewer = ({ guide, buttonText = "Ver Guía" }) => {
   return (
     <>
       <button 
-        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+        className="p-1 rounded transition flex items-center gap-2"
         onClick={openDialog}
       >
-        {buttonText}
+        {text && <span className="font-sans text-[#4558C8] text-lg underline font-semibold">{text}</span>}
+        {icon && <img src={Icon} alt=""/>}
       </button>
 
       {isOpen && (

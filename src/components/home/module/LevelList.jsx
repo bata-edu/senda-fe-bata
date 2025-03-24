@@ -8,7 +8,7 @@ import LoadingPage from "../../../pages/LoadingPage";
 
 import ArrowRight from "../../../assets/icons/arrowRight";
 import { motion } from "framer-motion";
-import StreaksNDiamonds from "../../common/Streaks&Diamons/Streaks&Diamons";
+// import StreaksNDiamonds from "../../common/Streaks&Diamons/Streaks&Diamons";
 import Html from "../../../assets/icons/html.svg";
 import Python from "../../../assets/icons/python.svg";
 import Js from "../../../assets/icons/js.svg";

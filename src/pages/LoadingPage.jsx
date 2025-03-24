@@ -5,7 +5,7 @@ const LoadingPage = ({message}) => {
   return (
     <div className="mx-auto h-full flex flex-col justify-center">
       <img className="w-48 mx-auto" src={Loading} alt="Loading..." />
-      {message && <p className="text-center w-full">{message}</p>}
+      {message && <p className="font-mono text-lg text-center w-full">{message}</p>}
     </div>
   );
 };

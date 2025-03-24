@@ -60,6 +60,7 @@ export const SectionPage = () => {
     }
 
     loadInitialData()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, moduleId, levelId, sectionId])
 
   // Calculate progress percentage
@@ -259,16 +260,19 @@ export const SectionPage = () => {
             <span className="ml-2">Salir</span>
           </button>
         </div>
-        <div className="max-w-md mx-auto">
-          <div className="flex border-[#E4E7EC] border-2 rounded-xl py-2 px-3">
-            {courseImage[moduleId]?.image}
-            <span className="ml-2 font-sans text-lg font-semibold">Sección {localStorage.getItem("sectionOrder")}</span>
-          </div>
-          {section.guide && (
-            <GuideViewer 
-              guide={section.guide}
-            />
-          )}
+          <div className="max-w-md w-full justify-between mx-auto flex gap-2 items-center border-[#E4E7EC] border-2 rounded-xl py-2 px-2 sm:px-6">
+
+            <div className="flex gap-2">
+              {courseImage[moduleId]?.image}
+              <span className="sfont-sans text-lg font-semibold">Sección {localStorage.getItem("sectionOrder")}</span>
+            </div>
+            {section.guide && (
+              <GuideViewer 
+                guide={section.guide}
+                icon
+                text={"Ver guía"}
+              />
+            )}
         </div>
       </div>
 

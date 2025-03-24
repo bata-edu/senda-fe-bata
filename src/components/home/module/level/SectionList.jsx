@@ -22,17 +22,10 @@ export const SectionList = () => {
   const { moduleId, levelId } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  // const { levelsInfo = [], page } = useSelector((state) => state.level || {});
-
-  const { currentProgress } = useSelector(
-    (state) => state.userProgress || {}
-  );
+  const { currentProgress } = useSelector((state) => state.userProgress || {});
   
   const [loading, setLoading] = useState(false);
-  // const [hasMoreLevels, setHasMoreLevels] = useState(true);
   const [showNoMoreLevels, setShowNoMoreLevels] = useState(false);
-  // const levelRefs = useRef({});
   const [level, setLevel] = useState(null);
   const courseImage = {
     "671909eecc62ee9e8f06c578": {
@@ -107,10 +100,8 @@ export const SectionList = () => {
     const fetchData = async (moduleId) => {
       setLoading(true);
         try {
-          // Primero obtén el progreso del usuario
           await dispatch(fetchUserProgressById(moduleId)).unwrap();
           const levelResponse = await dispatch(fetchLevelInfo({ moduleId: moduleId, page: 0, limit: 10 })).unwrap();
-          // Si hay levelsInfo y levelId después de la carga, establece el nivel seleccionado
           if (levelId && levelResponse.levels?.length) {
             const selectedLevel = levelResponse.levels.find(lvl => lvl._id === levelId);
             if (selectedLevel) {
@@ -129,52 +120,6 @@ export const SectionList = () => {
     }
   }, [levelId, dispatch, moduleId]);
 
-  // useEffect(() => {
-  //   const handleHashChange = async () => {
-  //     const levelId = window.location.hash.replace("#", "");
-  //     if (levelId && levelId) {
-  //       let targetLevel = levelsInfo.find((level) => level._id === levelId);
-  //       let levelPage = 0;
-  //       while (!targetLevel && hasMoreLevels) {
-  //         try {
-  //           const response = await dispatch(
-  //             fetchLevelInfo({ levelId, page: levelPage, limit: 3 })
-  //           ).unwrap();
-  //           if (response.levels.length === 0) {
-  //             setHasMoreLevels(false);
-  //             break;
-  //           }
-  //           targetLevel = response.levels.find(
-  //             (level) => level._id === levelId
-  //           );
-  //           levelPage++;
-  //         } catch (error) {
-  //           console.error("Error fetching levels:", error);
-  //           setHasMoreLevels(false);
-  //           break;
-  //         }
-  //       }
-
-  //       if (targetLevel) {
-  //         const targetElement = levelRefs.current[levelId];
-  //         if (targetElement) {
-  //           targetElement.scrollIntoView({
-  //             behavior: "smooth",
-  //             block: "center",
-  //           });
-  //         }
-  //       }
-  //     }
-  //   };
-
-  //   window.addEventListener("hashchange", handleHashChange);
-  //   handleHashChange();
-
-  //   return () => {
-  //     window.removeEventListener("hashchange", handleHashChange);
-  //   };
-  // }, [levelsInfo, hasMoreLevels, levelId, dispatch]);
-
   useEffect(() => {
     if (showNoMoreLevels) {
       const timer = setTimeout(() => {
@@ -192,14 +137,15 @@ export const SectionList = () => {
 
   return(
     <div className="flex flex-col w-full h-full items-center">
-          <div className="flex max-w-md">
             <div
               style={{
                 background: courseImage[moduleId].backgroundCurrent,
                 border: `2px solid ${courseImage[moduleId].backgroundDone}`,
               }}
-              className={`flex py-3 px-6  mt-4 rounded-xl border-2 border-[#F9BEA8] w-full`}
+              className={`max-w-md flex flex-col py-3 px-6 mt-4 rounded-xl border-2 border-[#F9BEA8] w-full`}
             >
+              <div className="w-full flex justify-between items-center">
+
                 <button
                   onClick={() => navigate(`/learn/modules/${moduleId}`)}
                   className="flex items-center"
@@ -211,12 +157,14 @@ export const SectionList = () => {
                     Volver
                   </span>
                 </button>
-                <div className="flex mt-3">
-                  {courseImage[moduleId]?.image}
-                  <GuideViewer guide={level?.guide} />
-                </div>
+                <GuideViewer guide={level?.guide} />
               </div>
-          </div>
+              <div className="text-white font-mono text-2xl">
+                Nivel {level?.order}: {level?.name}
+              </div>
+
+            </div>
+
       <div className="relative w-full h-auto flex justify-center items-start mt-12">
         {level?.sections?.map((section, index) => {
           const position = index % 5;
