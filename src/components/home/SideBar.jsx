@@ -18,7 +18,7 @@ import pizzaronIcon from "../../assets/icons/pizzaron.svg";
 import formIcon from "../../assets/icons/form.svg";
 import taskIcon from "../../assets/icons/task.svg";
 
-const Sidebar = () => {
+const Sidebar = ({className}) => {
   const navigate = useNavigate();
   // const dispatch = useDispatch();
 
@@ -55,10 +55,10 @@ const Sidebar = () => {
 
   if (!user) return(<Navigate to={'/login'}></Navigate>)
   return (
-    <div className="flex flex-col justify-between pr-24 py-4 pl-8 ">
+    <div className={`flex flex-col justify-between px-8 pt-4 ${className}`}>
       <div>
         {user && user.role === "student" && (
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-6 lg:min-w-64 mx-auto">
             <div className="flex cursor-pointer">
               <img src={Book} alt="Book icon" />
               <span

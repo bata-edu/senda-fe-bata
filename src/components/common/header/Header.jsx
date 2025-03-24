@@ -36,7 +36,7 @@ const Header = ({className}) => {
     navigate("/login");
   };
 
-  let activeButtonClassName = "bg-grayBg border-borderGray border-1"
+  let activeButtonClassName = "bg-headerButtonActive border-borderHeaderButtonActive border-1.5"
   if (isEditor) {
     activeButtonClassName = "bg-[#2F414A] border-[#385966] border-1"
   }
@@ -50,10 +50,10 @@ const Header = ({className}) => {
         <>
           <div className="flex justify-center items-center mx-auto">
             <button
-              className={`flex items-center mx-1 p-2 rounded ${
+              className={`flex items-center mx-1 p-2 rounded border-[1.5px] ${
                 isActive("/learn/modules")
                   ? activeButtonClassName
-                  : ""
+                  : "border-transparent"
               }`}
               onClick={() => navigateTo("/learn/modules")}
             >
@@ -62,7 +62,7 @@ const Header = ({className}) => {
             </button>
             {user.role === "student" && (
               <button
-                className={`flex items-center mx-1 p-2 rounded ${
+                className={`pointer-events-none opacity-50 flex items-center mx-1 p-2 rounded ${
                   isActive("/classroom")
                     ? activeButtonClassName
                     : ""

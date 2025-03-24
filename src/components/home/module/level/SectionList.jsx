@@ -16,6 +16,7 @@ import BookWhite from "../../../../assets/icons/white/book-white.svg";
 // import { clearSections } from '../../features/section/sectionSlice';
 import LoadingPage from "../../../../pages/LoadingPage";
 import { GuideViewer } from "./section/Guide"
+import ArrowBack from "../../../../assets/icons/arrowBack.svg";
 
 export const SectionList = () => {
   const { moduleId, levelId } = useParams();
@@ -191,20 +192,31 @@ export const SectionList = () => {
 
   return(
     <div className="flex flex-col w-full h-full items-center">
-      <div
-        style={{
-          background: courseImage[moduleId].backgroundCurrent,
-          border: `2px solid ${courseImage[moduleId].border}`,
-        }}
-        className="flex flex-col py-4 px-6  mt-4 rounded-xl  w-[480px]"
-      >
-        <div className="flex justify-between items-center" >
-          <span className={`cursor-pointer text-${courseImage[moduleId].text}`} onClick={() => navigate(`/learn/modules/${moduleId}`)} >
-            Volver
-          </span>
-          <GuideViewer guide={level?.guide} />
-        </div>
-      </div>
+          <div className="flex max-w-md">
+            <div
+              style={{
+                background: courseImage[moduleId].backgroundCurrent,
+                border: `2px solid ${courseImage[moduleId].backgroundDone}`,
+              }}
+              className={`flex py-3 px-6  mt-4 rounded-xl border-2 border-[#F9BEA8] w-full`}
+            >
+                <button
+                  onClick={() => navigate(`/learn/modules/${moduleId}`)}
+                  className="flex items-center"
+                >
+                  <img src={ArrowBack} alt="arrow back" />
+                  <span
+                    className={`text-white  text-lg font-sans ml-2 font-medium`}
+                  >
+                    Volver
+                  </span>
+                </button>
+                <div className="flex mt-3">
+                  {courseImage[moduleId]?.image}
+                  <GuideViewer guide={level?.guide} />
+                </div>
+              </div>
+          </div>
       <div className="relative w-full h-auto flex justify-center items-start mt-12">
         {level?.sections?.map((section, index) => {
           const position = index % 5;

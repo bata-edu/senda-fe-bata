@@ -18,16 +18,17 @@ import { useParams } from 'react-router-dom';
 import { fetchUserProgressById } from "../../../features/userProgress/userProgressSlice";
 
 export const LevelList = () => {
-  const { moduleId } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  
+  const { moduleId } = useParams();
   const { levelsInfo } = useSelector((state) => state.level || {});
   const { currentProgress } = useSelector((state) => state.userProgress || {});
 
   const [loading, setLoading] = useState(true);
   const [userCurrentInfo, setUserCurrentInfo] = useState({
-    currentLevelIndex: 0,
-    currentSectionIndex: 0,
+    currentLevelIndex: null,
+    currentSectionIndex: null,
     lastSectionIndex: null,
   });
 
@@ -150,18 +151,17 @@ export const LevelList = () => {
 
   if (loading || !levelsInfo) return(<LoadingPage message={"Cargando niveles..."}/>)
   return (
-    <div className="w-2/3 mx-auto">
+    <div className="w-full max-w-5xl px-4 mx-auto">
       {moduleId && levelsInfo?.length ? (
         <>
-          <div className="flex w-full">
+          <div className="flex max-w-md">
             <div
               style={{
-                background: courseImage[moduleId].backgroundDone,
-                border: `2px solid ${courseImage[moduleId].borderDone}`,
+                background: courseImage[moduleId].backgroundCurrent,
+                border: `2px solid ${courseImage[moduleId].backgroundDone}`,
               }}
               className={`flex flex-col py-3 px-6  mt-4 rounded-xl border-2 border-[#F9BEA8] w-full`}
             >
-              <div>
                 <button
                   onClick={() => navigate(`/learn/modules`)}
                   className="flex items-center"
@@ -180,10 +180,9 @@ export const LevelList = () => {
                   </span>
                 </div>
               </div>
-            </div>
-            <StreaksNDiamonds />
+            {/* <StreaksNDiamonds /> */}
           </div>
-          <div className="relative w-full mt-36">
+          <div className="relative w-full mt-32">
             {levelsInfo?.map((level, index) => {
               const progressBarColor =
                 index < userCurrentInfo.currentLevelIndex
@@ -201,7 +200,7 @@ export const LevelList = () => {
                 <motion.div
                   onClick={() => handleLevelClick(level._id)}
                   key={level._id}
-                  className={`absolute w-full rounded-[50px] h-[400px] flex items-start justify-start py-10 px-12 ${
+                  className={`absolute w-full rounded-[50px] h-[400px] overflow-hidden flex items-start justify-start py-10 px-12 ${
                     index > userCurrentInfo.currentLevelIndex ? "pointer-events-none" : ""
                   }`}                  style={{
                     top: `${index * 250}px`,
@@ -225,7 +224,7 @@ export const LevelList = () => {
                   }}
                   transition={{ duration: 0.3 }}
                 >
-                  <div className="flex flex-col justify-start w-2/3">
+                  <div className="flex flex-col justify-start">
                     <span
                       className={`font-mono text-5xl ${
                         index <= userCurrentInfo.currentLevelIndex
@@ -233,7 +232,7 @@ export const LevelList = () => {
                           : "text-[#ADADAD]"
                       }`}
                     >
-                      {`Nivel ${level.order}`}
+                      {`Nivel ${level.order}`}: {level.name}
                     </span>
                     <div className="mt-2">
                       <p
@@ -252,7 +251,7 @@ export const LevelList = () => {
                         {index < userCurrentInfo.currentLevelIndex
                           ? "100%"
                           : index === userCurrentInfo.currentLevelIndex
-                          ? currentProgress?.levelProgress + "%"
+                          ? currentProgress?.levelProgress.toFixed(2) + "%"
                           : "0%"}
                       </span>
                       <div

@@ -13,9 +13,10 @@ import LoadingPage from "../../pages/LoadingPage";
 
 export const ModuleList = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  
   const { modules } = useSelector((state) => state.modules);
   const { progress } = useSelector((state) => state.userProgress);
-  const navigate = useNavigate();
   
   const courseColors = {
     Python: {
@@ -64,22 +65,21 @@ export const ModuleList = () => {
 
   return (
     <>
-      <div className="flex flex-col justify-start items-center min-h-screen">
-        <div className="text-5xl font-semibold text-gray-800 flex items-center space-x-2 my-12">
+      <div className="flex flex-col justify-start items-center px-4 mt-12 md:mt-24 h-full">
+        <div className="font-semibold text-gray-800 flex items-center gap-5 my-12">
           <img src={Left} alt="Corchete izquierdo" className="h-10" />
-          <span className="font-mono text-3xl font-medium">
+          <span className="font-mono text-4xl sm:text-5xl font-medium">
             Comienza tu curso
           </span>
           <img src={Right} alt="Corchete derecho" className="h-10" />
         </div>
-        <section className="w-2/3 relative">
+        <section className="w-full mx-auto max-w-4xl relative">
           {modules?.map((module) => {
             const moduleProgress = progress?.find((p) => p.course === module.id) 
             const percentage = moduleProgress?.courseProgress.toFixed(0) || 0;
             const moduleColor = courseColors[module.name]?.primary;
             const transparentModuleColor = courseColors[module.name]?.secondary;
             const textColor = courseColors[module.name]?.text;
-            const svgColor = courseColors[module.name]?.svg;
 
             return (
               <motion.div
@@ -118,7 +118,7 @@ export const ModuleList = () => {
                   >
                     {module.name}
                   </span>
-                  <span className={`font-mono text-3xl`} style={{ color: svgColor}}>
+                  <span className={`font-mono text-3xl`} style={{ color: textColor}}>
                     {percentage}%
                   </span>
                 </div>
@@ -126,15 +126,16 @@ export const ModuleList = () => {
                   <div className="flex">
                     {["Label", "Label"].map((tag, i) => (
                       <div
+                        style={{ borderColor: textColor, color: textColor }}
                         key={i}
-                        className="border-white border-2 rounded-full flex items-center px-4 mr-3"
+                        className="border-2 rounded-full flex items-center px-4 mr-3"
                       >
-                        <span className="text-xl text-white">{tag}</span>
+                        <span className="text-xl">{tag}</span>
                       </div>
                     ))}
                   </div>
                   <div>
-                    <ArrowRight color={svgColor} />
+                    <ArrowRight color={textColor} />
                   </div>
                 </div>
               </motion.div>

@@ -67,6 +67,8 @@ module.exports = {
         strongBlue: "rgba(69, 88, 200, 1)",
         lightGray: "#F2F7F9",
         grayBg: "#FAFAFA",
+        headerButtonActive: "#F2F2F7", 
+        borrderHeaderButtonActive: "#E4E7EC", 
         borderGray: "#E4E7EC",
         darkGrayText: "#46505E",
         darkBlue: '#4558C8',
