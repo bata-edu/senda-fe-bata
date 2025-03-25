@@ -5,15 +5,15 @@ import left from "../../assets/icons/corchete-izquierdo.svg";
 import right from "../../assets/icons/corchete-derecho.svg";
 import rightArrow from "../../assets/icons/rightLeft.svg";
 import graduationIcon from "../../assets/icons/graduation.svg";
-import GenericDialog from "../../common/dialog/dialog";
+import GenericDialog from "../../../common/dialog/dialog";
 import { useDispatch } from "react-redux";
 import {
   createCourse,
   getSchoolLocalStorage,
   saveCourseLocalStorage,
-} from "../../../features/school/schoolSlice";
+} from "../../../../features/school/schoolSlice";
 import { placeholder } from "@codemirror/view";
-import Header from "../../common/header/Header";
+import Header from "../../../common/header/Header";
 
 const CoursesList = () => {
   const dispatch = useDispatch();

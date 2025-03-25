@@ -1,9 +1,9 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { getUser } from "../../features/auth/authService";
+import { getUser } from "../../../../features/auth/authService";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
-import { getSchoolById } from "../../features/school/schoolSlice";
+import { getSchoolById } from "../../../../features/school/schoolSlice";
 
 const SchoolAdminHomePage = () => {
     const navigate = useNavigate();

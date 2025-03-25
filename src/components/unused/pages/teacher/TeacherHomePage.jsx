@@ -1,10 +1,10 @@
 import React from "react";
-import { fetchSchools } from "../../features/teacher/teacherSlice";
-import LoadingPage from "../LoadingPage";
+import { fetchSchools } from "../../../../features/teacher/teacherSlice";
+import LoadingPage from "../../../../pages/LoadingPage";
 import { useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
 import TeacherHome from "../../components/teacherHome/TeacherHome";
-import Header from "../../components/common/header/Header";
+import Header from "../../../common/header/Header";
 
 const TeacherHomePage = () => {
     const dispatch = useDispatch();

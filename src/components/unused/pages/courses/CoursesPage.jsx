@@ -3,9 +3,9 @@ import CoursesList from "../../components/courses/CoursesList";
 import { useParams } from "react-router-dom";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { fetchSchoolCourses } from "../../features/school/schoolSlice";
-import { getUser } from "../../features/auth/authService";
-import LoadingPage from "../LoadingPage";
+import { fetchSchoolCourses } from "../../../../features/school/schoolSlice";
+import { getUser } from "../../../../features/auth/authService";
+import LoadingPage from "../../../../pages/LoadingPage";
 
 const CoursesPage = () => {
   const { schoolId } = useParams();
