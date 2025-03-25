@@ -1,19 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import {
-  fetchLevelInfo,
-  // fetchAllLevels,
-} from "../../../../features/level/levelSlice";
-import {
-  fetchUserProgressById,
-  // startCourse,
-} from "../../../../features/userProgress/userProgressSlice";
+import { fetchUserProgressById } from "../../../../features/userProgress/userProgressSlice";
 import MouseWhite from "../../../../assets/icons/white/mouse-white.svg";
 import KeyBoardWhite from "../../../../assets/icons/white/keyboard-white.svg";
 import DisplayWhite from "../../../../assets/icons/white/display-white.svg";
 import BookWhite from "../../../../assets/icons/white/book-white.svg";
-// import { clearSections } from '../../features/section/sectionSlice';
 import LoadingPage from "../../../../pages/LoadingPage";
 import { GuideViewer } from "./section/Guide"
 import ArrowBack from "../../../../assets/icons/arrowBack.svg";
@@ -23,10 +15,11 @@ export const SectionList = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { currentProgress } = useSelector((state) => state.userProgress || {});
-  
+  const { levelsInfo } = useSelector((state) => state.level || {});
+  const level = levelsInfo?.find((lvl) => lvl._id === levelId);
+
   const [loading, setLoading] = useState(false);
-  const [showNoMoreLevels, setShowNoMoreLevels] = useState(false);
-  const [level, setLevel] = useState(null);
+
   const courseImage = {
     "671909eecc62ee9e8f06c578": {
       course: "Python",
@@ -101,37 +94,19 @@ export const SectionList = () => {
       setLoading(true);
         try {
           await dispatch(fetchUserProgressById(moduleId)).unwrap();
-          const levelResponse = await dispatch(fetchLevelInfo({ moduleId: moduleId, page: 0, limit: 10 })).unwrap();
-          if (levelId && levelResponse.levels?.length) {
-            const selectedLevel = levelResponse.levels.find(lvl => lvl._id === levelId);
-            if (selectedLevel) {
-              setLevel(selectedLevel);
-            }
-          }
         } catch (error) {
           console.error("Error fetching data:", error);
         } finally {
           setLoading(false);
         }
     };
+    fetchData(moduleId);
 
-    if (moduleId && levelId) {
-      fetchData(moduleId);
-    }
-  }, [levelId, dispatch, moduleId]);
-
-  useEffect(() => {
-    if (showNoMoreLevels) {
-      const timer = setTimeout(() => {
-        setShowNoMoreLevels(false);
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [showNoMoreLevels]);
+  }, [dispatch, moduleId]);
   
   if (loading) return (        
     <div className="w-full h-[90vh] flex justify-center items-center">
-      <LoadingPage />
+      <LoadingPage message={"Cargando nivel..."} />
     </div>
   );
 
