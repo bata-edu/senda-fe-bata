@@ -139,16 +139,6 @@ export const LevelList = () => {
     navigate(`/learn/modules/${moduleId}/levels/${levelId}`);
   };
 
-  // const handleFinalProjectClick = (levelIndex, levelId) => {
-  //   let current = levelIndex === userCurrentInfo.currentLevelIndex;
-  //   if (!current && currentProgress.courseCompleted) current = false;
-  //   if (current) {
-  //     navigate(`/progress?current=true`);
-  //   } else {
-  //     navigate(`/progress?level=${levelId}&index=${levelIndex}&current=false`);
-  //   }
-  // };
-
   if (loading || !levelsInfo) return(<LoadingPage message={"Cargando niveles..."}/>)
   return (
     <div className="w-full max-w-5xl px-4 mx-auto">
