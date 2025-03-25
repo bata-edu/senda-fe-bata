@@ -6,7 +6,6 @@ import "../../styles/profile.css";
 import LoadingPage from "../LoadingPage";
 import UserInfo from "../../components/profile/UserInfo";
 import Streaks from "../../components/profile/Streaks";
-import MyWebPage from "../../components/profile/MyWebPage";
 
 const Profile = () => {
   const dispatch = useDispatch();
@@ -39,7 +38,6 @@ const Profile = () => {
     <div className="profile-container">
       <UserInfo />
       <Streaks />
-      <MyWebPage />
     </div>
   );
 };

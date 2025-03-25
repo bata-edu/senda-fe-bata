@@ -14,6 +14,8 @@ export const Button = ({
 }) => {
   const colorClasses = {
     blue: "bg-blue-500 text-white shadow-sm font-normal text-base rounded-lg font-mono",
+    darkBlue:
+      "bg-blue-800 text-white shadow-sm font-normal text-base rounded-lg font-mono",
   };
 
   return (
