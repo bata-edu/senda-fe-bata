@@ -20,35 +20,26 @@ import { GuideViewer } from "./Guide"
 
 export const SectionPage = () => {
   const navigate = useNavigate()
-  const { moduleId, levelId, sectionId } = useParams()
   const dispatch = useDispatch()
-
-  // Redux state
+  const { moduleId, levelId, sectionId } = useParams()
   const { currentProgress } = useSelector((state) => state.userProgress || {})
   const { section  } = useSelector((state) => state.section || {})
-
-  // Local state
+  const currentCompletedExercises = currentProgress?.completedExercises.filter(
+    (ex) => ex.sectionId === sectionId
+  )
+  console.log(currentCompletedExercises)
   const [loading, setLoading] = useState(true)
   const [currentContent, setCurrentContent] = useState(null)
   const [contentType, setContentType] = useState(null) // "class" or "exercise" or "section-completed"
-  const [progress, setProgress] = useState(0)
 
   // Initial data loading
   useEffect(() => {
     const loadInitialData = async () => {
       if (!moduleId || !levelId || !sectionId) return
-
       try {
         setLoading(true)
-
-        // Fetch user progress
         await dispatch(fetchUserProgressById(moduleId)).unwrap()
-
-        // Fetch section data
         const sectionData = await dispatch(fetchSection(sectionId)).unwrap()
-
-        // Calculate progress
-        calculateProgress(sectionData)
 
         // Determine current content based on user progress
         determineCurrentContent(sectionData)
@@ -63,55 +54,28 @@ export const SectionPage = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, moduleId, levelId, sectionId])
 
-  // Calculate progress percentage
-  const calculateProgress = (sectionData) => {
-    if (!currentProgress || !sectionData) return
-
-    const { completedClasses, completedExercises } = currentProgress
-    const totalItems = (sectionData.sectionClasses?.length || 0) + (sectionData.sectionExercises?.length || 0)
-
-    const completedItems = completedClasses.length + completedExercises.length
-
-    const progressPercentage = totalItems > 0 ? Math.round((completedItems / totalItems) * 100) : 0
-
-    setProgress(progressPercentage)
-  }
-  // Determine what content to show based on user progress
   const determineCurrentContent = (sectionData, prevContent) => {
     if (!currentProgress || !sectionData) return
-
     setCurrentContent(null)
     const { completedClasses, completedExercises } = currentProgress
-
-    // Check if there are classes to complete
     if (sectionData.sectionClasses && sectionData.sectionClasses.length > 0) {
-      // Find the first non-completed class
       const nextClassIndex = sectionData.sectionClasses.findIndex((cls) => {
-        // Skip the class if it matches prevContent
         if (prevContent && prevContent._id === cls._id) {
           return false
         }
-        // Skip the class if it's in completedClasses
         return !completedClasses.some((completedClass) => completedClass._id === cls._id)
       })
-
       if (nextClassIndex !== -1) {
-        // Found a class to complete
         setCurrentContent(sectionData.sectionClasses[nextClassIndex])
         setContentType("class")
         return
       }
     }
-
-    // If all classes are completed, move to exercises
     if (sectionData.sectionExercises && sectionData.sectionExercises.length > 0) {
-      // Similar logic for exercises
       const nextExerciseIndex = sectionData.sectionExercises.findIndex((ex) => {
-        // Skip the exercise if it matches prevContent
         if (prevContent && prevContent._id === ex._id) {
           return false
         }
-        // Skip the exercise if it's in completedExercises
         return !completedExercises.some((completedExercise) => completedExercise.exerciseId === ex._id)
       })
 
@@ -121,14 +85,11 @@ export const SectionPage = () => {
         return
       }
     }
-
-    // If all content is completed
     handleSectionCompleted(currentProgress._id)
   }
 
   const handleSectionCompleted = async (progressId) => {
     setContentType("section-completed")
-    setProgress(100)
   }
 
   // Handle completion of current content
@@ -158,7 +119,6 @@ export const SectionPage = () => {
         navigate(`/learn/modules/${moduleId}/levels/${levelId}`)
       } else {
         await dispatch(fetchUserProgressById(moduleId)).unwrap()
-        calculateProgress(section)
         determineCurrentContent(section, currentContent)
       }
     } catch (error) {
@@ -185,7 +145,6 @@ export const SectionPage = () => {
       ).unwrap()
 
       await dispatch(fetchUserProgressById(moduleId)).unwrap()
-      calculateProgress(section)
 
       // Check if section is complete
       if (response?.message === ADVANCE_SECTION || response?.message === ADVANCE_LEVEL) {
@@ -241,6 +200,63 @@ export const SectionPage = () => {
     return <div className="text-center mt-8">No hay contenido disponible</div>
   }
 
+const renderProgress = () => {
+  if (!section) return null
+
+  // Datos de la sección actual
+  const totalClasses = section.sectionClasses?.length || 0
+  const completedClasses = currentProgress?.completedClasses.length || 0
+
+  const totalExercises = section.sectionExercises?.length || 0
+  const completedExercises = currentCompletedExercises?.length
+
+  return (
+    <div className="max-w-md mx-auto mt-4 px-4">
+      {contentType === "class" && totalClasses > 0 && (
+        <div className="flex gap-1">
+          {[...Array(totalClasses)].map((_, index) => (
+            <div
+              key={index}
+              className={`h-2 flex-1 rounded-md ${
+                index < completedClasses ? "bg-[#4558C8]" : "bg-gray-300"
+              }`}
+            />
+          ))}
+        </div>
+      )}
+
+      {contentType === "exercise" && totalExercises > 0 && (
+        <div className="flex gap-1">
+          {section.sectionExercises.map((exercise, index) => {
+            const isCompleted = currentCompletedExercises?.some(
+              (completedExercise) => completedExercise.exerciseId === exercise._id
+            )
+            const isCorrect = currentCompletedExercises?.find(
+              (completedExercise) => completedExercise.exerciseId === exercise._id
+            )?.isCorrect
+
+            return (
+              <div
+                key={index}
+                className={`h-2 flex-1 rounded-md ${
+                  isCompleted
+                    ? isCorrect === false
+                      ? "bg-red-500"
+                      : "bg-green-500"
+                    : "bg-gray-300"
+                }`}
+              />
+            )
+          })}
+        </div>
+      )}
+    </div>
+  )
+}
+
+
+
+
   if (loading)
     return (
       <div className="w-full h-[90vh] flex justify-center items-center">
@@ -277,15 +293,7 @@ export const SectionPage = () => {
       </div>
 
       {/* Progress bar */}
-      <div className="max-w-md mx-auto mt-4 px-4">
-        <div className="flex justify-between text-sm mb-1">
-          <span>Progreso</span>
-          <span>{progress}%</span>
-        </div>
-        <div className="w-full bg-gray-200 rounded-full h-2">
-          <div className="bg-[#4558C8] h-2 rounded-full" style={{ width: `${progress}%` }}></div>
-        </div>
-      </div>
+      {renderProgress()}
 
       <div className="mt-8">{renderContent()}</div>
     </div>
