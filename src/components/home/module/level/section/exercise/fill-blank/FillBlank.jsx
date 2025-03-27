@@ -55,31 +55,60 @@ export const FillBlank = ({ exercise, colors, setSelectedOption, selectedOption,
     const contentParts = exercise.content.split(placeholderPattern)
     
     return (
-      <div className="flex flex-wrap items-center justify-center gap-2">
-        {contentParts.map((part, index) => (
-          <React.Fragment key={index}>
-            <span>{part}</span>
-            {index < contentParts.length - 1 && (
-              <input
-                type="text"
-                disabled={locked}
-                className={`
-                  border-2 rounded-md px-3 py-1 max-w-[200px]
-                  ${locked ? "pointer-events-none opacity-50" : "border-[#E4E7EC]"}
-                `}
-                value={answers[index] || ""}
-                onChange={(e) => handleAnswerChange(index, e.target.value)}
-                placeholder="Tu respuesta"
-              />
-            )}
-          </React.Fragment>
-        ))}
+<>
+  {contentParts.map((part, index) => {
+      const nonRenderableTags = ['title', 'meta', 'link', 'script', 'style'];
+
+      const isNonRenderableTag = nonRenderableTags.some(tag =>
+        part.trim().toLowerCase().includes(`<${tag}`) || 
+        part.trim().toLowerCase().includes(`</${tag}>`)
+      );
+
+      // Reemplazar etiquetas para que se rendericen como texto sin que React escape su contenido
+      const escapeHtml = (str) => {
+        return str
+          .replace(/</g, "‹")  // Usamos ‹ y › en lugar de &lt; y &gt;
+          .replace(/>/g, "›");
+      };
+
+    return (
+      <React.Fragment key={index}>
+        {/* Muestra el texto respetando los espacios */}
+      <div
+        className="inline whitespace-pre-wrap"
+        style={{
+          margin: 0,
+          padding: 0,
+          display: 'inline',
+          whiteSpace: 'pre-wrap',
+          wordWrap: 'break-word',
+        }}
+      >
+        {isNonRenderableTag ? part : escapeHtml(part)}
       </div>
+
+        {index < contentParts.length - 1 && (
+          <input
+            type="text"
+            disabled={locked}
+            className={`mx-1 appearance-none rounded-md min-w-[60px] inline-block
+              border-2 max-w-[10ch]
+              ${locked ? "pointer-events-none opacity-50" : "border-[#E4E7EC]"}
+            `}
+            value={answers[index] || ""}
+            onChange={(e) => handleAnswerChange(index, e.target.value)}
+          />
+        )}
+      </React.Fragment>
+    );
+  })}
+</>
+
     )
   }
   
   return (
-    <div className="border-[#F4F5F7] border-8 rounded-lg w-full max-w-md mx-auto">
+    <div className="border-[#F4F5F7] border-8 rounded-lg w-full max-w-5xl mx-auto">
       <div className="p-4 border-b-[#F4F5F7] border-b-4 flex justify-center">
         <span className="text-lg font-medium font-sans">
           {exercise?.description || "Completa los espacios en blanco"}
@@ -89,7 +118,7 @@ export const FillBlank = ({ exercise, colors, setSelectedOption, selectedOption,
         <h2 className="font-semibold text-xl text-center font-sans mb-6">
           {exercise?.prompt || "Completa la siguiente frase:"}
         </h2>
-        <div className="flex flex-col items-center justify-center">
+        <div className="flex flex-col items-center justify-center font-mono">
           {renderContent()}
         </div>
       </div>

@@ -23,10 +23,13 @@ const Exercise = ({ content, advance }) => {
   
   // Reset state when content changes
   useEffect(() => {
-    setSelectedOption(content?.isMultipleAnswers ? [] : "")
-    setIsAnswered(false)
-    setFeedbackState(null)
-    setIsSubmitting(false)
+    const resetExerciseState = () => {
+      setSelectedOption(content?.isMultipleAnswers ? [] : "")
+      setIsAnswered(false)
+      setFeedbackState(null)
+      setIsSubmitting(false)
+    }
+    resetExerciseState();
   }, [content])
 
   const validateCompleteness = () => {
@@ -51,7 +54,7 @@ const Exercise = ({ content, advance }) => {
       // Check if arrays have same length
       if (selectedOption.length !== answers.length) return false
       
-      if (content.template === 1) { // drag and drop
+      if (content.template === 1 || content.template === 2) { // drag and drop
         return selectedOption.every((option, index) => {
           return option === answers[index]
           }
@@ -61,9 +64,6 @@ const Exercise = ({ content, advance }) => {
       // multiple choice
       return selectedOption.every(option => answers.includes(option))
     }
-    
-    // For text input or single selection
-    return content.answers?.includes(selectedOption)
   }
 
   const handleSubmit = () => {
@@ -78,17 +78,18 @@ const Exercise = ({ content, advance }) => {
     setIsSubmitting(true)
     setIsAnswered(true)
     
-    // Check if answer is correct
     const isCorrect = checkCorrectness()
     setFeedbackState(isCorrect ? "correct" : "incorrect")
-    
-    // Submit after a delay to show feedback
     setTimeout(() => {
       advance(selectedOption)
-      setIsSubmitting(false)
-      setSelectedOption(content?.isMultipleAnswers ? [] : "")
-      setIsAnswered(false)
-      setFeedbackState(null)
+      
+      const resetExerciseState = () => {
+        setSelectedOption(content?.isMultipleAnswers ? [] : "")
+        setIsAnswered(false)
+        setFeedbackState(null)
+        setIsSubmitting(false)
+      }
+      resetExerciseState()
     }, isCorrect ? 1000 : 2000) // Longer delay for incorrect answers
   }
   

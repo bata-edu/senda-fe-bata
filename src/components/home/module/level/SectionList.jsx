@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { fetchUserProgressById } from "../../../../features/userProgress/userProgressSlice";
+import { selectLevels } from "../../../../features/module/moduleSlice";
 import MouseWhite from "../../../../assets/icons/white/mouse-white.svg";
 import KeyBoardWhite from "../../../../assets/icons/white/keyboard-white.svg";
 import DisplayWhite from "../../../../assets/icons/white/display-white.svg";
@@ -15,8 +16,8 @@ export const SectionList = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { currentProgress } = useSelector((state) => state.userProgress || {});
-  const { levelsInfo } = useSelector((state) => state.level || {});
-  const level = levelsInfo?.find((lvl) => lvl._id === levelId);
+  const levels = useSelector((state) => selectLevels(state, moduleId));
+  const level = levels?.find((lvl) => lvl._id === levelId);
 
   const [loading, setLoading] = useState(false);
 

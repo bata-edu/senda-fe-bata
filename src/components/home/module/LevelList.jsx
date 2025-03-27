@@ -3,7 +3,9 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
   fetchLevelInfo,
-} from "../../../features/level/levelSlice";
+  selectLevels,
+  selectModule,
+} from "../../../features/module/moduleSlice";
 import LoadingPage from "../../../pages/LoadingPage";
 
 import ArrowRight from "../../../assets/icons/arrowRight";
@@ -22,7 +24,8 @@ export const LevelList = () => {
   const navigate = useNavigate();
   
   const { moduleId } = useParams();
-  const { levelsInfo } = useSelector((state) => state.level || {});
+  const levels = useSelector((state) => selectLevels(state, moduleId));
+  const module = useSelector((state) => selectModule(state, moduleId));
   const { currentProgress } = useSelector((state) => state.userProgress || {});
 
   const [loading, setLoading] = useState(true);
@@ -120,11 +123,11 @@ export const LevelList = () => {
 
   useEffect(() => {
     const setLevelInfo = async () => {
-      if (!currentProgress || !levelsInfo) return;
-      const currentLevelIndex = levelsInfo?.findIndex(
+      if (!currentProgress || !levels) return;
+      const currentLevelIndex = levels?.findIndex(
         (level) => level._id === currentProgress.currentLevel
       );
-      const currentLevel = levelsInfo[currentLevelIndex] || levelsInfo[0];
+      const currentLevel = levels[currentLevelIndex] || levels[0];
       const currentSectionIndex =
         currentLevel?.sections?.findIndex(
           (section) => section._id === currentProgress.currentSection
@@ -133,16 +136,16 @@ export const LevelList = () => {
     };
     setLevelInfo();
     setLoading(false);
-  }, [levelsInfo, moduleId, currentProgress]);
+  }, [levels, moduleId, currentProgress]);
 
   const handleLevelClick = (levelId) => {
     navigate(`/learn/modules/${moduleId}/levels/${levelId}`);
   };
 
-  if (loading || !levelsInfo) return(<LoadingPage message={"Cargando niveles..."}/>)
+  if (loading || !levels) return(<LoadingPage message={"Cargando niveles..."}/>)
   return (
     <div className="w-full max-w-5xl px-4 mx-auto">
-      {moduleId && levelsInfo?.length ? (
+      {moduleId && levels?.length ? (
         <>
           <div className="flex max-w-md">
             <div
@@ -173,7 +176,7 @@ export const LevelList = () => {
             {/* <StreaksNDiamonds /> */}
           </div>
           <div className="relative w-full mt-32">
-            {levelsInfo?.map((level, index) => {
+            {levels?.map((level, index) => {
               const progressBarColor =
                 index < userCurrentInfo.currentLevelIndex
                   ? courseImage[moduleId]?.barDone

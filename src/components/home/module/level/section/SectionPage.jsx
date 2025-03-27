@@ -9,7 +9,7 @@ import {
   completeExercise,
   fetchUserProgressById,
 } from "../../../../../features/userProgress/userProgressSlice"
-import { fetchSection } from "../../../../../features/section/sectionSlice"
+import { fetchSection, selectSection } from "../../../../../features/module/moduleSlice"
 import SectionClass from "./class/Class"
 import Exercise from "./exercise/Exercise"
 import LoadingPage from "../../../../../pages/LoadingPage"
@@ -23,7 +23,7 @@ export const SectionPage = () => {
   const dispatch = useDispatch()
   const { moduleId, levelId, sectionId } = useParams()
   const { currentProgress } = useSelector((state) => state.userProgress || {})
-  const { section  } = useSelector((state) => state.section || {})
+  const section = useSelector((state) => selectSection(state, sectionId))
   const currentCompletedExercises = currentProgress?.completedExercises.filter(
     (ex) => ex.sectionId === sectionId
   )
@@ -203,13 +203,9 @@ export const SectionPage = () => {
 const renderProgress = () => {
   if (!section) return null
 
-  // Datos de la sección actual
   const totalClasses = section.sectionClasses?.length || 0
   const completedClasses = currentProgress?.completedClasses.length || 0
-
   const totalExercises = section.sectionExercises?.length || 0
-  const completedExercises = currentCompletedExercises?.length
-
   return (
     <div className="max-w-md mx-auto mt-4 px-4">
       {contentType === "class" && totalClasses > 0 && (

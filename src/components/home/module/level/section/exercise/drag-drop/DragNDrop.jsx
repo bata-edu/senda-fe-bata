@@ -85,38 +85,69 @@ const DragNDrop = ({ exercise, setSelectedOption, colors }) => {
     
     // Split content by placeholder pattern
     const contentParts = exercise.content.split(placeholderPattern)
-    
+    console.log(contentParts)
     return (
-      <>
-        {contentParts.map((part, index) => (
-          <React.Fragment key={index}>
-            {part}
-            {index < contentParts.length - 1 && (
-              <span
-                className={`
-                  relative mx-1 px-2 py-1 rounded-md min-w-[60px] inline-block
-                  ${isDragging ? 'bg-[#4558C8]/10' : droppedAnswers[index] ? 'bg-[#F0F4FF]' : 'bg-gray-100'}
-                  ${droppedAnswers[index] ? 'border border-[#4558C8]' : 'border border-gray-300'}
-                `}
-                onDrop={(e) => handleDrop(e, index)}
-                onDragOver={handleDragOver}
+<>
+{contentParts.map((part, index) => {
+  // Lista de tags que no deben renderizarse como HTML
+  const nonRenderableTags = ['title', 'meta', 'link', 'script', 'style'];
+
+  const isNonRenderableTag = nonRenderableTags.some(tag =>
+    part.trim().toLowerCase().includes(`<${tag}`) || 
+    part.trim().toLowerCase().includes(`</${tag}>`)
+  );
+
+  // Reemplazar etiquetas para que se rendericen como texto sin que React escape su contenido
+  const escapeHtml = (str) => {
+    return str
+      .replace(/</g, "‹")  // Usamos ‹ y › en lugar de &lt; y &gt;
+      .replace(/>/g, "›");
+  };
+
+  return (
+    <React.Fragment key={index}>
+      <div
+        className="inline whitespace-pre-wrap"
+        style={{
+          margin: 0,
+          padding: 0,
+          display: 'inline',
+          whiteSpace: 'pre-wrap',
+          wordWrap: 'break-word',
+        }}
+      >
+        {isNonRenderableTag ? part : escapeHtml(part)}
+      </div>
+
+      {index < contentParts.length - 1 && (
+        <span
+          className={`
+            relative mx-1 px-2 py-1 rounded-md min-w-[60px] inline-block
+            ${isDragging ? 'bg-[#4558C8]/10' : droppedAnswers[index] ? 'bg-[#F0F4FF]' : 'bg-gray-100'}
+            ${droppedAnswers[index] ? 'border border-[#4558C8]' : 'border border-gray-300'}
+          `}
+          onDrop={(e) => handleDrop(e, index)}
+          onDragOver={handleDragOver}
+        >
+          {droppedAnswers[index] ? (
+            <>
+              {droppedAnswers[index]}
+              <button
+                className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
+                onClick={() => handleRemoveAnswer(index)}
               >
-                {droppedAnswers[index] ? (
-                  <>
-                    {droppedAnswers[index]}
-                    <button 
-                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
-                      onClick={() => handleRemoveAnswer(index)}
-                    >
-                      ×
-                    </button>
-                  </>
-                ) : '_____'}
-              </span>
-            )}
-          </React.Fragment>
-        ))}
-      </>
+                ×
+              </button>
+            </>
+          ) : '_____'}
+        </span>
+      )}
+    </React.Fragment>
+  );
+})}
+
+
+</>
     )
   }
   
@@ -129,25 +160,26 @@ const DragNDrop = ({ exercise, setSelectedOption, colors }) => {
     : exercise?.options.filter(option => !usedOptions.includes(option))
   
   return (
-    <div className="border-[#F4F5F7] border-8 rounded-lg w-full max-w-md mx-auto">
+    <div className="border-[#F4F5F7] border-8 rounded-lg w-full max-w-4xl mx-auto">
       <div className="p-4 border-b-[#F4F5F7] border-b-4 flex justify-center">
+        
         <span className="text-lg font-medium font-sans">
-          {isMultipleAnswers ? "Arrastra las respuestas correctas" : "Arrastra la respuesta correcta"}
+          {exercise?.prompt || "Arrastra la/s respuestas correctamente"}
         </span>
+      
       </div>
-      <div className="p-4 w-full">
         <div
           className={`
-            p-6 min-h-[100px] flex items-center justify-center rounded-lg
+            min-h-[100px] max-h-96 overflow-y-auto flex items-center justify-center rounded-lg
             ${isDragging ? "border-2 border-dashed border-[#4558C8] bg-[#4558C8]/5" : "border-2 border-[#F4F5F7]"}
           `}
         >
-          <h2 className="font-semibold text-xl text-center font-sans">
+          <div className="font-mono">
             {renderContent()}
-          </h2>
+          </div>
         </div>
-        <div className="flex flex-wrap items-center justify-center gap-2 mt-6">
-          <span className="mr-2">Opciones:</span>
+        <div className="py-2 flex flex-wrap items-center justify-center gap-2">
+          <span className="">Opciones:</span>
           {availableOptions.map((option, index) => (
             <div
               key={index}
@@ -160,7 +192,6 @@ const DragNDrop = ({ exercise, setSelectedOption, colors }) => {
             </div>
           ))}
         </div>
-      </div>
     </div>
   )
 }
