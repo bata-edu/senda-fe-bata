@@ -93,6 +93,7 @@ export const SectionPage = () => {
 
     setCurrentContent(null)
     const { completedClasses } = currentProgress
+    const completedExercises = currentProgress?.completedExercises || []
 
     // First check classes
     if (sectionData.sectionClasses?.length > 0) {
@@ -111,21 +112,34 @@ export const SectionPage = () => {
 
     // Then check exercises
     if (sectionData.sectionExercises?.length > 0) {
-      // First try to find incorrect exercises
-      const incorrectExerciseIndex = sectionData.sectionExercises.findIndex((ex) => {
+      // If we have a previous content and it's an exercise, try to find the next one
+      if (prevContent && sectionData.sectionExercises.some(ex => ex._id === prevContent._id)) {
+        const currentIndex = sectionData.sectionExercises.findIndex(ex => ex._id === prevContent._id)
+        const nextExercise = sectionData.sectionExercises[currentIndex + 1]
+        
+        if (nextExercise) {
+          setCurrentContent(nextExercise)
+          setContentType("exercise")
+          return
+        }
+      }
+
+      // If we're at the end or starting fresh, check for incorrect exercises
+      const incorrectExercises = sectionData.sectionExercises.filter((ex) => {
         const completedExercise = completedExercises.find(
           (completedExercise) => completedExercise.exerciseId === ex._id
         )
         return completedExercise && !completedExercise.isCorrect
       })
 
-      if (incorrectExerciseIndex !== -1) {
-        setCurrentContent(sectionData.sectionExercises[incorrectExerciseIndex])
+      if (incorrectExercises.length > 0) {
+        // If we have incorrect exercises, start with the first one
+        setCurrentContent(incorrectExercises[0])
         setContentType("exercise")
         return
       }
 
-      // If no incorrect exercises, find the next uncompleted exercise
+      // If no incorrect exercises, find the first uncompleted exercise
       const nextExerciseIndex = sectionData.sectionExercises.findIndex((ex) => {
         if (prevContent && prevContent._id === ex._id) {
           return false
@@ -210,7 +224,7 @@ export const SectionPage = () => {
       if (response?.message === ADVANCE_SECTION || response?.message === ADVANCE_LEVEL) {
         setContentType("section-completed")
       } else if (response?.message === 'INCORRECT_EXERCISES') {
-        // If we have incorrect exercises at the end of the section, go back to the first one
+        // If we have incorrect exercises, go to the first one
         const firstIncorrectExercise = response.incorrectExercises[0];
         const exercise = sectionData.sectionExercises.find(
           (ex) => ex._id === firstIncorrectExercise.exerciseId
@@ -219,7 +233,7 @@ export const SectionPage = () => {
           setCurrentContent(exercise);
           setContentType("exercise");
         }
-      } else {
+      } else if (response?.message === 'CONTINUE') {
         // Get the next uncompleted exercise
         const nextExercise = sectionData.sectionExercises.find((ex) => {
           const completedExercise = completedExercises.find(
@@ -233,7 +247,21 @@ export const SectionPage = () => {
           setContentType("exercise")
         } else {
           // If no more exercises to complete, check if we can advance
-          handleSectionCompleted(currentProgress._id)
+          const hasIncorrectExercises = completedExercises.some(ex => !ex.isCorrect)
+          if (hasIncorrectExercises) {
+            // If there are still incorrect exercises, go back to the first one
+            const firstIncorrect = completedExercises.find(ex => !ex.isCorrect)
+            const exercise = sectionData.sectionExercises.find(
+              (ex) => ex._id === firstIncorrect.exerciseId
+            )
+            if (exercise) {
+              setCurrentContent(exercise)
+              setContentType("exercise")
+            }
+          } else {
+            // If all exercises are correct, we can complete the section
+            handleSectionCompleted(currentProgress._id)
+          }
         }
       }
     } catch (error) {
