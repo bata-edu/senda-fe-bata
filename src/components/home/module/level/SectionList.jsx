@@ -10,6 +10,7 @@ import BookWhite from "../../../../assets/icons/white/book-white.svg";
 import LoadingPage from "../../../../pages/LoadingPage";
 import { GuideViewer } from "./section/Guide"
 import ArrowBack from "../../../../assets/icons/arrowBack.svg";
+import { fetchLevelInfo } from "../../../../features/module/moduleSlice";
 
 export const SectionList = () => {
   const { moduleId, levelId } = useParams();
@@ -19,7 +20,8 @@ export const SectionList = () => {
   const levels = useSelector((state) => selectLevels(state, moduleId));
   const level = levels?.find((lvl) => lvl._id === levelId);
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const courseImage = {
     "671909eecc62ee9e8f06c578": {
@@ -91,55 +93,102 @@ export const SectionList = () => {
   };
 
   useEffect(() => {
-    const fetchData = async (moduleId) => {
-      setLoading(true);
-        try {
-          await dispatch(fetchUserProgressById(moduleId)).unwrap();
-        } catch (error) {
-          console.error("Error fetching data:", error);
-        } finally {
+    let isMounted = true;
+
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        // If we don't have the level data, fetch it first
+        if (!level && moduleId) {
+          await dispatch(fetchLevelInfo({ moduleId, page: 0, limit: 100 })).unwrap();
+        }
+        
+        // Then fetch user progress
+        await dispatch(fetchUserProgressById(moduleId)).unwrap();
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        if (isMounted) {
+          setError("Error al cargar el progreso del usuario");
+        }
+      } finally {
+        if (isMounted) {
           setLoading(false);
         }
+      }
     };
-    fetchData(moduleId);
 
-  }, [dispatch, moduleId]);
-  
-  if (loading) return (        
-    <div className="w-full h-[90vh] flex justify-center items-center">
-      <LoadingPage message={"Cargando nivel..."} />
-    </div>
-  );
+    if (moduleId) {
+      fetchData();
+    }
 
-  return(
+    return () => {
+      isMounted = false;
+    };
+  }, [dispatch, moduleId, level]);
+
+  if (loading) {
+    return (
+      <div className="w-full h-[90vh] flex justify-center items-center">
+        <LoadingPage message="Cargando secciones del nivel..." />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="w-full h-[90vh] flex flex-col justify-center items-center">
+        <p className="text-red-500 mb-4">{error}</p>
+        <button 
+          onClick={() => navigate(`/learn/modules/${moduleId}`)}
+          className="bg-[#4558C8] text-white px-6 py-2 rounded-lg"
+        >
+          Volver
+        </button>
+      </div>
+    );
+  }
+
+  if (!level) {
+    return (
+      <div className="w-full h-[90vh] flex flex-col justify-center items-center">
+        <p className="text-gray-500 mb-4">Nivel no encontrado</p>
+        <button 
+          onClick={() => navigate(`/learn/modules/${moduleId}`)}
+          className="bg-[#4558C8] text-white px-6 py-2 rounded-lg"
+        >
+          Volver
+        </button>
+      </div>
+    );
+  }
+
+  return (
     <div className="flex flex-col w-full h-full items-center">
-            <div
-              style={{
-                background: courseImage[moduleId].backgroundCurrent,
-                border: `2px solid ${courseImage[moduleId].backgroundDone}`,
-              }}
-              className={`max-w-md flex flex-col py-3 px-6 mt-4 rounded-xl border-2 border-[#F9BEA8] w-full`}
-            >
-              <div className="w-full flex justify-between items-center">
-
-                <button
-                  onClick={() => navigate(`/learn/modules/${moduleId}`)}
-                  className="flex items-center"
-                >
-                  <img src={ArrowBack} alt="arrow back" />
-                  <span
-                    className={`text-white  text-lg font-sans ml-2 font-medium`}
-                  >
-                    Volver
-                  </span>
-                </button>
-                <GuideViewer guide={level?.guide} />
-              </div>
-              <div className="text-white font-mono text-2xl">
-                Nivel {level?.order}: {level?.name}
-              </div>
-
-            </div>
+      <div
+        style={{
+          background: courseImage[moduleId].backgroundCurrent,
+          border: `2px solid ${courseImage[moduleId].backgroundDone}`,
+        }}
+        className={`max-w-md flex flex-col py-3 px-6 mt-4 rounded-xl border-2 border-[#F9BEA8] w-full`}
+      >
+        <div className="w-full flex justify-between items-center">
+          <button
+            onClick={() => navigate(`/learn/modules/${moduleId}`)}
+            className="flex items-center"
+          >
+            <img src={ArrowBack} alt="arrow back" />
+            <span className={`text-white text-lg font-sans ml-2 font-medium`}>
+              Volver
+            </span>
+          </button>
+          <GuideViewer guide={level?.guide} />
+        </div>
+        <div className="text-white font-mono text-2xl">
+          Nivel {level?.order}: {level?.name}
+        </div>
+      </div>
 
       <div className="relative w-full h-auto flex justify-center items-start mt-12">
         {level?.sections?.map((section, index) => {
@@ -164,13 +213,13 @@ export const SectionList = () => {
                 <div
                   className="w-1 h-20 relative ml-[58px]"
                   style={{
-                    borderLeft: "4px dashed gray", // Borde izquierdo
-                    borderBottom: "4px dashed gray", // Borde inferior
+                    borderLeft: "4px dashed gray",
+                    borderBottom: "4px dashed gray",
                     borderTop: "none",
                     borderRight: "none",
                     borderColor: borderColor,
-                    width: "60px", // Ajusta el ancho para la base de la "L"
-                    height: "60px", // Ajusta la altura para la parte vertical de la "L"
+                    width: "60px",
+                    height: "60px",
                   }}
                 ></div>
               ),
@@ -183,12 +232,12 @@ export const SectionList = () => {
                 <div
                   style={{
                     position: "absolute",
-                    top: "50%", // Centrado verticalmente dentro del contenedor
-                    left: "100%", // Justo a la derecha del contenido
-                    width: "60px", // Longitud de la línea horizontal
-                    height: "60px", // Altura 0 ya que es solo una línea
-                    borderTop: "4px dashed gray", // Línea discontinua usando border
-                    borderRight: "4px dashed gray", // Línea discontinua usando border
+                    top: "50%",
+                    left: "100%",
+                    width: "60px",
+                    height: "60px",
+                    borderTop: "4px dashed gray",
+                    borderRight: "4px dashed gray",
                     borderColor: borderColor,
                   }}
                 ></div>
@@ -200,7 +249,6 @@ export const SectionList = () => {
               top: "132px",
               extra: <></>,
             },
-
             {
               className:
                 "absolute left-[55.5%] flex flex-col items-center z-[10]",
@@ -237,6 +285,7 @@ export const SectionList = () => {
               ),
             },
           ];
+
           const iconIndex = index % 4;
           const { className, top, extra } = positions[position];
           return (
@@ -255,11 +304,11 @@ export const SectionList = () => {
                 style={{
                   background: (() => {
                     if (sectionIndex < currentSectionIndex || currentSectionIndex === -1) {
-                      return courseImage[moduleId]?.backgroundDone; // Antes de la sección actual
+                      return courseImage[moduleId]?.backgroundDone;
                     } else if (sectionIndex === currentSectionIndex) {
-                      return courseImage[moduleId]?.backgroundCurrent; // Sección actual
+                      return courseImage[moduleId]?.backgroundCurrent;
                     } else {
-                      return ""; // Después de la sección actual
+                      return "";
                     }
                   })(),
                   border: `2px solid ${courseImage[moduleId]?.border}`,
