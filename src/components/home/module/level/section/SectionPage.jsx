@@ -9,13 +9,13 @@ import {
   completeExercise,
   fetchUserProgressById,
 } from "../../../../../features/userProgress/userProgressSlice"
-import { fetchSection, selectSection, fetchLevelInfo } from "../../../../../features/module/moduleSlice"
+import { fetchSection, fetchLevelInfo } from "../../../../../features/module/moduleSlice"
 import SectionClass from "./class/Class"
 import Exercise from "./exercise/Exercise"
 import LoadingPage from "../../../../../pages/LoadingPage"
 import BackLogo from "../../../../../assets/icons/back.png"
 import { courseImageSectionPage as courseImage } from "../../../../../utils/courseImage"
-import { ADVANCE_LEVEL, ADVANCE_SECTION } from "../../../../../utils/constants"
+import { ADVANCE_SECTION } from "../../../../../utils/constants"
 import { GuideViewer } from "./Guide"
 
 export const SectionPage = () => {
@@ -92,7 +92,7 @@ export const SectionPage = () => {
     }
 
     setCurrentContent(null)
-    const { completedClasses } = currentProgress
+    const completedClasses = currentProgress?.completedClasses || []
     const completedExercises = currentProgress?.completedExercises || []
 
     // First check classes
@@ -220,11 +220,9 @@ export const SectionPage = () => {
       // Fetch updated progress
       await dispatch(fetchUserProgressById(moduleId)).unwrap()
 
-      // Check if section is complete
-      if (response?.message === ADVANCE_SECTION || response?.message === ADVANCE_LEVEL) {
-        setContentType("section-completed")
+      if (response?.message === 'ADVANCE_SECTION') {
+        handleSectionCompleted(currentProgress._id)
       } else if (response?.message === 'INCORRECT_EXERCISES') {
-        // If we have incorrect exercises, go to the first one
         const firstIncorrectExercise = response.incorrectExercises[0];
         const exercise = sectionData.sectionExercises.find(
           (ex) => ex._id === firstIncorrectExercise.exerciseId
@@ -234,7 +232,7 @@ export const SectionPage = () => {
           setContentType("exercise");
         }
       } else if (response?.message === 'CONTINUE') {
-        // Get the next uncompleted exercise
+        // Find the next uncompleted exercise
         const nextExercise = sectionData.sectionExercises.find((ex) => {
           const completedExercise = completedExercises.find(
             (completedExercise) => completedExercise.exerciseId === ex._id
@@ -245,23 +243,6 @@ export const SectionPage = () => {
         if (nextExercise) {
           setCurrentContent(nextExercise)
           setContentType("exercise")
-        } else {
-          // If no more exercises to complete, check if we can advance
-          const hasIncorrectExercises = completedExercises.some(ex => !ex.isCorrect)
-          if (hasIncorrectExercises) {
-            // If there are still incorrect exercises, go back to the first one
-            const firstIncorrect = completedExercises.find(ex => !ex.isCorrect)
-            const exercise = sectionData.sectionExercises.find(
-              (ex) => ex._id === firstIncorrect.exerciseId
-            )
-            if (exercise) {
-              setCurrentContent(exercise)
-              setContentType("exercise")
-            }
-          } else {
-            // If all exercises are correct, we can complete the section
-            handleSectionCompleted(currentProgress._id)
-          }
         }
       }
     } catch (error) {
