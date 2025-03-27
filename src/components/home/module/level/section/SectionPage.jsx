@@ -9,7 +9,7 @@ import {
   completeExercise,
   fetchUserProgressById,
 } from "../../../../../features/userProgress/userProgressSlice"
-import { fetchSection, fetchLevelInfo } from "../../../../../features/module/moduleSlice"
+import { fetchSection } from "../../../../../features/module/moduleSlice"
 import SectionClass from "./class/Class"
 import Exercise from "./exercise/Exercise"
 import LoadingPage from "../../../../../pages/LoadingPage"
@@ -43,14 +43,11 @@ export const SectionPage = () => {
         setLoadingMessage("Cargando datos del módulo...")
         
         // First check if we have the level data
-        const levels = await dispatch(fetchLevelInfo({ moduleId, page: 0, limit: 100 })).unwrap();
         
         setLoadingMessage("Cargando progreso y contenido...")
         // Then fetch both user progress and section data in parallel
-        const [progressResult, sectionResponse] = await Promise.all([
-          dispatch(fetchUserProgressById(moduleId)).unwrap(),
-          dispatch(fetchSection(sectionId)).unwrap()
-        ])
+        const sectionResponse = await dispatch(fetchSection(sectionId)).unwrap()
+
 
         if (isMounted) {
           setSectionData(sectionResponse)
