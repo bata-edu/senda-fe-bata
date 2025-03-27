@@ -91,9 +91,9 @@ module.exports = {
           transform: 'translateY(0)',
         },
       },
-    },
-    animation: {
-      'bounce-in-down': 'bounce-in-down 0.8s ease-out forwards',
+      animation: {
+        'bounce-in-down': 'bounce-in-down 0.8s ease-out forwards',
+      },
     },
   },
   plugins: [],
