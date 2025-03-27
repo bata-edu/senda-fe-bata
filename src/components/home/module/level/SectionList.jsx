@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { fetchUserProgressById } from "../../../../features/userProgress/userProgressSlice";
-import { selectLevels } from "../../../../features/module/moduleSlice";
+import { selectLevels, fetchLevelInfo } from "../../../../features/module/moduleSlice";
 import MouseWhite from "../../../../assets/icons/white/mouse-white.svg";
 import KeyBoardWhite from "../../../../assets/icons/white/keyboard-white.svg";
 import DisplayWhite from "../../../../assets/icons/white/display-white.svg";
@@ -10,7 +10,6 @@ import BookWhite from "../../../../assets/icons/white/book-white.svg";
 import LoadingPage from "../../../../pages/LoadingPage";
 import { GuideViewer } from "./section/Guide"
 import ArrowBack from "../../../../assets/icons/arrowBack.svg";
-import { fetchLevelInfo } from "../../../../features/module/moduleSlice";
 
 export const SectionList = () => {
   const { moduleId, levelId } = useParams();
@@ -22,6 +21,7 @@ export const SectionList = () => {
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [loadingMessage, setLoadingMessage] = useState("Cargando nivel...");
 
   const courseImage = {
     "671909eecc62ee9e8f06c578": {
@@ -99,18 +99,27 @@ export const SectionList = () => {
       try {
         setLoading(true);
         setError(null);
-        
-        // If we don't have the level data, fetch it first
-        if (!level && moduleId) {
+        setLoadingMessage("Cargando datos del módulo...");
+
+        // First fetch level data if not available
+        if (!level) {
+          setLoadingMessage("Cargando información del nivel...");
           await dispatch(fetchLevelInfo({ moduleId, page: 0, limit: 100 })).unwrap();
         }
-        
-        // Then fetch user progress
+
+        setLoadingMessage("Cargando progreso del usuario...");
         await dispatch(fetchUserProgressById(moduleId)).unwrap();
+
+        if (!isMounted) return;
+
+        // If we still don't have the level after fetching, something went wrong
+        if (!level) {
+          setError("No se pudo encontrar el nivel");
+        }
       } catch (error) {
         console.error("Error fetching data:", error);
         if (isMounted) {
-          setError("Error al cargar el progreso del usuario");
+          setError("Error al cargar el contenido del nivel");
         }
       } finally {
         if (isMounted) {
@@ -131,14 +140,14 @@ export const SectionList = () => {
   if (loading) {
     return (
       <div className="w-full h-[90vh] flex justify-center items-center">
-        <LoadingPage message="Cargando secciones del nivel..." />
+        <LoadingPage message={loadingMessage} />
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="w-full h-[90vh] flex flex-col justify-center items-center">
+      <div className="flex flex-col justify-center items-center h-[90vh]">
         <p className="text-red-500 mb-4">{error}</p>
         <button 
           onClick={() => navigate(`/learn/modules/${moduleId}`)}
@@ -152,8 +161,8 @@ export const SectionList = () => {
 
   if (!level) {
     return (
-      <div className="w-full h-[90vh] flex flex-col justify-center items-center">
-        <p className="text-gray-500 mb-4">Nivel no encontrado</p>
+      <div className="flex flex-col justify-center items-center h-[90vh]">
+        <p className="text-gray-500 mb-4">No se encontró el nivel</p>
         <button 
           onClick={() => navigate(`/learn/modules/${moduleId}`)}
           className="bg-[#4558C8] text-white px-6 py-2 rounded-lg"
@@ -295,7 +304,7 @@ export const SectionList = () => {
                 localStorage.setItem("sectionName", section.name);
                 localStorage.setItem("sectionOrder", section.order);
               }}
-              key={index}
+              key={section._id}
               className={`${className} ${sectionIndex > currentSectionIndex ? "pointer-events-none" : ""}`}
               style={{ top: `calc(${top} + ${rowOffset}px)` }}
             >
