@@ -37,7 +37,7 @@ const EditorPage = () => {
   const [play, setPlay] = useState(false);
   const [showSaveOptions, setShowSaveOptions] = useState(false);
   const { freeModeProgress } = useSelector((state) => state.user);
-  const {examToCorrect, exam} = useSelector((state) => state.exam);
+  // const {examToCorrect, exam} = useSelector((state) => state.exam);
   const [showCorrectDialog, setShowCorrectDialog] = useState(false);
   const [score, setScore] = useState(0);
   const [showConsigna, setShowConsigna] = useState(false);
@@ -87,14 +87,14 @@ const EditorPage = () => {
   };
 
   useEffect(() => {
-    if(isTeacher){
-      if(!examToCorrect){
-        const getSubmission = async () => {
-          await dispatch(getSubmissionById(id));
-        };
-        getSubmission();
-      }
-    } else{
+  //   if(isTeacher){
+  //     if(!examToCorrect){
+  //       const getSubmission = async () => {
+  //         await dispatch(getSubmissionById(id));
+  //       };
+  //       getSubmission();
+  //     }
+    // } else{
       const fetchData = async () => {
         if (!freeModeProgress) await dispatch(fetchUserFreeModeProgressById({id}));
         if (freeModeProgress && freeModeProgress.code) {
@@ -108,15 +108,15 @@ const EditorPage = () => {
       }
       fetchExam();
       }
-    }
+  //   }
 
   }, [dispatch, freeModeProgress]);
 
-  useEffect(() => {
-    if(examToCorrect){
-      parseCode(examToCorrect.answer);
-    }
-  }, [examToCorrect]);
+  // useEffect(() => {
+  //   if(examToCorrect){
+  //     parseCode(examToCorrect.answer);
+  //   }
+  // }, [examToCorrect]);
 
   const decodeHTML = (str) => {
     const parser = new DOMParser();
@@ -154,17 +154,17 @@ const EditorPage = () => {
     }
   }
 
-  const handleCorrect = async () => {
-    try {
-      await dispatch((gradeSubmission({id: (examToCorrect.id || examToCorrect._id), score})));
-      toast.success("Examen corregido con éxito");
-      setShowCorrectDialog(false);
-      const courseId = getCourseLocalStorage();
-      navigate("/exam-califications/" + courseId);
-    } catch (error) {
-      console.error("Error al corregir el examen:", error);
-  }
-  }
+  // const handleCorrect = async () => {
+  //   try {
+  //     await dispatch((gradeSubmission({id: (examToCorrect.id || examToCorrect._id), score})));
+  //     toast.success("Examen corregido con éxito");
+  //     setShowCorrectDialog(false);
+  //     const courseId = getCourseLocalStorage();
+  //     navigate("/exam-califications/" + courseId);
+  //   } catch (error) {
+  //     console.error("Error al corregir el examen:", error);
+  // }
+  // }
 
 
   return (
@@ -176,7 +176,7 @@ const EditorPage = () => {
         title={"Corregir examen"}
         type="form"
         description={"Ingrese la calificación del examen"}
-        onConfirm={handleCorrect}
+        // onConfirm={handleCorrect}
         onCancel={() => setShowCorrectDialog(false)}
         cancelButtonText="Cancelar"
         confirmButtonText="Corregir"
@@ -273,7 +273,7 @@ const EditorPage = () => {
 
       </>
     )}
-    {showConsigna && (
+    {/* {showConsigna && (
     exam.question.startsWith('http') ? (
     <PdfViewer pdfUrl={exam?.question} onClose={() => setShowConsigna(false)} />
     ) : (
@@ -285,7 +285,7 @@ const EditorPage = () => {
         confirmButtonText="Cerrar"
       />
     )  
-    )}
+    )} */}
     </div>
 
         </nav>
