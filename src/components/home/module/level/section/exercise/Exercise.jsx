@@ -27,16 +27,24 @@ const Exercise = ({ content, advance }) => {
 
   // Reset state when content changes
   useEffect(() => {
-    if (!content) return;
-    const resetExerciseState = () => {
-      setSelectedOption(content?.isMultipleAnswers ? [] : "")
-      setIsAnswered(false)
-      setFeedbackState(null)
-      setIsSubmitting(false)
+    if (!content) return
+  
+    // Use template or content.answers to infer what the initial selectedOption should be
+    let initialSelection
+    if (content.template === 1 || (content.template === 2 && content.isMultipleAnswers)) {
+      // drag and drop or multiple choice with multiple answers
+      initialSelection = []
+    } else {
+      initialSelection = ""
     }
-    resetExerciseState()
+  
+    setSelectedOption(initialSelection)
+    setIsAnswered(false)
+    setFeedbackState(null)
+    setIsSubmitting(false)
   }, [content])
 
+  
   const validateCompleteness = () => {
     // For multiple answers (arrays)
     if (Array.isArray(selectedOption)) {

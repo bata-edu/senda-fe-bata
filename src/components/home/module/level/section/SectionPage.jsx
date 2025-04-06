@@ -167,7 +167,6 @@ export const SectionPage = () => {
 
   const handleCompleteExercise = async (userAnswers) => {
     if (!currentContent) return
-
     try {
       await dispatch(
         completeExercise({
