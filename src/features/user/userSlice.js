@@ -3,26 +3,10 @@ import {
   USER_ENDPOINT,
   RESET_STATE,
   RANK,
-  USER_DETAIL,
   ADMIN_ENDPOINT,
 } from "../../utils/constants";
 import apiClient from "../../utils/interceptors/authInterceptor";
-import { getUser } from "../auth/authService";
 import { buildQueryString } from "../../utils/buildQueryString";
-
-// Thunk para obtener la información del usuario
-export const fetchUser = createAsyncThunk(
-  "user/fetchUser",
-  async (_, { rejectWithValue }) => {
-    try {
-      const user = getUser();
-      const response = await apiClient.get(`${USER_DETAIL}/${user.id}`);
-      return response.data;
-    } catch (error) {
-      return rejectWithValue(error.response.data);
-    }
-  }
-);
 
 // Thunk para obtener los progresos del usuario en el modo libre
 export const fetchUserFreeModeProgress = createAsyncThunk(
@@ -88,7 +72,6 @@ export const createUserFreeModeProgress = createAsyncThunk(
   "user/createUserFreeModeProgress",
   async ({ body }, { rejectWithValue }) => {
     try {
-      const user = getUser();
       const response = await apiClient.post(
         `${USER_ENDPOINT}/freeModeProgress`,
         body
@@ -133,25 +116,12 @@ export const fetchUsers = createAsyncThunk(
 const userSlice = createSlice({
   name: "user",
   initialState: {
-    user: null,
     error: null,
     freeModeProgressList: null,
     freeModeProgress: null,
-    rank: null,
-    users: null,
   },
   reducers: {},
   extraReducers: (builder) => {
-    builder
-      .addCase(fetchUser.pending, (state) => {
-        state.error = null;
-      })
-      .addCase(fetchUser.fulfilled, (state, action) => {
-        state.user = action.payload;
-      })
-      .addCase(fetchUser.rejected, (state, action) => {
-        state.error = action.payload;
-      });
     builder
       .addCase(fetchUserFreeModeProgress.pending, (state) => {
         state.error = null;

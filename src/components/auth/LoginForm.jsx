@@ -1,81 +1,42 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
-  loginUser,
   forgotPassword,
   verifyEmail,
   googleLogin,
-  getAuthData,
 } from "../../features/auth/authService";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import simpleLogo from "../../assets/simple-logo.svg";
-import useNavigateToDashboard from "../../utils/userRoles";
 import GenericDialog from "../common/dialog/dialog";
 import { TextInput } from "../common/input/Input";
 import { StyledPasswordInput } from "../common/input/PasswordInput.jsx";
 import Header from "../common/header/Header.jsx";
 
+import { useDispatch, useSelector } from "react-redux";
+import { login, clearError } from "../../features/auth/authSlice";
+
 const LoginForm = () => {
+  const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const navigate = useNavigate();
-  const location = useLocation();
   const [showDialog, setShowDialog] = useState(false);
   const [emailForReset, setEmailForReset] = useState("");
+  const navigate = useNavigate();
 
-  const navigateToDashboard = useNavigateToDashboard();
-
-  const validateEmailToken = async (token) => {
-    try {
-      await verifyEmail(token);
-      toast.success("¡Correo verificado exitosamente!", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
-    } catch (err) {
-      setError(err.response?.data?.message || "Error al verificar el correo");
-    }
-  };
+  const { isAuthenticated, isLoading, error } = useSelector((state) => state.auth)
 
   useEffect(() => {
-    const token = new URLSearchParams(location.search).get("token");
-    if (token) {
-      validateEmailToken(token);
+    if (isAuthenticated) {
+      navigate("/learn/modules");
     }
-  }, [location.search]);
+  }, [isAuthenticated, navigate])
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
-    try {
-      await loginUser(email, password);
-      const { user } = getAuthData();
-      navigateToDashboard(user.role);
-    } catch (err) {
-      console.error(err);
-      setError(err.response?.data?.message || "Error al iniciar sesión");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleGoogleLogin = async (response) => {
-    try {
-      await googleLogin(response.credential);
-      navigate("/learn/modules");
-    } catch (error) {
-      setError("Error al autenticar con Google");
-      console.error(error);
-    }
+    e.preventDefault()
+    dispatch(clearError())
+    dispatch(login({ email, password }))
   };
 
   const handleForgotPassword = async () => {
@@ -158,10 +119,10 @@ const LoginForm = () => {
               </button>
             </div>
             <div className="mt-3 flex flex-col space-y-2">
-              <GoogleLogin
+              {/* <GoogleLogin
                 onSuccess={handleGoogleLogin}
                 onError={() => setError("Error al autenticar con Google")}
-              />
+              /> */}
               {/*                <button
                 className="flex items-center justify-center w-full py-2 border border-gray-300 rounded-lg hover:bg-gray-100"
               >

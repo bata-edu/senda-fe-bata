@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { motion } from "framer-motion";
-import { fetchModulesInfo, clearLevels } from "../../features/module/moduleSlice";
+import { fetchModules, clearLevels } from "../../features/module/moduleSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUserProgress, selectProgress } from "../../features/userProgress/userProgressSlice";
 import { useNavigate } from "react-router-dom";
@@ -49,10 +49,20 @@ export const ModuleList = () => {
   const progress = useSelector(selectProgress);
   
   useEffect(() => {
-    if (localStorage.getItem("accessToken")) {
-      dispatch(fetchModulesInfo());
-      dispatch(fetchUserProgress());
+    let isMounted = true;
+    
+    const fetchData = async () => { 
+      if (isMounted) {
+        dispatch(fetchModules());
+        dispatch(fetchUserProgress());
+      }
     }
+    
+    fetchData();
+    
+    return () => {
+      isMounted = false;
+    };
   }, [dispatch]);
 
   const handleModuleClick = (moduleId) => {
@@ -73,8 +83,8 @@ export const ModuleList = () => {
         <img src={Right} alt="Corchete derecho" className="h-10" />
       </div>
       <section className="w-full mx-auto max-w-4xl relative">
-        {modules?.map((module, index) => {
-          const moduleProgress = progress?.find((p) => p.course === module.id);
+        {Object.values(modules)?.map((module, index) => {
+          const moduleProgress = progress[module._id];
           const percentage = moduleProgress?.courseProgress.toFixed(0) || 0;
           const moduleColor = courseColors[module.name]?.primary;
           const transparentModuleColor = courseColors[module.name]?.secondary;
@@ -82,8 +92,8 @@ export const ModuleList = () => {
 
           return (
             <motion.div
-              onClick={() => handleModuleClick(module.id)}
-              key={module.id}
+              onClick={() => handleModuleClick(module._id)}
+              key={module._id}
               className="absolute w-full cursor-pointer rounded-[50px] h-[300px] flex flex-col items-center justify-start py-10 px-6 sm:px-12"
               initial={{
                 background: `linear-gradient(to right, ${moduleColor} 0%, ${transparentModuleColor} 0%)`,

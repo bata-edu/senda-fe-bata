@@ -3,14 +3,13 @@ import {
   MODULE_ENDPOINT, 
   LEVEL_INFO_ENDPOINT, 
   SECTION_ENDPOINT, 
-  SECTION_INDIVIDUAL,
   RESET_STATE 
 } from "../../utils/constants";
 import apiClient from "../../utils/interceptors/authInterceptor";
 import { decrypt } from "../../utils/decryptData";
 
-export const fetchModulesInfo = createAsyncThunk(
-  "modules/fetchModulesInfo",
+export const fetchModules = createAsyncThunk(
+  "modules/fetchModules",
   async (_, { rejectWithValue }) => {
     try {
       const response = await apiClient.get(`${MODULE_ENDPOINT}`);
@@ -21,12 +20,12 @@ export const fetchModulesInfo = createAsyncThunk(
   }
 );
 
-export const fetchLevelInfo = createAsyncThunk(
-  "modules/fetchLevelInfo",
-  async ({ moduleId, page, limit }, { rejectWithValue }) => {
+export const fetchLevels = createAsyncThunk(
+  "modules/fetchLevels",
+  async (moduleId, { rejectWithValue }) => {
     try {
       const response = await apiClient.get(
-        `${LEVEL_INFO_ENDPOINT}/${moduleId}?page=${page}&limit=${limit}`
+        `${LEVEL_INFO_ENDPOINT}/${moduleId}`
       );
       return { moduleId, data: response.data };
     } catch (error) {
@@ -35,12 +34,24 @@ export const fetchLevelInfo = createAsyncThunk(
   }
 );
 
-export const fetchSection = createAsyncThunk(
-  "modules/fetchSection",
+export const fetchSections = createAsyncThunk(
+  "modules/fetchSections",
+  async (levelId, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.get(`${SECTION_ENDPOINT}/${levelId}`);
+      return {levelId, data: response.data};
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const fetchExercisesAndClasses = createAsyncThunk(
+  "modules/fetchExercisesAndClasses",
   async (sectionId, { rejectWithValue }) => {
     try {
-      const response = await apiClient.get(`${SECTION_INDIVIDUAL}/${sectionId}`);
-      return response.data;
+      const response = await apiClient.get(`${SECTION_ENDPOINT}/individual/${sectionId}`);
+      return {sectionId, data: response.data};
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
@@ -61,11 +72,10 @@ export const fetchExercise = createAsyncThunk(
 );
 
 const initialState = {
-  modules: null,
-  levels: {},
-  sections: {},
-  exercises: {},
-  error: null,
+  modules: {},
+  currentModule: null,
+  currentLevel: null,
+  currentSection: null,
 };
 
 const moduleSlice = createSlice({
@@ -73,51 +83,50 @@ const moduleSlice = createSlice({
   initialState,
   reducers: {
     clearLevels: (state, action) => {
-      delete state.levels[action.payload];
+      delete state.modules[action.payload].levels;
     },
-    clearSections: (state, action) => {
-      delete state.sections[action.payload];
-    }
   },
   extraReducers: (builder) => {
     builder
       // Fetch modules
-      .addCase(fetchModulesInfo.pending, (state) => {
+      .addCase(fetchModules.pending, (state) => {
         state.error = null;
       })
-      .addCase(fetchModulesInfo.fulfilled, (state, action) => {
-        state.modules = action.payload.results;
+      .addCase(fetchModules.fulfilled, (state, action) => {
+        state.modules = action.payload;
       })
-      .addCase(fetchModulesInfo.rejected, (state, action) => {
+      .addCase(fetchModules.rejected, (state, action) => {
         state.error = action.payload;
       })
       // Fetch levels
-      .addCase(fetchLevelInfo.pending, (state) => {
+      .addCase(fetchLevels.pending, (state) => {
         state.error = null;
       })
-      .addCase(fetchLevelInfo.fulfilled, (state, action) => {
+      .addCase(fetchLevels.fulfilled, (state, action) => {
         const { moduleId, data } = action.payload;
-        state.levels[moduleId] = {
-          levels: data.levels,
-          module: data.module,
-          page: (state.levels[moduleId]?.page || 0) + 1
-        };
+        state.currentModule = moduleId;
+        state.modules[moduleId].levels = data;
       })
-      .addCase(fetchLevelInfo.rejected, (state, action) => {
+      .addCase(fetchLevels.rejected, (state, action) => {
         state.error = action.payload;
       })
       // Fetch section
-      .addCase(fetchSection.fulfilled, (state, action) => {
-        state.sections[action.payload._id] = action.payload;
+      .addCase(fetchSections.fulfilled, (state, action) => {
+        const { levelId, data } = action.payload;
+        state.currentLevel = levelId;
+        state.modules[state.currentModule].levels[levelId].sections = data;
       })
-      .addCase(fetchSection.rejected, (state, action) => {
+      .addCase(fetchSections.rejected, (state, action) => {
         state.error = action.payload;
       })
-      // Fetch exercise
-      .addCase(fetchExercise.fulfilled, (state, action) => {
-        state.exercises[action.payload._id] = action.payload;
+      // Fetch exercises and classes
+      .addCase(fetchExercisesAndClasses.fulfilled, (state, action) => {
+        const { sectionId, data } = action.payload;
+        state.currentSection = sectionId;
+        state.modules[state.currentModule].levels[state.currentLevel].sections[sectionId].exercises = data.sectionExercises;
+        state.modules[state.currentModule].levels[state.currentLevel].sections[sectionId].classes = data.sectionClasses;
       })
-      .addCase(fetchExercise.rejected, (state, action) => {
+      .addCase(fetchExercisesAndClasses.rejected, (state, action) => {
         state.error = action.payload;
       })
       .addCase(RESET_STATE, () => initialState);
@@ -127,11 +136,9 @@ const moduleSlice = createSlice({
 // Selectors
 export const selectModules = (state) => state.modules.modules;
 export const selectModuleError = (state) => state.modules.error;
-export const selectLevels = (state, moduleId) => state.modules.levels[moduleId]?.levels;
-export const selectModule = (state, moduleId) => state.modules.levels[moduleId]?.module;
-export const selectLevelPage = (state, moduleId) => state.modules.levels[moduleId]?.page;
-export const selectSection = (state, sectionId) => state.modules.sections[sectionId];
-export const selectExercise = (state, exerciseId) => state.modules.exercises[exerciseId];
-
+export const selectModule = (state, moduleId) => state.modules.modules[moduleId];
+export const selectLevels = (state, moduleId) => state.modules.modules[moduleId]?.levels;
+export const selectSection = (state, moduleId, levelId, sectionId) => state.modules.modules[moduleId]?.levels[levelId]?.sections[sectionId];
+export const selectExercise = (state, moduleId, exerciseId) => state.modules.modules[moduleId]?.exercises[exerciseId];
 export const { clearLevels, clearSections } = moduleSlice.actions;
 export default moduleSlice.reducer;

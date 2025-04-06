@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchUser, fetchRank } from "../../features/user/userSlice";
 import Sidebar from "../../components/home/SideBar";
 import "../../styles/home.css";
 import { Outlet } from "react-router-dom";
@@ -15,9 +14,6 @@ const Home = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setLoading(true);
-        dispatch(fetchUser());
-        setLoading(false);
       } catch (error) {
         console.error("Error loading data:", error);
         setLoading(true);

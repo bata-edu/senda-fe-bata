@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
-  fetchLevelInfo,
+  fetchLevels,
+  fetchModules,
   selectLevels,
-  selectModule,
 } from "../../../features/module/moduleSlice";
 import LoadingPage from "../../../pages/LoadingPage";
 
@@ -17,23 +17,19 @@ import Js from "../../../assets/icons/js.svg";
 import Css from "../../../assets/icons/css.svg";
 import ArrowBack from "../../../assets/icons/arrowBack.svg";
 import { useParams } from 'react-router-dom';
-import { fetchUserProgressById } from "../../../features/userProgress/userProgressSlice";
+import { fetchUserProgress } from "../../../features/userProgress/userProgressSlice";
 
 export const LevelList = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  
   const { moduleId } = useParams();
   const levels = useSelector((state) => selectLevels(state, moduleId));
-  const module = useSelector((state) => selectModule(state, moduleId));
-  const { currentProgress } = useSelector((state) => state.userProgress || {});
-
+  const { progress } = useSelector((state) => state.userProgress || {});
   const [loading, setLoading] = useState(true);
-  const [userCurrentInfo, setUserCurrentInfo] = useState({
-    currentLevelIndex: null,
-    currentSectionIndex: null,
-    lastSectionIndex: null,
-  });
+  const [currentProgress, setCurrentProgress] = useState(null);
+  const modulesLoaded = useRef(false);
+  const progressLoaded = useRef(false);
+  const levelsLoaded = useRef(false);
 
   const courseImage = {
     "671909eecc62ee9e8f06c578": {
@@ -97,55 +93,64 @@ export const LevelList = () => {
       barUnfilled: "#5B75D6",
     },
   };
-
-
   useEffect(() => {
-    const fetchData = async (moduleId) => {
-      setUserCurrentInfo({
-        currentLevelIndex: 0,
-        currentSectionIndex: 0,
-        lastSectionIndex: null,
-      });
-      const progressAction = dispatch(fetchUserProgressById(moduleId));
-      progressAction.then(() => {
-        dispatch(fetchLevelInfo({ moduleId: moduleId, page: 0, limit: 100 }))
-          .finally(() => {
-            setLoading(false);
-          });
-      });
-    };
-
-      if (moduleId) {
-        setLoading(true);
-        fetchData(moduleId);
+    const fetchData = async () => {
+      try {
+        if (!modulesLoaded.current) {
+          await dispatch(fetchModules()).unwrap();
+          modulesLoaded.current = true;
+        }
+  
+        if (!progressLoaded.current) {
+          await dispatch(fetchUserProgress()).unwrap();
+          progressLoaded.current = true;
+        }
+  
+        if (!levelsLoaded.current && moduleId) {
+          await dispatch(fetchLevels(moduleId)).unwrap();
+          levelsLoaded.current = true;
+        }
+  
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching data", error);
+        setLoading(false);
       }
-    }, [moduleId, dispatch]);
+    };
+  
+    fetchData();
+  }, [moduleId, dispatch]);
+  
+  useEffect(() => {
+    if (loading || !progress || !levels || !moduleId || levels.length === 0) {
+      return;
+    }
+    
+    const moduleProgress = progress[moduleId];
+    if (!moduleProgress) return;
+    const currentLevel = levels[moduleProgress.currentLevel]
+
+    setCurrentProgress({
+      currentLevelIndex: currentLevel.order -1,
+      levelProgress: moduleProgress.levelProgress,
+    });
+  }, [levels, moduleId, progress, loading]);
 
   useEffect(() => {
-    const setLevelInfo = async () => {
-      if (!currentProgress || !levels) return;
-      const currentLevelIndex = levels?.findIndex(
-        (level) => level._id === currentProgress.currentLevel
-      );
-      const currentLevel = levels[currentLevelIndex] || levels[0];
-      const currentSectionIndex =
-        currentLevel?.sections?.findIndex(
-          (section) => section._id === currentProgress.currentSection
-        ) || 0;
-      setUserCurrentInfo({ currentLevelIndex, currentSectionIndex });
-    };
-    setLevelInfo();
-    setLoading(false);
-  }, [levels, moduleId, currentProgress]);
-
+    modulesLoaded.current = false;
+    progressLoaded.current = false;
+    levelsLoaded.current = false;
+    setLoading(true);
+  }, [moduleId]);
   const handleLevelClick = (levelId) => {
     navigate(`/learn/modules/${moduleId}/levels/${levelId}`);
   };
 
   if (loading || !levels) return(<LoadingPage message={"Cargando niveles..."}/>)
+  if (!currentProgress) return(<LoadingPage message={"Cargando progreso..."}/>)
   return (
     <div className="w-full max-w-5xl px-4 mx-auto">
-      {moduleId && levels?.length ? (
+      {moduleId && levels ? (
         <>
           <div className="flex max-w-md">
             <div
@@ -176,17 +181,17 @@ export const LevelList = () => {
             {/* <StreaksNDiamonds /> */}
           </div>
           <div className="relative w-full mt-32">
-            {levels?.map((level, index) => {
+            {Object.values(levels)?.map((level, index) => {
               const progressBarColor =
-                index < userCurrentInfo.currentLevelIndex
+                index < currentProgress.currentLevelIndex
                   ? courseImage[moduleId]?.barDone
-                  : index === userCurrentInfo.currentLevelIndex
+                  : index === currentProgress.currentLevelIndex
                   ? courseImage[moduleId]?.barCurrent
                   : "#DDDDDD";
               const remainingProgressBarColor =
-                index < userCurrentInfo.currentLevelIndex
+                index < currentProgress.currentLevelIndex
                   ? courseImage[moduleId]?.barDone
-                  : index === userCurrentInfo.currentLevelIndex
+                  : index === currentProgress.currentLevelIndex
                   ? courseImage[moduleId]?.barUnfilled
                   : "#DDDDDD";
               return (
@@ -194,21 +199,21 @@ export const LevelList = () => {
                   onClick={() => handleLevelClick(level._id)}
                   key={level._id}
                   className={`absolute w-full rounded-[50px] h-[400px] overflow-hidden flex items-start justify-start py-10 px-12 ${
-                    index > userCurrentInfo.currentLevelIndex ? "pointer-events-none" : ""
+                    index > currentProgress.currentLevelIndex ? "pointer-events-none" : ""
                   }`}                  style={{
                     top: `${index * 250}px`,
                     zIndex: index,
                     border: `2px solid ${
-                      index < userCurrentInfo.currentLevelIndex
+                      index < currentProgress.currentLevelIndex
                         ? courseImage[moduleId].borderDone
-                        : index === userCurrentInfo.currentLevelIndex
+                        : index === currentProgress.currentLevelIndex
                         ? courseImage[moduleId].borderCurrent
                         : courseImage[moduleId].borderDisable
                     }`,
                     backgroundColor:
-                      index < userCurrentInfo.currentLevelIndex
+                      index < currentProgress.currentLevelIndex
                         ? courseImage[moduleId].backgroundDone
-                        : index === userCurrentInfo.currentLevelIndex
+                        : index === currentProgress.currentLevelIndex
                         ? courseImage[moduleId].backgroundCurrent
                         : "white",
                   }}
@@ -220,7 +225,7 @@ export const LevelList = () => {
                   <div className="flex flex-col justify-start">
                     <span
                       className={`font-mono text-5xl ${
-                        index <= userCurrentInfo.currentLevelIndex
+                        index <= currentProgress.currentLevelIndex
                           ? "text-white"
                           : "text-[#ADADAD]"
                       }`}
@@ -230,7 +235,7 @@ export const LevelList = () => {
                     <div className="mt-2">
                       <p
                         className={`font-mono text-2xl ${
-                          index <= userCurrentInfo.currentLevelIndex
+                          index <= currentProgress.currentLevelIndex
                             ? "text-white"
                             : "text-[#ADADAD]"
                         }`}
@@ -241,18 +246,18 @@ export const LevelList = () => {
                     </div>
                     <div className="flex flex-row-reverse items-center">
                       <span className="font-mono text-3xl text-white ml-12">
-                        {index < userCurrentInfo.currentLevelIndex
+                        {index < currentProgress.currentLevelIndex
                           ? "100%"
-                          : index === userCurrentInfo.currentLevelIndex
+                          : index === currentProgress.currentLevelIndex
                           ? currentProgress?.levelProgress.toFixed(2) + "%"
                           : "0%"}
                       </span>
                       <div
                         style={{
                           background:
-                            index < userCurrentInfo.currentLevelIndex
+                            index < currentProgress.currentLevelIndex
                               ? courseImage[moduleId].barUnfilled
-                              : index === userCurrentInfo.currentLevelIndex
+                              : index === currentProgress.currentLevelIndex
                               ? courseImage[moduleId].barUnfilled
                               : "#DDDDDD",
                         }}

@@ -6,9 +6,9 @@ import {
   completeClass,
   completeExercise,
   fetchUserProgress,
-  fetchUserProgressById,
+  // fetchUserProgressById,
 } from "../../../features/userProgress/userProgressSlice";
-import { fetchSection } from "../../../features/section/sectionSlice";
+// import { fetchSections } from "../../../features/module/moduleSlice";
 import SectionClass from "../../components/section/Class";
 import Exercise from "../../components/section/Exercice";
 import LoadingPage from "../../../pages/LoadingPage";
@@ -44,10 +44,10 @@ export const SectionPage = () => {
         setLoading(true);
 
         // Fetch user progress
-        await dispatch(fetchUserProgressById(moduleId)).unwrap();
+        // await dispatch(fetchUserProgressById(moduleId)).unwrap();
 
         // Fetch section data
-        const sectionData = await dispatch(fetchSection(sectionId)).unwrap()
+        // const sectionData = await dispatch(fetchSection(sectionId)).unwrap()
 
         // Calculate progress
         calculateProgress(sectionData)
@@ -147,7 +147,7 @@ export const SectionPage = () => {
           return;
         case "class":
           console.log(contentType);
-          response = await dispatch(completeClass(currentContent._id)).unwrap();
+          response = await dispatch(completeClass({ moduleId, classId: currentContent._id })).unwrap();
           break;
         default:
           return
@@ -156,7 +156,7 @@ export const SectionPage = () => {
       if (response?.message === ADVANCE_SECTION) {
         navigate(`/learn/modules/${moduleId}/levels/${levelId}`)
       } else {
-        await dispatch(fetchUserProgressById(moduleId)).unwrap();
+        // await dispatch(fetchUserProgressById(moduleId)).unwrap();
         determineCurrentContent(section, currentContent);
         // Small delay to ensure state updates are processed
         return; // Return early to avoid setting loading to false twice
@@ -180,7 +180,7 @@ export const SectionPage = () => {
       const response = await dispatch(
         completeExercise({ exerciseId: currentContent._id, body })
       ).unwrap();
-      await dispatch(fetchUserProgressById(moduleId)).unwrap();
+      // await dispatch(fetchUserProgressById(moduleId)).unwrap();
 
       // Check if section is complete
       if (

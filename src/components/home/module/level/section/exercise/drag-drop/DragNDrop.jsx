@@ -85,7 +85,6 @@ const DragNDrop = ({ exercise, setSelectedOption, colors }) => {
     
     // Split content by placeholder pattern
     const contentParts = exercise.content.split(placeholderPattern)
-    console.log(contentParts)
     return (
 <>
 {contentParts.map((part, index) => {

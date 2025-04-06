@@ -21,12 +21,13 @@ export const fetchUserProgress = createAsyncThunk(
   }
 );
 
-export const fetchUserProgressById = createAsyncThunk(
-  "userProgress/fetchUserProgressById",
-  async (moduleId, { rejectWithValue }) => {
+export const fetchUserSectionProgress = createAsyncThunk(
+  "userProgress/fetchUserSectionProgress",
+  async ({ courseId, levelId, sectionId }, { rejectWithValue }) => {
     try {
-      const response = await apiClient.get(`${USER_PROGRESS_ENDPOINT}/${moduleId}`);
-      return response.data;
+      const response = await apiClient.get(`${USER_PROGRESS_ENDPOINT}/${courseId}/${levelId}/${sectionId}`);
+      return { moduleId: courseId, levelId, sectionId, progress: response.data };
+
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
@@ -48,10 +49,10 @@ export const startCourse = createAsyncThunk(
 // Content completion thunks
 export const completeClass = createAsyncThunk(
   "userProgress/completeClass",
-  async (classId, { rejectWithValue }) => {
+  async ({ moduleId, classId }, { rejectWithValue }) => {
     try {
-      const response = await apiClient.post(`${COMPLETE_CLASS_ENDPOINT}/${classId}`);
-      return response.data;
+      await apiClient.post(`${COMPLETE_CLASS_ENDPOINT}/${moduleId}/${classId}`);
+      return classId;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
@@ -60,13 +61,13 @@ export const completeClass = createAsyncThunk(
 
 export const completeExercise = createAsyncThunk(
   "userProgress/completeExercise",
-  async ({ exerciseId, body }, { rejectWithValue }) => {
+  async ({ moduleId, exerciseId, body }, { rejectWithValue }) => {
     try {
-      const response = await apiClient.post(
-        `${COMPLETE_EXERCISE_ENDPOINT}/${exerciseId}`,
+      await apiClient.post(
+        `${COMPLETE_EXERCISE_ENDPOINT}/${moduleId}/${exerciseId}`,
         body
       );
-      return response.data;
+      return exerciseId;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
@@ -89,14 +90,19 @@ export const advanceProgress = createAsyncThunk(
 
 const initialState = {
   progress: null,
-  currentProgress: null,
+  currentSection: null,
+  loadingCurrentSection: false,
   error: null,
 };
 
 const userProgressSlice = createSlice({
   name: "userProgress",
   initialState,
-  reducers: {},
+  reducers: {
+    clearSectionProgress: (state, action) => {
+      state.currentSection = null;
+    },
+  },
   extraReducers: (builder) => {
     builder
       // Fetch all progress
@@ -109,15 +115,18 @@ const userProgressSlice = createSlice({
       .addCase(fetchUserProgress.rejected, (state, action) => {
         state.error = action.payload;
       })
-      // Fetch progress by ID
-      .addCase(fetchUserProgressById.pending, (state) => {
+      // Fetch user section progress
+      .addCase(fetchUserSectionProgress.pending, (state) => {
         state.error = null;
+        state.loadingCurrentSection = true;
       })
-      .addCase(fetchUserProgressById.fulfilled, (state, action) => {
-        state.currentProgress = action.payload;
-      })
-      .addCase(fetchUserProgressById.rejected, (state, action) => {
+      .addCase(fetchUserSectionProgress.fulfilled, (state, action) => {
+        state.currentSection = action.payload;
+        state.loadingCurrentSection = false;
+      })  
+      .addCase(fetchUserSectionProgress.rejected, (state, action) => {
         state.error = action.payload;
+        state.loadingCurrentSection = false;
       })
       // Start course
       .addCase(startCourse.pending, (state) => {
@@ -132,22 +141,28 @@ const userProgressSlice = createSlice({
       // Complete class
       .addCase(completeClass.pending, (state) => {
         state.error = null;
+        state.loadingCurrentSection = true;
       })
       .addCase(completeClass.fulfilled, (state, action) => {
-        state.currentProgress = action.payload;
+        state.currentSection.progress.completedClasses.push(action.payload);
+        state.loadingCurrentSection = false;
       })
       .addCase(completeClass.rejected, (state, action) => {
         state.error = action.payload;
+        state.loadingCurrentSection = false;
       })
       // Complete exercise
       .addCase(completeExercise.pending, (state) => {
         state.error = null;
+        state.loadingCurrentSection = true;
       })
       .addCase(completeExercise.fulfilled, (state, action) => {
-        state.currentProgress = action.payload;
+        state.currentSection.progress.completedExercises.push(action.payload);
+        state.loadingCurrentSection = false;
       })
       .addCase(completeExercise.rejected, (state, action) => {
         state.error = action.payload;
+        state.loadingCurrentSection = false;
       })
       // Advance progress
       .addCase(advanceProgress.pending, (state) => {
@@ -169,4 +184,5 @@ export const selectProgress = (state) => state.userProgress.progress;
 export const selectCurrentProgress = (state) => state.userProgress.currentProgress;
 export const selectError = (state) => state.userProgress.error;
 
+export const { clearSectionProgress } = userProgressSlice.actions;
 export default userProgressSlice.reducer;
