@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { fetchUserProgressById } from "../../../../features/userProgress/userProgressSlice";
-import { selectLevels, fetchLevelInfo } from "../../../../features/module/moduleSlice";
+import { selectLevels, fetchLevels, fetchSections, fetchModules } from "../../../../features/module/moduleSlice";
 import MouseWhite from "../../../../assets/icons/white/mouse-white.svg";
 import KeyBoardWhite from "../../../../assets/icons/white/keyboard-white.svg";
 import DisplayWhite from "../../../../assets/icons/white/display-white.svg";
@@ -10,20 +9,20 @@ import BookWhite from "../../../../assets/icons/white/book-white.svg";
 import LoadingPage from "../../../../pages/LoadingPage";
 import { GuideViewer } from "./section/Guide"
 import ArrowBack from "../../../../assets/icons/arrowBack.svg";
-
+import { fetchUserProgress, clearSectionProgress } from "../../../../features/userProgress/userProgressSlice";
 export const SectionList = () => {
   const { moduleId, levelId } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { currentProgress } = useSelector((state) => state.userProgress || {});
+  const { modules } = useSelector((state) => state.modules);
+  const { progress } = useSelector((state) => state.userProgress || {});
   const levels = useSelector((state) => selectLevels(state, moduleId));
-  const level = levels?.find((lvl) => lvl._id === levelId);
-
+  const [level, setLevel] = useState(null);
+  const [currentSectionIndex, setCurrentSectionIndex] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [loadingMessage, setLoadingMessage] = useState("Cargando nivel...");
 
-  const courseImage = {
+    const courseImage = {
     "671909eecc62ee9e8f06c578": {
       course: "Python",
       border: "#C694EC",
@@ -92,50 +91,36 @@ export const SectionList = () => {
     },
   };
 
-  useEffect(() => {
-    let isMounted = true;
-
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        setLoadingMessage("Cargando datos del módulo...");
-
-        // First fetch level data if not available
-        if (!level) {
-          setLoadingMessage("Cargando información del nivel...");
-          await dispatch(fetchLevelInfo({ moduleId, page: 0, limit: 100 })).unwrap();
-        }
-
-        setLoadingMessage("Cargando progreso del usuario...");
-        await dispatch(fetchUserProgressById(moduleId)).unwrap();
-
-        if (!isMounted) return;
-
-        // If we still don't have the level after fetching, something went wrong
-        if (!level) {
-          setError("No se pudo encontrar el nivel");
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        if (isMounted) {
-          setError("Error al cargar el contenido del nivel");
-        }
-      } finally {
-        if (isMounted) {
-          setLoading(false);
-        }
-      }
-    };
-
-    if (moduleId) {
-      fetchData();
+  useEffect(() => { 
+    if (!modules || !modules[moduleId]) {
+      setLoadingMessage("Cargando módulo...")
+      dispatch(fetchModules())
+      return;
+    }
+    if (!levels || !levels[levelId]) {
+      setLoadingMessage("Cargando nivel...")
+      dispatch(fetchLevels(moduleId))
+      return;
     }
 
-    return () => {
-      isMounted = false;
-    };
-  }, [dispatch, moduleId, level]);
+    if (!progress || !progress[moduleId] || !progress[moduleId].currentSection) {
+      setLoadingMessage("Cargando progreso...")
+      dispatch(fetchUserProgress())
+      return;
+    }
+
+    if (!levels || !levels[levelId] || !levels[levelId].sections) {
+      setLoadingMessage("Cargando secciones...")
+      dispatch(fetchSections(levelId))
+      return;
+    }
+
+    const currentSectionIndex = levels[levelId].sections[progress[moduleId].currentSection].order;
+    setLevel(levels[levelId]);
+    setCurrentSectionIndex(currentSectionIndex);
+    setLoading(false);
+  
+  }, [levels, levelId, progress, moduleId, dispatch, modules, level]);
 
   if (loading) {
     return (
@@ -144,34 +129,10 @@ export const SectionList = () => {
       </div>
     );
   }
-
-  if (error) {
-    return (
-      <div className="flex flex-col justify-center items-center h-[90vh]">
-        <p className="text-red-500 mb-4">{error}</p>
-        <button 
-          onClick={() => navigate(`/learn/modules/${moduleId}`)}
-          className="bg-[#4558C8] text-white px-6 py-2 rounded-lg"
-        >
-          Volver
-        </button>
-      </div>
-    );
-  }
-
-  if (!level) {
-    return (
-      <div className="flex flex-col justify-center items-center h-[90vh]">
-        <p className="text-gray-500 mb-4">No se encontró el nivel</p>
-        <button 
-          onClick={() => navigate(`/learn/modules/${moduleId}`)}
-          className="bg-[#4558C8] text-white px-6 py-2 rounded-lg"
-        >
-          Volver
-        </button>
-      </div>
-    );
-  }
+  const handleSectionClick = (sectionId) => {
+    dispatch(clearSectionProgress(sectionId));
+    navigate(`/learn/modules/${moduleId}/levels/${levelId}/sections/${sectionId}`);
+  };
 
   return (
     <div className="flex flex-col w-full h-full items-center">
@@ -200,12 +161,9 @@ export const SectionList = () => {
       </div>
 
       <div className="relative w-full h-auto flex justify-center items-start mt-12">
-        {level?.sections?.map((section, index) => {
+        {level?.sections && Object.values(level?.sections)?.map((section, index) => {
           const position = index % 5;
           const rowOffset = Math.floor(index / 5) * 300;
-          const currentSectionIndex = level?.sections?.findIndex(
-            (sec) => sec._id === currentProgress?.currentSection
-          );
           const sectionIndex = index;
 
           const borderColor =
@@ -299,12 +257,8 @@ export const SectionList = () => {
           const { className, top, extra } = positions[position];
           return (
             <div
-              onClick={() => {
-                navigate(`sections/${section._id}`);
-                localStorage.setItem("sectionName", section.name);
-                localStorage.setItem("sectionOrder", section.order);
-              }}
-              key={section._id}
+              onClick={() => handleSectionClick(section.id)}
+              key={section.id}
               className={`${className} ${sectionIndex > currentSectionIndex ? "pointer-events-none" : ""}`}
               style={{ top: `calc(${top} + ${rowOffset}px)` }}
             >

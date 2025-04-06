@@ -50,7 +50,7 @@ const Preview = ({ htmlCode, cssCode, play, jsCode }) => {
     iframeDoc.open();
     iframeDoc.write(output);
     iframeDoc.close();
-  }, [play]);
+  }, [play, htmlCode, cssCode, jsCode]);
 
   return (
     <div className="w-full h-full">

@@ -17,12 +17,13 @@ import profileSkeleton from "../../../assets/icons/profile-skel.svg"
 import profileSkeletonWhite from "../../../assets/icons/white/profile-skel-white.svg"
 
 
-import { getAuthData, logoutUser } from "../../../features/auth/authService";
-
+import { logout } from "../../../features/auth/authSlice";
+import { useSelector, useDispatch } from "react-redux";
 const Header = ({className}) => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { user } = getAuthData();
+  const { user } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
   const [showMenu, setShowMenu] = useState(false);
   const isActive = (path) => location.pathname.startsWith(path);
   const isEditor = isActive("/editor")
@@ -32,7 +33,7 @@ const Header = ({className}) => {
   };
 
   const handleLogout = async () => {
-    await logoutUser();
+    dispatch(logout());
     navigate("/login");
   };
 
@@ -118,7 +119,7 @@ const Header = ({className}) => {
                 >
                   Cerrar sesión
                 </button>
-              </div>
+              </div>  
             )}
             <img src={isEditor ? whiteBell : Bell} alt="Notificaciones" className="h-5" />
             <img  onClick={() => navigate("/learn/profile")} src={isEditor ? profileSkeletonWhite : profileSkeleton} alt="Notificaciones" className={`size-10 ${isEditor ? "fill-white" : ""}`} />

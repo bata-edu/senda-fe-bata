@@ -16,7 +16,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import LoadingPage from "../../../pages/LoadingPage";
-import { fetchModulesInfo } from "../../../features/module/moduleSlice";
+import { fetchModules } from "../../../features/module/moduleSlice";
 import cycle from "../../assets/icons/cycle.svg";
 import maleExample from "../../assets/male-example.svg";
 import GenericDialog from "../../common/dialog/dialog";
@@ -56,7 +56,7 @@ const CourseDashboard = () => {
 
   const fetchCourseInfo = async (page) => {
     setLoading(true);
-    const m = await dispatch(fetchModulesInfo());
+    const m = await dispatch(fetchModules());
     const moduleA = m.payload.results[selectedModuleIndex];
     setSelectedModule(moduleA);
     fetchExams(page);

@@ -40,9 +40,7 @@ const AppRoutes = () => {
         <Route
           path="/login"
           element={
-            <LoginGuard>
               <LoginPage />
-            </LoginGuard>
           }
         />
         <Route

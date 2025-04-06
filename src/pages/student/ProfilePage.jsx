@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchUser } from "../../features/user/userSlice";
+import React from "react";
+import { useSelector } from "react-redux";
 
 import "../../styles/profile.css";
 import LoadingPage from "../LoadingPage";
@@ -8,29 +7,9 @@ import UserInfo from "../../components/profile/UserInfo";
 import Streaks from "../../components/profile/Streaks";
 
 const Profile = () => {
-  const dispatch = useDispatch();
-  const [loading, setLoading] = useState(false);
   const { user } = useSelector((state) => state.user || {});
 
-  useEffect(() => {
-    if (user && user.name) {
-      setLoading(false);
-      return;
-    }
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        dispatch(fetchUser());
-        setLoading(false);
-      } catch (error) {
-        console.error("Error loading data:", error);
-        setLoading(true);
-      }
-    };
-    fetchData();
-  }, [dispatch]);
-
-  if (loading) {
+  if (!user) {
     return <LoadingPage />;
   }
 

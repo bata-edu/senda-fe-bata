@@ -13,7 +13,7 @@ import {
   getSchoolLocalStorage,
 } from "../../../../features/school/schoolSlice";
 import Sidebar from "../../../home/SideBar";
-import { fetchModulesInfo } from "../../../../features/module/moduleSlice";
+import { fetchModules } from "../../../../features/module/moduleSlice";
 import { fetchAllLevels } from "../../../../features/level/levelSlice";
 import { fetchSections } from "../../../../features/section/sectionSlice";
 import { TextInput } from "../../../common/input/Input";
@@ -43,7 +43,7 @@ const TaskForm = () => {
   );
 
   useEffect(() => {
-    dispatch(fetchModulesInfo());
+    dispatch(fetchModules());
   }, [dispatch]);
 
   useEffect(() => {
