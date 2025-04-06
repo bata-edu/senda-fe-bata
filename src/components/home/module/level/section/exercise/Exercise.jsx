@@ -27,6 +27,7 @@ const Exercise = ({ content, advance }) => {
 
   // Reset state when content changes
   useEffect(() => {
+    if (!content) return;
     const resetExerciseState = () => {
       setSelectedOption(content?.isMultipleAnswers ? [] : "")
       setIsAnswered(false)
@@ -89,20 +90,12 @@ const Exercise = ({ content, advance }) => {
 
     const isCorrect = checkCorrectness()
     setFeedbackState(isCorrect ? "correct" : "incorrect")
-    setTimeout(
-      () => {
-        advance(selectedOption)
-
-        const resetExerciseState = () => {
-          setSelectedOption(content?.isMultipleAnswers ? [] : "")
-          setIsAnswered(false)
-          setFeedbackState(null)
-          setIsSubmitting(false)
-        }
-        resetExerciseState()
-      },
-      isCorrect ? 1000 : 2000,
-    ) // Longer delay for incorrect answers
+    // setTimeout(
+      // () => {
+    advance(selectedOption)
+      // },
+      // isCorrect ? 1000 : 2000,
+    // ) // Longer delay for incorrect answers
   }
 
   const renderFeedback = () => {
