@@ -7,20 +7,28 @@ import {
   advanceProgress,
   completeClass,
   completeExercise,
-  fetchUserSectionProgress
+  fetchUserSectionProgress,
+  determineNextContent,
+  selectNextContent,
+  selectContentType,
+  selectSectionCompleted,
+  selectIsLoading,
+  selectCurrentSection,
+  selectReviewingIncorrectExercises,
+  selectAllExercisesAttempted,
+  fetchUserProgress,
 } from "../../../../../features/userProgress/userProgressSlice"
 import {
   fetchModules,
   fetchSections,
   fetchExercisesAndClasses,
-  fetchLevels
+  fetchLevels,
 } from "../../../../../features/module/moduleSlice"
 import SectionClass from "./class/Class"
 import Exercise from "./exercise/Exercise"
 import LoadingPage from "../../../../../pages/LoadingPage"
 import BackLogo from "../../../../../assets/icons/back.png"
 import { courseImageSectionPage as courseImage } from "../../../../../utils/courseImage"
-import { ADVANCE_SECTION } from "../../../../../utils/constants"
 import { GuideViewer } from "./Guide"
 
 export const SectionPage = () => {
@@ -30,13 +38,19 @@ export const SectionPage = () => {
 
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [currentContent, setCurrentContent] = useState(null)
-  const [contentType, setContentType] = useState(null)
   const [sectionData, setSectionData] = useState(null)
 
-  const { loadingCurrentSection } = useSelector((state) => state.userProgress || {})
+  // Use selectors to get state from Redux
+  const isLoadingSection = useSelector(selectIsLoading)
   const { modules } = useSelector((state) => state.modules)
-  const { currentSection } = useSelector((state) => state.userProgress || {})
+  const { progress } = useSelector((state) => state.userProgress)
+  const currentSection = useSelector(selectCurrentSection)
+  const currentContent = useSelector(selectNextContent)
+  const contentType = useSelector(selectContentType)
+  const sectionCompleted = useSelector(selectSectionCompleted)
+  const reviewingIncorrectExercises = useSelector(selectReviewingIncorrectExercises)
+  const allExercisesAttempted = useSelector(selectAllExercisesAttempted)
+
   const modulesLoaded = useRef(false)
   const levelsLoaded = useRef(false)
   const sectionsLoaded = useRef(false)
@@ -45,7 +59,7 @@ export const SectionPage = () => {
 
   // Load all data needed (modules, sections, progress)
   useEffect(() => {
-    if (!moduleId || !levelId || !sectionId) return;
+    if (!moduleId || !levelId || !sectionId) return
     const loadData = async () => {
       try {
         // Load modules if not loaded
@@ -53,38 +67,53 @@ export const SectionPage = () => {
           console.log("Fetching modules")
           await dispatch(fetchModules()).unwrap()
           modulesLoaded.current = true
-          return;
+          return
         }
         // Load levels if not loaded
         if (modules && modules[moduleId] && !modules[moduleId].levels && !levelsLoaded.current) {
           console.log("Fetching levels")
           await dispatch(fetchLevels(moduleId)).unwrap()
           levelsLoaded.current = true
-          return;
+          return
         }
         // Load sections if not loaded
         if (modules && modules[moduleId] && !modules[moduleId].levels[levelId].sections && !sectionsLoaded.current) {
           console.log("Fetching sections")
           await dispatch(fetchSections(levelId)).unwrap()
           sectionsLoaded.current = true
-          return;
+          return
         }
         // Load exercises and classes if not loaded
-        if (modules && modules[moduleId] && modules[moduleId].levels[levelId].sections[sectionId] && !sectionData && !exercisesAndClassesLoaded.current) {
+        if (
+          modules &&
+          modules[moduleId] &&
+          modules[moduleId].levels[levelId].sections[sectionId] &&
+          !sectionData &&
+          !exercisesAndClassesLoaded.current
+        ) {
+          const sectionDataFromStore = modules[moduleId].levels[levelId].sections[sectionId]
+          setSectionData(sectionDataFromStore)
           await dispatch(fetchExercisesAndClasses(sectionId)).unwrap()
           exercisesAndClassesLoaded.current = true
+          return
+        }
+        if (!progress) {
+          console.log("Fetching general progress")
+          dispatch(fetchUserProgress())
           return;
         }
-        if (!currentSection || !currentSection.progress) {
+        if (!progress || !currentSection || !currentSection.progress) {
           setSectionData(modules[moduleId].levels[levelId].sections[sectionId])
-          console.log("Fetching progress")
-          await dispatch(fetchUserSectionProgress({
-            courseId: moduleId,
-            levelId,
-            sectionId
-          })).unwrap()
+          console.log("Fetching section progress")
+          await dispatch(
+            fetchUserSectionProgress({
+              courseId: moduleId,
+              levelId,
+              sectionId,
+            }),
+          ).unwrap()
           progressLoaded.current = true
-          return;
+          return
         }
         setLoading(false)
       } catch (err) {
@@ -96,116 +125,74 @@ export const SectionPage = () => {
     loadData()
   }, [dispatch, moduleId, levelId, sectionId, currentSection, sectionData, modules])
 
-  // Cuando tengamos sección y progreso, determinamos el contenido
+  // When we have section data and progress, determine the next content
   useEffect(() => {
     if (sectionData && currentSection) {
       console.log("Determinando contenido")
-      determineCurrentContent()
+      dispatch(determineNextContent({ sectionData }))
     }
-  }, [sectionData, currentSection])
-
-  const determineCurrentContent = () => {
-    setCurrentContent(null)
-    const completedClasses = currentSection?.progress?.completedClasses
-    const completedExercises = currentSection?.progress?.completedExercises
-
-    console.log(completedClasses)
-    console.log(sectionData.classes)
-    if (sectionData.classes.length > completedClasses.length) {
-      const classToDo = sectionData.classes[completedClasses.length]
-      console.log(classToDo)
-      setCurrentContent(classToDo)
-      setContentType("class")
-      return;
-    }
-  
-    const incorrectExercises = sectionData.exercises?.filter((ex) => {
-      const completed = completedExercises.find((done) => done.exerciseId === ex._id)
-      return completed && !completed.isCorrect
-    })
-  
-    if (incorrectExercises.length > 0) {
-      setCurrentContent(incorrectExercises[0])
-      setContentType("exercise")
-      return
-    }
-  
-    const nextExercise = sectionData.exercises?.find((ex) =>
-      !completedExercises.some((done) => done.exerciseId === ex._id)
-    )
-  
-    if (nextExercise) {
-      setCurrentContent(nextExercise)
-      setContentType("exercise")
-      return
-    }
-  
-    handleSectionCompleted(currentSection?._id)
-  }
+  }, [sectionData, currentSection, dispatch])
 
   const handleCompleteContent = async () => {
-    if (!currentContent && contentType !== "section-completed") return
-    setLoading(true)
-  
-    const sectionProgress = currentSection
-  
+    if (contentType === "section-completed") {
+      try {
+        await dispatch(advanceProgress({progressId: progress[moduleId]._id, sectionId})).unwrap()
+        dispatch(fetchUserProgress())
+        navigate(`/learn/modules/${moduleId}/levels/${levelId}`)
+      } catch (err) {
+        console.error("Error advancing progress:", err)
+      }
+      return
+    }
+
+    if (!currentContent) return
+
     try {
       if (contentType === "class") {
         console.log("Completando clase")
-        await dispatch(completeClass({ moduleId, classId: currentContent._id })).unwrap();
-      } else if (contentType === "exercise") {
-        await dispatch(completeExercise({ moduleId, exerciseId: currentContent._id })).unwrap();
-      } else if (contentType === "section-completed") {
-        await dispatch(advanceProgress(sectionProgress._id)).unwrap()
-        navigate(`/learn/modules/${moduleId}/levels/${levelId}`)
-        return
+        await dispatch(
+          completeClass({
+            moduleId,
+            classId: currentContent._id,
+          }),
+        ).unwrap()
+
+        // After completing a class, determine the next content
+        dispatch(determineNextContent({ sectionData }))
       }
     } catch (err) {
       console.error("Error completando contenido:", err)
-    } finally {
-      setLoading(false)
     }
   }
 
-  const handleSectionCompleted = async (sectionId) => {
-    setContentType("section-completed")
-  }
-  
-
-  const handleCompleteExercise = async (options) => {
+  const handleCompleteExercise = async (userAnswers) => {
     if (!currentContent) return
-    setLoading(true)
 
     try {
       await dispatch(
         completeExercise({
           moduleId,
           exerciseId: currentContent._id,
-          body: { userAnswers: options },
-        })
+          body: { userAnswers },
+        }),
       ).unwrap()
 
-
-
-
-      handleSectionCompleted(currentSection.sectionId)
-
+      // After completing an exercise, determine the next content
+      dispatch(determineNextContent({ sectionData }))
     } catch (err) {
       console.error("Error completando ejercicio:", err)
-    } finally {
-      setLoading(false)
     }
   }
 
   const renderProgress = () => {
-    if (!sectionData) return null
-  
-    const completedClasses = currentSection?.progress?.completedClasses
-    const completedExercises = currentSection?.progress?.completedExercises
-  
+    if (!sectionData || !currentSection?.progress) return null
+
+    const completedClasses = currentSection?.progress?.completedClasses || []
+    const completedExercises = currentSection?.progress?.completedExercises || []
+
     const totalClasses = sectionData.classes?.length || 0
     const totalExercises = sectionData.exercises?.length || 0
-  
+
     return (
       <div className="max-w-md mx-auto mt-4 px-4">
         {contentType === "class" && totalClasses > 0 && (
@@ -213,41 +200,39 @@ export const SectionPage = () => {
             {[...Array(totalClasses)].map((_, index) => (
               <div
                 key={index}
-                className={`h-2 flex-1 rounded-md ${
-                  index < completedClasses.length ? "bg-[#4558C8]" : "bg-gray-300"
-                }`}
+                className={`h-2 flex-1 rounded-md ${index < completedClasses.length ? "bg-[#4558C8]" : "bg-gray-300"}`}
               />
             ))}
           </div>
         )}
-  
+
         {contentType === "exercise" && totalExercises > 0 && (
-          <div className="flex gap-1">
-            {sectionData.exercises.map((exercise, index) => {
-              const completed = completedExercises.find((e) => e.exerciseId === exercise._id)
-              const isCompleted = !!completed
-              const isCorrect = completed?.isCorrect
-              const isCurrent = currentContent?._id === exercise._id
-  
-              return (
-                <div
-                  key={index}
-                  className={`h-2 flex-1 rounded-md ${
-                    isCompleted
-                      ? isCorrect === false
-                        ? "bg-red-500"
-                        : "bg-green-500"
-                      : "bg-gray-300"
-                  } ${isCurrent ? "animate-bounce" : ""}`}
-                />
-              )
-            })}
+          <div className="flex flex-col gap-2">
+            {reviewingIncorrectExercises && (
+              <div className="text-center text-sm text-amber-600">Revisando ejercicios incorrectos</div>
+            )}
+            <div className="flex gap-1">
+              {sectionData.exercises.map((exercise, index) => {
+                const completed = completedExercises.find((e) => e.exerciseId === exercise._id)
+                const isCompleted = !!completed
+                const isCorrect = completed?.isCorrect
+                const isCurrent = currentContent?._id === exercise._id
+
+                return (
+                  <div
+                    key={index}
+                    className={`h-2 flex-1 rounded-md ${
+                      isCompleted ? (isCorrect === false ? "bg-red-500" : "bg-green-500") : "bg-gray-300"
+                    } ${isCurrent ? "animate-bounce" : ""}`}
+                  />
+                )
+              })}
+            </div>
           </div>
         )}
       </div>
     )
   }
-  
 
   const renderContent = () => {
     if (error) {
@@ -264,30 +249,23 @@ export const SectionPage = () => {
       )
     }
 
-    if (loadingCurrentSection) {
+    if (isLoadingSection) {
       return (
         <div className="flex justify-center items-center h-[50vh]">
           <LoadingPage message="Cargando contenido de la sección..." />
         </div>
       )
     }
-    // if (!currentContent && contentType !== "section-completed") {
-    //   return (
-    //     <div className="flex justify-center items-center h-[50vh]">
-    //       <LoadingPage message="Cargando contenido de la sección..." />
-    //     </div>
-    //   )
-    // }
 
-    if (contentType === "class") {
+    if (contentType === "class" && currentContent) {
       return <SectionClass content={currentContent} advance={handleCompleteContent} />
     }
 
-    if (contentType === "exercise") {
+    if (contentType === "exercise" && currentContent) {
       return <Exercise content={currentContent} advance={handleCompleteExercise} />
     }
 
-    if (contentType === "section-completed") {
+    if (contentType === "section-completed" || sectionCompleted) {
       return (
         <div className="text-center mt-8">
           <div className="mb-4">
@@ -334,9 +312,7 @@ export const SectionPage = () => {
             {courseImage[moduleId]?.image}
             <span className="font-sans text-lg font-semibold">Sección {localStorage.getItem("sectionOrder")}</span>
           </div>
-          {sectionData?.guide && (
-            <GuideViewer guide={sectionData.guide} icon text="Ver guía" />
-          )}
+          {sectionData?.guide && <GuideViewer guide={sectionData.guide} icon text="Ver guía" />}
         </div>
       </div>
 
@@ -346,3 +322,6 @@ export const SectionPage = () => {
     </div>
   )
 }
+
+export default SectionPage
+
