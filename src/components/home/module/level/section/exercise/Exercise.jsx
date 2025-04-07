@@ -86,27 +86,22 @@ const Exercise = ({ content, advance }) => {
 
   const handleSubmit = () => {
     if (isSubmitting) return
+    setIsSubmitting(true)
+    if (isAnswered && ["correct", "incorrect"].includes(feedbackState)) {
+      advance(selectedOption);
+      return;
+    }
 
-    // First, check if all fields are filled
     if (!validateCompleteness()) {
       setFeedbackState("incomplete")
+      setIsSubmitting(false)
       return
     }
 
-    setIsSubmitting(true)
-    setIsAnswered(true)
-
     const isCorrect = checkCorrectness()
     setFeedbackState(isCorrect ? "correct" : "incorrect")
-    // setTimeout(
-      // () => {
-    advance(selectedOption)
+    setIsAnswered(true)
     setIsSubmitting(false)
-    setIsAnswered(false)
-
-      // },
-      // isCorrect ? 1000 : 2000,
-    // ) // Longer delay for incorrect answers
   }
 
   const renderFeedback = () => {
@@ -156,8 +151,8 @@ const Exercise = ({ content, advance }) => {
 
   const getButtonLabel = () => {
     if (isSubmitting) return "Verificando..."
-    if (feedbackState === "incomplete") return "Completa todos los campos"
-    if (isAnswered) return feedbackState === "correct" ? "¡Correcto!" : "Incorrecto"
+    if (feedbackState === "incomplete") return "Incompleto"
+    if (isAnswered) return "Continuar"
     return "Comprobar"
   }
 
@@ -180,15 +175,15 @@ const Exercise = ({ content, advance }) => {
             ${
               isSubmitting
                 ? "bg-gray-400"
-                : feedbackState === "incomplete"
-                  ? "bg-amber-500"
-                  : feedbackState === "correct"
-                    ? "bg-green-600"
-                    : feedbackState === "incorrect"
-                      ? "bg-red-600"
-                      : !selectedOption || (Array.isArray(selectedOption) && selectedOption.length === 0)
-                        ? "bg-gray-400"
-                        : "bg-[#4558C8]"
+              : feedbackState === "incomplete"
+                ? "bg-amber-500"
+              : feedbackState === "correct"
+                ? "bg-green-600"
+              : feedbackState === "incorrect"
+                ? "bg-red-600"
+              : !selectedOption || (Array.isArray(selectedOption) && selectedOption.length === 0)
+                ? "bg-gray-400"
+                : "bg-[#4558C8]"
             }
           `}
         >

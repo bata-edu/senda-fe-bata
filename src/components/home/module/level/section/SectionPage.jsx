@@ -15,7 +15,7 @@ import {
   selectIsLoading,
   selectCurrentSection,
   selectReviewingIncorrectExercises,
-  selectAllExercisesAttempted,
+  // selectAllExercisesAttempted,
   fetchUserProgress,
 } from "../../../../../features/userProgress/userProgressSlice"
 import {
@@ -49,7 +49,7 @@ export const SectionPage = () => {
   const contentType = useSelector(selectContentType)
   const sectionCompleted = useSelector(selectSectionCompleted)
   const reviewingIncorrectExercises = useSelector(selectReviewingIncorrectExercises)
-  const allExercisesAttempted = useSelector(selectAllExercisesAttempted)
+  // const allExercisesAttempted = useSelector(selectAllExercisesAttempted)
 
   const modulesLoaded = useRef(false)
   const levelsLoaded = useRef(false)
@@ -125,13 +125,14 @@ export const SectionPage = () => {
     loadData()
   }, [dispatch, moduleId, levelId, sectionId, currentSection, sectionData, modules])
 
-  // When we have section data and progress, determine the next content
+  const [initialized, setInitialized] = useState(false)
   useEffect(() => {
-    if (sectionData && currentSection) {
+    if (!initialized && sectionData && currentSection) {
       console.log("Determinando contenido")
       dispatch(determineNextContent({ sectionData }))
+      setInitialized(true)
     }
-  }, [sectionData, currentSection, dispatch])
+  }, [sectionData, currentSection, dispatch, initialized])
 
   const handleCompleteContent = async () => {
     if (contentType === "section-completed") {
@@ -168,13 +169,13 @@ export const SectionPage = () => {
   const handleCompleteExercise = async (userAnswers) => {
     if (!currentContent) return
     try {
-      await dispatch(
+      dispatch(
         completeExercise({
           moduleId,
           exerciseId: currentContent._id,
           body: { userAnswers },
         }),
-      ).unwrap()
+      )
 
       // After completing an exercise, determine the next content
       dispatch(determineNextContent({ sectionData }))

@@ -249,7 +249,6 @@ const userProgressSlice = createSlice({
       const { sectionData } = action.payload
 
       if (!state.currentSection || !sectionData) return
-
       const completedClasses = state.currentSection.progress.completedClasses
       const completedExercises = state.currentSection.progress.completedExercises
 
@@ -293,7 +292,16 @@ const userProgressSlice = createSlice({
       // If there are incorrect exercises, go through them
       if (incorrectExercises.length > 0) {
         state.reviewingIncorrectExercises = true
-        state.nextContentToShow = incorrectExercises[0]
+      
+        // Buscar el índice del último incorrecto mostrado (si existe)
+        console.log(state.nextContentToShow)
+        const lastIncorrectId = state.nextContentToShow?._id
+        const currentIndex = incorrectExercises.findIndex((ex) => ex._id === lastIncorrectId)
+      
+        // Mostrar el siguiente incorrecto en la lista (si hay uno)
+        const nextIncorrect = incorrectExercises[currentIndex + 1] || incorrectExercises[0]
+      
+        state.nextContentToShow = nextIncorrect
         state.contentType = "exercise"
         return
       }
