@@ -17,14 +17,14 @@ import Js from "../../../assets/icons/js.svg";
 import Css from "../../../assets/icons/css.svg";
 import ArrowBack from "../../../assets/icons/arrowBack.svg";
 import { useParams } from 'react-router-dom';
-import { fetchUserProgress } from "../../../features/userProgress/userProgressSlice";
+import { fetchUserModuleProgress, fetchUserProgress } from "../../../features/userProgress/userProgressSlice";
 
 export const LevelList = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { moduleId } = useParams();
   const levels = useSelector((state) => selectLevels(state, moduleId));
-  const { progress } = useSelector((state) => state.userProgress || {});
+  const { progress } = useSelector((state) => state.userProgress);
   const [loading, setLoading] = useState(true);
   const [currentProgress, setCurrentProgress] = useState(null);
   const modulesLoaded = useRef(false);
@@ -100,41 +100,43 @@ export const LevelList = () => {
           await dispatch(fetchModules()).unwrap();
           modulesLoaded.current = true;
         }
+
+        if (!levelsLoaded.current) {
+          await dispatch(fetchLevels(moduleId)).unwrap();
+          levelsLoaded.current = true;
+        }
   
         if (!progressLoaded.current) {
           await dispatch(fetchUserProgress()).unwrap();
           progressLoaded.current = true;
         }
   
-        if (!levelsLoaded.current && moduleId) {
-          await dispatch(fetchLevels(moduleId)).unwrap();
-          levelsLoaded.current = true;
+        if (progress && !progress[moduleId]) {
+          await dispatch(fetchUserModuleProgress(moduleId)).unwrap(); 
+          return
         }
-  
-        setLoading(false);
+        const setLoadedState = (currentLevelIndex, levelProgress) => {
+          setCurrentProgress({
+            currentLevelIndex,
+            levelProgress
+          });   
+          setLoading(false);
+        }
+        
+        const moduleProgress = progress[moduleId];
+        const currentLevel = levels[moduleProgress.currentLevel]
+        const currentLevelIndex =  currentLevel.order -1
+        const levelProgress = moduleProgress.levelProgress
+        setLoadedState(currentLevelIndex, levelProgress)
+
       } catch (error) {
         console.error("Error fetching data", error);
         setLoading(false);
       }
     };
-  
+    if (!moduleId) return;
     fetchData();
-  }, [moduleId, dispatch]);
-  
-  useEffect(() => {
-    if (loading || !progress || !levels || !moduleId || levels.length === 0) {
-      return;
-    }
-    
-    const moduleProgress = progress[moduleId];
-    if (!moduleProgress) return;
-    const currentLevel = levels[moduleProgress.currentLevel]
-
-    setCurrentProgress({
-      currentLevelIndex: currentLevel.order -1,
-      levelProgress: moduleProgress.levelProgress,
-    });
-  }, [levels, moduleId, progress, loading]);
+  }, [moduleId, dispatch, levels, progress]);
 
   useEffect(() => {
     modulesLoaded.current = false;
@@ -142,6 +144,8 @@ export const LevelList = () => {
     levelsLoaded.current = false;
     setLoading(true);
   }, [moduleId]);
+
+
   const handleLevelClick = (levelId) => {
     navigate(`/learn/modules/${moduleId}/levels/${levelId}`);
   };

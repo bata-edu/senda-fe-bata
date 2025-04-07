@@ -17,6 +17,16 @@ export const fetchUserProgress = createAsyncThunk("userProgress/fetchUserProgres
     return rejectWithValue(error.response.data)
   }
 })
+// Core thunks
+export const fetchUserModuleProgress = createAsyncThunk(
+  "userProgress/fetchUserModuleProgress", async (moduleId, { rejectWithValue, dispatch }) => {
+  try {
+    const response = await apiClient.get(`${USER_PROGRESS_ENDPOINT}/${moduleId}`)
+    return {moduleId, data:response.data}
+  } catch (error) {
+    return rejectWithValue(error.response.data)
+  }
+})
 
 export const fetchUserSectionProgress = createAsyncThunk(
   "userProgress/fetchUserSectionProgress",
@@ -305,6 +315,16 @@ const userProgressSlice = createSlice({
         state.progress = action.payload
       })
       .addCase(fetchUserProgress.rejected, (state, action) => {
+        state.error = action.payload
+      })      
+      .addCase(fetchUserModuleProgress.pending, (state) => {
+        state.error = null
+      })
+      .addCase(fetchUserModuleProgress.fulfilled, (state, action) => {
+        const { data, moduleId} = action.payload
+        state.progress[moduleId] = data
+      })
+      .addCase(fetchUserModuleProgress.rejected, (state, action) => {
         state.error = action.payload
       })
       // Fetch user section progress
