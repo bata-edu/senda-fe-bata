@@ -101,6 +101,9 @@ const Exercise = ({ content, advance }) => {
     // setTimeout(
       // () => {
     advance(selectedOption)
+    setIsSubmitting(false)
+    setIsAnswered(false)
+
       // },
       // isCorrect ? 1000 : 2000,
     // ) // Longer delay for incorrect answers

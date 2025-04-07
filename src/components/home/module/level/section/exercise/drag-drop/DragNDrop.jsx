@@ -12,6 +12,10 @@ const DragNDrop = ({ exercise, setSelectedOption, colors }) => {
   const placeholders = exercise.content.match(placeholderPattern) || []
   const placeholderCount = placeholders.length
   
+  useEffect (() => {
+    setDroppedAnswers({})
+  }, [exercise])
+
   useEffect(() => {
     if (Object.keys(droppedAnswers).length > 0) {
       // Convert droppedAnswers object to array format for submission
@@ -35,7 +39,7 @@ const DragNDrop = ({ exercise, setSelectedOption, colors }) => {
     setDroppedAnswers(prev => ({
       ...prev,
       [placeholderIndex]: option
-    }))
+    }))     
   }
   
   const handleDragOver = (e) => e.preventDefault()
