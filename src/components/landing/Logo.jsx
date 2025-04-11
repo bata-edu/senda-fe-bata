@@ -12,26 +12,26 @@ export default function Logo() {
         fill="none"
       >
         <path
-          fill-rule="evenodd"
-          clip-rule="evenodd"
+          fillRule="evenodd"
+          clipRule="evenodd"
           d="M0.799189 10.0025L7.75579 13.9996L16.6089 8.91297V0L0 9.54352L0.799189 10.0025Z"
           fill="#D9B9F3"
         />
         <path
-          fill-rule="evenodd"
-          clip-rule="evenodd"
+          fillRule="evenodd"
+          clipRule="evenodd"
           d="M0.799189 17.9966L7.75579 13.9995L16.6089 19.0861V27.9991L0 18.4556L0.799189 17.9966Z"
           fill="#4558C8"
         />
         <path
-          fill-rule="evenodd"
-          clip-rule="evenodd"
+          fillRule="evenodd"
+          clipRule="evenodd"
           d="M36.8451 10.0025L29.8885 13.9996L21.0354 8.91297V0L37.6443 9.54352L36.8451 10.0025Z"
           fill="#EE5E37"
         />
         <path
-          fill-rule="evenodd"
-          clip-rule="evenodd"
+          fillRule="evenodd"
+          clipRule="evenodd"
           d="M36.8451 17.9966L29.8885 13.9995L21.0354 19.0861V27.9991L37.6443 18.4556L36.8451 17.9966Z"
           fill="#E0F47E"
         />

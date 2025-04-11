@@ -18,8 +18,7 @@ export default function Languages() {
           <div className="py-12 md:py-20">
             <div className="mx-auto max-w-3xl pb-16 text-center md:pb-20">
               <h2 className="text-3xl font-bold  md:text-4xl font-sans">
-                Dominá la programación y <br />
-                llevá tus habilidades al siguiente nivel.
+              Domina la programación y lleva tus habilidades al siguiente nivel
               </h2>
             </div>
             <div className="relative flex h-[324px] items-center justify-center">

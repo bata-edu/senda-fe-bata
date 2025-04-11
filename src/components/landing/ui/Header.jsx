@@ -1,7 +1,6 @@
 import { React, useState, useEffect } from "react";
 
 import MobileMenu from "./MobileMenu";
-import { Link } from "react-router-dom";
 import Logo from "../Logo";
 import { Button } from "../../common/button/button";
 
@@ -29,35 +28,35 @@ export default function Header() {
           <nav className="hidden md:flex md:grow">
             <ul className="flex grow items-center justify-center gap-4 text-sm lg:gap-8 mb-0 ">
               <li className="px-3 py-1">
-                <Link
-                  to="/pricing"
+                <a
+                  href="#features"
                   className="flex items-center text-gray-700 transition hover:text-gray-900 no-underline"
                 >
                   Beneficios
-                </Link>
+                </a>
               </li>
               <li className="px-3 py-1">
-                <Link
-                  to="/customers"
+                <a
+                  href="#pricing"
                   className="flex items-center text-gray-700 transition hover:text-gray-900 no-underline"
                 >
-                  Planes
-                </Link>
+                  MAX
+                </a>
               </li>
               <li className="px-3 py-1">
-                <Link
-                  to="/blog"
+                <a
+                  href="#faq"
                   className="flex items-center text-gray-700 transition hover:text-gray-900 no-underline"
                 >
                   FAQ
-                </Link>
+                </a>
               </li>
             </ul>
           </nav>
 
           <ul className="hidden md:flex flex-1 flex-col items-end justify-center gap-3 mb-0">
             <li>
-              <Button thin label="Mas info" />
+              <Button thin label="Comienza ahora" />
             </li>
           </ul>
 

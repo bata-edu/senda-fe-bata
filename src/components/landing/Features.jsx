@@ -7,7 +7,7 @@ import PlanetTagImg04 from "../../assets/landing/tag-04.png";
 
 export default function Features() {
   return (
-    <section className="relative before:absolute before:inset-0 before:-z-20 before:bg-gray-900 overflow-x-hidden">
+    <section id="features" className="relative before:absolute before:inset-0 before:-z-20 before:bg-gray-900 overflow-x-hidden">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="py-12 md:py-20">
           <div className="mx-auto max-w-3xl pb-16 text-center md:pb-20">
@@ -82,9 +82,7 @@ export default function Features() {
                 <span className="text-base">Aprendizaje interactivo</span>
               </h3>
               <p className="text-[15px] text-gray-400">
-                Sumergite en una experiencia de aprendizaje práctico y dinámico,
-                donde cada ejercicio te acerca más al dominio de la
-                programación.
+              Comienza una experiencia de aprendizaje práctico y dinámico, donde cada ejercicio te acerca más al dominio de la programación.
               </p>
             </article>
             <article>
@@ -100,8 +98,7 @@ export default function Features() {
                 <span className="text-base">Codeo libre</span>
               </h3>
               <p className="text-[15px] text-gray-400">
-                Experimentá y escribí tu código sin restricciones, con la ayuda
-                de una IA que te guía y potencia tu aprendizaje.
+              Experimenta y escribe tu código sin restricciones, con la ayuda de nuestro robot “Bata” que te guía y potencia tu aprendizaje.
               </p>
             </article>
             <article>
@@ -121,8 +118,7 @@ export default function Features() {
                 <span className="text-base">Flexibilidad</span>
               </h3>
               <p className="text-[15px] text-gray-400">
-                Adaptá tu aprendizaje a tu ritmo y necesidades, con acceso desde
-                cualquier lugar y en cualquier momento.
+              Adapta tu aprendizaje a tu ritmo y necesidades, con acceso desde cualquier lugar y en cualquier momento.
               </p>
             </article>
             <article>
@@ -138,9 +134,7 @@ export default function Features() {
                 <span className="text-base">Pantalla Dividida</span>
               </h3>
               <p className="text-[15px] text-gray-400">
-                Programá y visualizá en tiempo real cómo toma forma tu página,
-                con una experiencia de pantalla dividida que te permite aprender
-                mientras ves los resultados.
+              Programa y visualiza en tiempo real cómo toma forma tu página, con una experiencia de pantalla dividida que te permite aprender mientras ves los resultados.
               </p>
             </article>
             <article>
@@ -156,8 +150,7 @@ export default function Features() {
                 <span className="text-base">Logros y Recompensas</span>
               </h3>
               <p className="text-[15px] text-gray-400">
-                Superá desafíos y desbloqueá insignias, certificados y
-                recompensas que marcan tu progreso en el aprendizaje.
+              Supera desafíos y desbloquea insignias, certificados y recompensas que marcan tu progreso en el aprendizaje.
               </p>
             </article>
             <article>
@@ -173,9 +166,7 @@ export default function Features() {
                 <span className="text-base">Comunidad</span>
               </h3>
               <p className="text-[15px] text-gray-400">
-                Formá parte de una comunidad vibrante de programadores, compartí
-                tus logros, resolvé dudas y crecé junto a otros apasionados por
-                la tecnología.
+              Forma parte de una comunidad vibrante de programadores, comparte tus logros, resuelve dudas y crece junto a otros apasionados por la tecnología.
               </p>
             </article>
           </div>

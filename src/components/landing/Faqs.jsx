@@ -41,7 +41,7 @@ export default function Faqs() {
   ];
 
   return (
-    <section>
+    <section id="faq" className="scroll-mt-48">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="pb-12 md:pb-20">
           <div className="mx-auto max-w-3xl pb-12 text-center md:pb-20">

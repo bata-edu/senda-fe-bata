@@ -1,8 +1,10 @@
 import PageIllustration from "./PageIllustration";
-import Computer from "../../assets/landing/computer.png";
+import Computer from "../../assets/landing/macbook-pro-11-4.png";
 import { Button } from "../common/button/button";
+import { useNavigate } from "react-router-dom";
 
 export default function HeroHome() {
+  const navigate = useNavigate()
   return (
     <section className="relative overflow-x-hidden">
       <PageIllustration />
@@ -14,24 +16,26 @@ export default function HeroHome() {
               data-aos="zoom-y-out"
               data-aos-delay={150}
             >
-              Aprendé programación gratis, fácil e interactivamente.
+              Una plataforma gratuita donde aprendes a programar haciendo, no leyendo.
             </h1>
-            <div className="mx-auto max-w-3xl">
+            <div className="mx-auto max-w-4xl">
               <p
                 className="mb-8 text-lg text-gray-700 font-mono"
                 data-aos="zoom-y-out"
                 data-aos-delay={300}
               >
-                Mejorá tus habilidades con ejercicios prácticos y desafiantes de
-                distintos lenguajes de programación.
+          Aprende con desafíos que te atrapan, a tu ritmo y sin perder la motivación.
+
+          Empieza hoy y llega más lejos de lo que imaginaste.
               </p>
               <div className="relative before:absolute before:inset-0 before:border-y before:[border-image:linear-gradient(to_right,transparent,theme(colors.slate.300/.8),transparent)1]">
                 <div
-                  className="relative mx-auto max-w-xs sm:flex sm:max-w-none sm:justify-center"
+                  className="relative mx-auto max-w-xs flex justify-center"
                   data-aos="zoom-y-out"
                   data-aos-delay={450}
                 >
                   <Button
+                    onClick={() => navigate("/login")}
                     icon={
                       <svg
                         width="11"
@@ -46,7 +50,7 @@ export default function HeroHome() {
                         />
                       </svg>
                     }
-                    label="Quiero saber más"
+                    label="Comienza ahora"
                   />
                   <button>
                     <span className="relative inline-flex items-center font-mono"></span>
@@ -60,8 +64,8 @@ export default function HeroHome() {
             data-aos="zoom-y-out"
             data-aos-delay={600}
           >
-            <div className="relative aspect-video   px-5 py-3  before:pointer-events-none before:absolute ">
-              <img src={Computer} alt="" />
+            <div className="relative aspect-video px-5 py-3  before:pointer-events-none before:absolute ">
+              <img src={Computer} alt="" className="mx-auto"/>
             </div>
           </div>
         </div>

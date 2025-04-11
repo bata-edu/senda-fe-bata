@@ -1,9 +1,8 @@
-import { Button } from "../common/button/button";
 import MaxIllustration from "../../assets/landing/max.svg";
 
-export default function PricingTables() {
+export default function   PricingTables() {
   return (
-    <section className="">
+    <section className="" id="pricing" >
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="pb-12 pt-32 md:pb-20 md:pt-40">
           <div className="pb-6 text-center">
@@ -12,9 +11,7 @@ export default function PricingTables() {
             </h1>
             <div className="mx-auto max-w-3xl">
               <p className="text-lg text-gray-700 font-sans">
-                Con Bata MAX, desbloqueá tu máximo potencial con funciones
-                avanzadas, inteligencia artificial y una experiencia de
-                aprendizaje mejorada.
+              Con Bata MAX, desbloquea tu máximo potencial con funciones avanzadas, inteligencia artificial y una experiencia de aprendizaje mejorada.
               </p>
             </div>
           </div>
@@ -29,26 +26,26 @@ export default function PricingTables() {
               >
                 <g filter="url(#filter0_dd_321_7607)">
                   <path
-                    fill-rule="evenodd"
-                    clip-rule="evenodd"
+                    fillRule="evenodd"
+                    clipRule="evenodd"
                     d="M21.5979 31L37.1196 22.2798V7L8 23.3608L21.5979 31Z"
                     fill="white"
                   />
                   <path
-                    fill-rule="evenodd"
-                    clip-rule="evenodd"
+                    fillRule="evenodd"
+                    clipRule="evenodd"
                     d="M21.5979 31L37.1196 39.7202V55L8 38.6392L21.5979 31Z"
                     fill="white"
                   />
                   <path
-                    fill-rule="evenodd"
-                    clip-rule="evenodd"
+                    fillRule="evenodd"
+                    clipRule="evenodd"
                     d="M60.4021 31L44.8804 22.2798V7L74 23.3608L60.4021 31Z"
                     fill="white"
                   />
                   <path
-                    fill-rule="evenodd"
-                    clip-rule="evenodd"
+                    fillRule="evenodd"
+                    clipRule="evenodd"
                     d="M60.4021 31L44.8804 39.7202V55L74 38.6392L60.4021 31Z"
                     fill="white"
                   />
