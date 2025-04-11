@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import { getExamsByCourse, myTaskProgress } from "../../features/exam/examSlice";
 import { getCourseAndSchool } from "../../features/school/schoolSlice";
 import { getCourseArticles } from "../../features/courseArticle/courseArticle";
-import { createUserFreeModeProgress, setActiveFreeModeProgress } from "../../features/user/userSlice";
+import { createUserFreeModeProgress, setActiveFreeModeProgress } from "../../features/user/freeCodeSlice";
 import GenericDialog from "../common/dialog/dialog";
 import Header from "../common/header/Header";
 import { useNavigate, useParams } from "react-router-dom";

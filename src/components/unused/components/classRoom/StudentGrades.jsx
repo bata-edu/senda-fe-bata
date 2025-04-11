@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getCourseAndSchool } from "../../features/school/schoolSlice";
-import { createUserFreeModeProgress } from "../../features/user/userSlice";
+import { createUserFreeModeProgress } from "../../features/user/freeCodeSlice";
 import Header from "../common/header/Header";
 import SideBarClassroom from "../home/SideBarClassroom";
 import LoadingPage from "../../pages/LoadingPage";

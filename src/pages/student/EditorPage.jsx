@@ -8,7 +8,7 @@ import { saveAs } from "file-saver";
 import {
   fetchUserFreeModeProgressById,
   updateUserFreeModeProgress,
-} from "../../features/user/userSlice";
+} from "../../features/user/freeCodeSlice";
 import { toast } from "react-toastify";
 import { useNavigate, useParams } from "react-router-dom";
 import { useLocation } from 'react-router-dom';
@@ -36,7 +36,7 @@ const EditorPage = () => {
   const [activeTab, setActiveTab] = useState("index.html");
   const [play, setPlay] = useState(false);
   const [showSaveOptions, setShowSaveOptions] = useState(false);
-  const { freeModeProgress } = useSelector((state) => state.user);
+  const { freeModeProgress } = useSelector((state) => state.freeCode);
   // const {examToCorrect, exam} = useSelector((state) => state.exam);
   const [showCorrectDialog, setShowCorrectDialog] = useState(false);
   const [score, setScore] = useState(0);

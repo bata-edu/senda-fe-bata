@@ -5,7 +5,7 @@ import LoadingPage from "../../pages/LoadingPage";
 import GenericTable from "../common/table/GenericTable";
 import { getCourseLocalStorage, getSchoolLocalStorage } from "../../features/school/schoolSlice";
 import Header from "../common/header/Header";
-import { fetchRank, fetchUsers } from "../../features/user/userSlice";
+import { fetchRank, fetchUsers } from "../../features/user/freeCodeSlice";
 import SideBar from "../home/SideBar";
 import ilustracionLigas from '../../assets/ilustracion-ligas.svg';
 

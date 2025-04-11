@@ -10,7 +10,7 @@ import { buildQueryString } from "../../utils/buildQueryString";
 
 // Thunk para obtener los progresos del usuario en el modo libre
 export const fetchUserFreeModeProgress = createAsyncThunk(
-  "user/fetchUserFreeModeProgress",
+  "freeCode/fetchUserFreeModeProgress",
   async ({query}, { rejectWithValue }) => {
     try {
       const queryString = query ? `?${buildQueryString(query)}` : '';
@@ -26,7 +26,7 @@ export const fetchUserFreeModeProgress = createAsyncThunk(
 
 // Thunk para establecer el progreso activo del usuario en modo libre
 export const setActiveFreeModeProgress = createAsyncThunk(
-  "user/setActiveFreeModeProgress",
+  "freeCode/setActiveFreeModeProgress",
   async (progress, { rejectWithValue }) => {
     try {
       return progress;
@@ -38,7 +38,7 @@ export const setActiveFreeModeProgress = createAsyncThunk(
 
 // Thunk para obtener el progreso del usuario en modo libre por id
 export const fetchUserFreeModeProgressById = createAsyncThunk(
-  "user/fetchUserFreeModeProgressById",
+  "freeCode/fetchUserFreeModeProgressById",
   async ({ id }, { rejectWithValue }) => {
     try {
       const response = await apiClient.get(
@@ -52,7 +52,7 @@ export const fetchUserFreeModeProgressById = createAsyncThunk(
 
 // Thunk para actualizar el progreso del usuario en el modo libre
 export const updateUserFreeModeProgress = createAsyncThunk(
-  "user/updateUserFreeModeProgress",
+  "freeCode/updateUserFreeModeProgress",
   async ({ code, id }, { rejectWithValue }) => {
     try {
       const response = await apiClient.patch(
@@ -69,7 +69,7 @@ export const updateUserFreeModeProgress = createAsyncThunk(
 // Thunk para crear el progreso del usuario en el modo libre
 
 export const createUserFreeModeProgress = createAsyncThunk(
-  "user/createUserFreeModeProgress",
+  "freeCode/createUserFreeModeProgress",
   async ({ body }, { rejectWithValue }) => {
     try {
       const response = await apiClient.post(
@@ -85,7 +85,7 @@ export const createUserFreeModeProgress = createAsyncThunk(
 
 // Thunk para obtener el ranking de los usuarios
 export const fetchRank = createAsyncThunk(
-  "user/fetchRank",
+  "freeCode/fetchRank",
   async (_, { rejectWithValue }) => {
     try {
       const response = await apiClient.get(
@@ -98,23 +98,9 @@ export const fetchRank = createAsyncThunk(
   }
 );
 
-export const fetchUsers = createAsyncThunk(
-  "user/fetchUserCourse",
-  async ({query}, { rejectWithValue }) => {
-    try {
-      const queryString = query ? `?${buildQueryString(query)}` : '';
-      const response = await apiClient.get(
-        `${ADMIN_ENDPOINT}${queryString}`
-      );
-      return response;
-    } catch (error) {
-      return rejectWithValue(error.response.data);
-    }
-  }
-);
 
-const userSlice = createSlice({
-  name: "user",
+const freeCodeSlice = createSlice({
+  name: "freeCode",
   initialState: {
     error: null,
     freeModeProgressList: null,
@@ -182,23 +168,7 @@ const userSlice = createSlice({
       .addCase(fetchRank.rejected, (state, action) => {
         state.error = action.payload;
       });
-    builder
-      .addCase(fetchUsers.pending, (state) => {
-        state.error = null;
-      })
-      .addCase(fetchUsers.fulfilled, (state, action) => {
-        state.users = action.payload.data;
-      })
-      .addCase(RESET_STATE, (state) => {
-        return {
-          user: null,
-          error: null,
-          freeModeProgress: null,
-          rank: null,
-          users: null
-        };
-      });
   },
 });
 
-export default userSlice.reducer;
+export default freeCodeSlice.reducer;

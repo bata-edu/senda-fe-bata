@@ -76,48 +76,47 @@ const LoginForm = () => {
               ¡Bienvenido! Por favor, ingresa tus datos.
             </p>
             <div className="space-y-4">
-              <TextInput
-                label={"Email"}
-                id="email"
-                type="email"
-                placeHolder="Ingresar email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-              <div>
-                <StyledPasswordInput
-                  label={"Contraseña"}
-                  id="password"
-                  type="password"
-                  placeHolder="Ingresar contraseña"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
-              </div>
-              {error && <p className="text-sm text-red-500">{error}</p>}
-              <div className="mt-3 text-end">
-                <button
-                  onClick={() => setShowDialog(true)}
-                  className="text-sm text-strongBlue hover:underline"
-                >
-                  ¿Olvidaste tu contraseña?
-                </button>
-              </div>
-              <button
-                type="submit"
-                className={`w-full py-2 text-white font-bold rounded-lg ${
-                  isLoading
-                    ? "bg-gray-400"
-                    : "bg-strongBlue hover:strongBlue-600"
-                }`}
-                disabled={isLoading}
-                onClick={handleSubmit}
-              >
-                {isLoading ? "Cargando..." : "Iniciar sesión"}
-              </button>
-            </div>
+  <form onSubmit={handleSubmit} className="space-y-4">
+    <TextInput
+      label={"Email"}
+      id="email"
+      type="email"
+      placeHolder="Ingresar email"
+      value={email}
+      onChange={(e) => setEmail(e.target.value)}
+      required
+    />
+    <StyledPasswordInput
+      label={"Contraseña"}
+      id="password"
+      type="password"
+      placeHolder="Ingresar contraseña"
+      value={password}
+      onChange={(e) => setPassword(e.target.value)}
+      required
+    />
+    {error && <p className="text-sm text-red-500">{error}</p>}
+    <div className="mt-3 text-end">
+      <button
+        type="button"
+        onClick={() => setShowDialog(true)}
+        className="text-sm text-strongBlue hover:underline"
+      >
+        ¿Olvidaste tu contraseña?
+      </button>
+    </div>
+    <button
+      type="submit"
+      className={`w-full py-2 text-white font-bold rounded-lg ${
+        isLoading ? "bg-gray-400" : "bg-strongBlue hover:strongBlue-600"
+      }`}
+      disabled={isLoading}
+    >
+      {isLoading ? "Cargando..." : "Iniciar sesión"}
+    </button>
+  </form>
+</div>
+
             <div className="mt-3 flex flex-col space-y-2">
               {/* <GoogleLogin
                 onSuccess={handleGoogleLogin}

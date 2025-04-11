@@ -5,7 +5,7 @@ import {
   fetchUserFreeModeProgress,
   createUserFreeModeProgress,
   setActiveFreeModeProgress,
-} from "../../features/user/userSlice";
+} from "../../features/user/freeCodeSlice";
 import Header from "../../components/common/header/Header";
 import htmlIcon from "../../assets/icons/html.svg";
 import cssIcon from "../../assets/icons/css.svg";
@@ -53,7 +53,7 @@ const FreeCodeList = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const freeModeProgressList = useSelector(
-    (state) => state.user.freeModeProgressList
+    (state) => state.freeCode.freeModeProgressList
   );
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
