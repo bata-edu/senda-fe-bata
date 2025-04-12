@@ -1,12 +1,10 @@
 import React from "react";
-import { useSelector } from "react-redux";
 import "../../styles/profile.css";
 import simpleLogo from "../../assets/simple-logo.svg";
 import { TextInput } from "../common/input/Input";
 import { Button } from "../common/button/button";
 
-const UserInfo = () => {
-  const { user } = useSelector((state) => state.user || {});
+const   UserInfo = ({user}) => {
   const parseDate = (dateString) => {
     const date = new Date(dateString);
     const months = [
@@ -48,21 +46,33 @@ const UserInfo = () => {
             </div>
             <div className="grid grid-cols-3 gap-4 items-center border-b pb-4">
               <label className="font-semibold text-gray-800">
-                Nombre y apellido
+                Email
               </label>
               <TextInput
                 id="email"
                 type="email"
-                value={user.name}
+                value={user?.email}
                 // onChange={(e) => setEmail(e.target.value)}
-                required
+                disabled
+              />
+            </div>
+            <div className="grid grid-cols-3 gap-4 items-center border-b pb-4">
+              <label className="font-semibold text-gray-800">
+                Nombre y apellido
+              </label>
+              <TextInput
+                id="name"
+                type="name"
+                value={user?.name}
+                // onChange={(e) => setEmail(e.target.value)}
+                disabled
               />
               <TextInput
                 id="email"
                 type="email"
-                value={user.lastName}
+                value={user?.lastName}
                 // onChange={(e) => setEmail(e.target.value)}
-                required
+                disabled
               />
             </div>
             <div className="grid grid-cols-3 gap-4 items-center border-b py-4">

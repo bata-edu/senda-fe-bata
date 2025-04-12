@@ -7,15 +7,15 @@ import UserInfo from "../../components/profile/UserInfo";
 import Streaks from "../../components/profile/Streaks";
 
 const Profile = () => {
-  const { user } = useSelector((state) => state.user || {});
+  const { user } = useSelector((state) => state.auth || {});
 
   if (!user) {
-    return <LoadingPage />;
+    return <LoadingPage message={"Cargando perfil..."} />;
   }
 
   return (
     <div className="profile-container">
-      <UserInfo />
+      <UserInfo user={user} />
       <Streaks />
     </div>
   );
