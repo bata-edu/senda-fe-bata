@@ -11,23 +11,23 @@ import {
 } from "../../features/user/freeCodeSlice";
 import { toast } from "react-toastify";
 import { useNavigate, useParams } from "react-router-dom";
-import { useLocation } from 'react-router-dom';
+// import { useLocation } from 'react-router-dom';
 import { getUser } from "../../features/auth/authService";
-import { getExamById, getSubmissionById, gradeSubmission, submitExam } from "../../features/exam/examSlice";
+// import { getExamById, getSubmissionById, gradeSubmission, submitExam } from "../../features/exam/examSlice";
 import Header from "../../components/common/header/Header";
 import playIcon from "../../assets/icons/play.svg";
 import saveIcon from "../../assets/icons/save.svg";
 import uploadIcon from "../../assets/icons/upload.svg";
-import sendIcon from "../../assets/icons/send.svg";
-import readIcon from "../../assets/icons/read.svg";
-import PdfViewer from "../../utils/PdfViewer";
+// import sendIcon from "../../assets/icons/send.svg";
+// import readIcon from "../../assets/icons/read.svg";
+// import PdfViewer from "../../utils/PdfViewer";
 import GenericDialog from "../../components/common/dialog/dialog";
 import SuccessDialog from "../../components/common/dialog/successDialog";
-import { getCourseLocalStorage } from "../../features/school/schoolSlice";
+import {LoaderCSS} from "../LoadingPage";
+// import { getCourseLocalStorage } from "../../features/school/schoolSlice";
 
 const EditorPage = () => {
   const dispatch = useDispatch();
-  const location = useLocation();
   const navigate = useNavigate();
   const {id} = useParams();
   const [htmlCode, setHtmlCode] = useState("");
@@ -40,29 +40,32 @@ const EditorPage = () => {
   // const {examToCorrect, exam} = useSelector((state) => state.exam);
   const [showCorrectDialog, setShowCorrectDialog] = useState(false);
   const [score, setScore] = useState(0);
-  const [showConsigna, setShowConsigna] = useState(false);
+  // const [showConsigna, setShowConsigna] = useState(false);
   const [showSubmitExamDialog, setShowSubmitExamDialog] = useState(false);
   const user = getUser();
   
-  const handleClear = () => {
-    setHtmlCode("");
-    setCssCode("");
-    setJsCode("");
-    setPlay(false);
-  };
+  // const handleClear = () => {
+  //   setHtmlCode("");
+  //   setCssCode("");
+  //   setJsCode("");
+  //   setPlay(false);
+  // };
   
-  const getQueryParam = (param) => {
-    const queryParams = new URLSearchParams(location.search);
-    return queryParams.get(param);
-  };
-  const [examId, setExamId] = useState(getQueryParam('examId'));
-  const [isTeacher, setIsTeacher] = useState(getQueryParam('teacherRole') === '$true');
+  // const getQueryParam = (param) => {
+  //   const queryParams = new URLSearchParams(location.search);
+  //   return queryParams.get(param);
+  // };
+  // const [examId, setExamId] = useState(getQueryParam('examId'));
+  // const [isTeacher, setIsTeacher] = useState(getQueryParam('teacherRole') === '$true');
+  const [saving, setSaving] = useState(false)
 
   const handleSave = async (exportFiles = false) => {
     const code = { html: htmlCode, css: cssCode, javascript: jsCode };
     try {
-      await dispatch(updateUserFreeModeProgress({ code, id }));
+      setSaving(true)
+      await dispatch(updateUserFreeModeProgress({ code, id })).unwrap();
       toast.success("Código guardado con éxito");
+      setSaving(false)
 
       if (exportFiles) {
         exportProjectFiles();
@@ -95,6 +98,21 @@ const EditorPage = () => {
   //       getSubmission();
   //     }
     // } else{
+      const parseCode = (code) => {
+        const parsedCode = JSON.parse(code);
+        if(parsedCode.html){
+          const htmlDecoded = decodeHTML(parsedCode.html);
+          setHtmlCode(htmlDecoded);
+        }
+        if(parsedCode.css){
+          const cssDecoded = decodeHTML(parsedCode.css);
+          setCssCode(cssDecoded);
+        }
+        if(parsedCode.javascript){
+          const jsDecoded = decodeHTML(parsedCode.javascript);
+          setJsCode(jsDecoded);
+        }
+      }
       const fetchData = async () => {
         if (!freeModeProgress) await dispatch(fetchUserFreeModeProgressById({id}));
         if (freeModeProgress && freeModeProgress.code) {
@@ -102,15 +120,15 @@ const EditorPage = () => {
         }
       };
       fetchData();
-      if(examId){
-        const fetchExam = async () => {
-          await dispatch(getExamById(examId));
-      }
-      fetchExam();
-      }
+      // if(examId){
+      //   const fetchExam = async () => {
+      //     await dispatch(getExamById(examId));
+      // }
+      // fetchExam();
+      // }
   //   }
 
-  }, [dispatch, freeModeProgress]);
+  }, [dispatch, freeModeProgress, id]);
 
   // useEffect(() => {
   //   if(examToCorrect){
@@ -124,35 +142,19 @@ const EditorPage = () => {
     return doc.documentElement.textContent;
   };
 
-  const parseCode = (code) => {
-    const parsedCode = JSON.parse(code);
-    if(parsedCode.html){
-      const htmlDecoded = decodeHTML(parsedCode.html);
-      setHtmlCode(htmlDecoded);
-    }
-    if(parsedCode.css){
-      const cssDecoded = decodeHTML(parsedCode.css);
-      setCssCode(cssDecoded);
-    }
-    if(parsedCode.javascript){
-      const jsDecoded = decodeHTML(parsedCode.javascript);
-      setJsCode(jsDecoded);
-    }
-  }
-
-  const handleSubmit = async () => {
-    try {
-      const body = {
-        answer: JSON.stringify({ html: htmlCode, css: cssCode, javascript: jsCode }),
-        student: getUser().id,
-        exam: examId,
-      };
-      await dispatch(submitExam({body}));
-      setShowSubmitExamDialog(true);
-    } catch (error) {
-      console.error("Error al entregar el examen:", error);
-    }
-  }
+  // const handleSubmit = async () => {
+  //   try {
+  //     const body = {
+  //       answer: JSON.stringify({ html: htmlCode, css: cssCode, javascript: jsCode }),
+  //       student: getUser().id,
+  //       exam: examId,
+  //     };
+  //     await dispatch(submitExam({body}));
+  //     setShowSubmitExamDialog(true);
+  //   } catch (error) {
+  //     console.error("Error al entregar el examen:", error);
+  //   }
+  // }
 
   // const handleCorrect = async () => {
   //   try {
@@ -199,7 +201,7 @@ const EditorPage = () => {
             </div>
           </div>
           <div className="flex gap-4">
-    {isTeacher ? (
+    {/* {isTeacher ? (
       <div className="flex gap-4">
       <button
         onClick={() => setPlay(!play)}
@@ -211,7 +213,7 @@ const EditorPage = () => {
         Calificar
       </button>
       </div>
-    ) : (
+    ) : ( */}
       <>
 {/*         <button
           onClick={handleClear}
@@ -242,20 +244,25 @@ const EditorPage = () => {
             <div className="absolute right-0 mt-2 w-48 bg-[#141F25] font-semibold rounded-md shadow-lg z-10">
               <button
                 onClick={() => handleSave(false)}
-                className="block w-full px-4 py-2 text-left hover:bg-[#141F25] rounded-md"
+                className={
+                  `block w-full px-4 py-2 text-left rounded-md h-10  ${saving && "opacity-50 animate-pulse pointer-events-none"}`}
+                
               >
-                Solo Guardar
+                {saving ? (<LoaderCSS width={30} height={20}/>) : "Guardar"}
+                
               </button>
               <button
                 onClick={() => handleSave(true)}
-                className="block w-full px-4 py-2 text-left hover:bg-[#141F25] rounded-md"
+                className={["block w-full px-4 py-2 text-left rounded-md h-10",
+                  saving && "opacity-50 animate-pulse pointer-events-none"
+                ]}
               >
-                Guardar y Exportar
+                {saving ? (<LoaderCSS width={30} height={20}/>) : "Guardar y exportar"}
               </button>
             </div>
           )}
         </div>
-      {examId && (
+      {/* {examId && (
         <>
           <button className="bg-[#141F25] flex items-center gap-2 font-semibold px-4 py-1 rounded" onClick={() => setShowConsigna(!showConsigna)}>
             <img src={readIcon} alt="Read icon" />
@@ -269,10 +276,10 @@ const EditorPage = () => {
             Entregar
           </button>
         </>
-      )}
+      )} */}
 
       </>
-    )}
+    {/* )} */}
     {/* {showConsigna && (
     exam.question.startsWith('http') ? (
     <PdfViewer pdfUrl={exam?.question} onClose={() => setShowConsigna(false)} />

@@ -137,7 +137,10 @@ const FreeCodeList = () => {
   };
 
   return loading ? (
-    <LoadingFullScreen />
+    <>
+      <Header />
+      <LoadingFullScreen backgroundColor={"#141F25"} />
+    </>
   ) : (
     <div>
       <Header />

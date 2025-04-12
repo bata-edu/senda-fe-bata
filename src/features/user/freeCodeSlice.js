@@ -1,9 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import {
   USER_ENDPOINT,
-  RESET_STATE,
   RANK,
-  ADMIN_ENDPOINT,
 } from "../../utils/constants";
 import apiClient from "../../utils/interceptors/authInterceptor";
 import { buildQueryString } from "../../utils/buildQueryString";
