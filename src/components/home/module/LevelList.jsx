@@ -122,13 +122,13 @@ export const LevelList = () => {
           });   
           setLoading(false);
         }
-        
-        const moduleProgress = progress[moduleId];
-        const currentLevel = levels[moduleProgress.currentLevel]
-        const currentLevelIndex =  currentLevel.order -1
-        const levelProgress = moduleProgress.levelProgress
-        setLoadedState(currentLevelIndex, levelProgress)
-
+        if (levels && progress) {
+          const moduleProgress = progress[moduleId];
+          const currentLevel = levels[moduleProgress.currentLevel]
+          const currentLevelIndex =  currentLevel.order -1
+          const levelProgress = moduleProgress.levelProgress
+          setLoadedState(currentLevelIndex, levelProgress)
+        }
       } catch (error) {
         console.error("Error fetching data", error);
         setLoading(false);
