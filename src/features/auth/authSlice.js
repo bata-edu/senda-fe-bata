@@ -49,6 +49,7 @@ const loadAuthState = () => {
       // Guardar en localStorage
       localStorage.setItem("token", tokens.access.token)
       localStorage.setItem("user", JSON.stringify(user))
+      localStorage.setItem("refreshToken", tokens.refresh.token);
   
       return { user, token: tokens.access.token }
     } catch {

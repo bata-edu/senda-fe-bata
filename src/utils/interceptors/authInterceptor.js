@@ -26,10 +26,40 @@ apiClient.interceptors.request.use(
   }
 );
 
-// Interceptor de respuesta para manejar errores
+// Interceptor de respuesta para manejar 401 y hacer refresh del token
 apiClient.interceptors.response.use(
-  (response) => response, 
-  (error) => {
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+
+      try {
+        const refreshToken = localStorage.getItem('refreshToken');
+        if (!refreshToken) throw new Error('No refresh token');
+
+        const res = await axios.post(
+          `${process.env.REACT_APP_BACKEND_URL || 'http://localhost:3001'}/auth/refresh-tokens`,
+          { refreshToken }
+        );
+
+        const { access, refresh } = res.data.tokens;
+
+        localStorage.setItem('token', access.token);
+        localStorage.setItem('refreshToken', refresh.token);
+
+        apiClient.defaults.headers.common['Authorization'] = `Bearer ${access.token}`;
+        originalRequest.headers['Authorization'] = `Bearer ${access.token}`;
+
+        return apiClient(originalRequest);
+      } catch (refreshError) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('refreshToken');
+        localStorage.removeItem('user');
+        return Promise.reject(refreshError);
+      }
+    }
+
     toast.error(`Error: ${error.response?.data?.message || error.message}`, {
       position: "top-right",
       autoClose: 5000,

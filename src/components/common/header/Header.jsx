@@ -33,7 +33,7 @@ const Header = ({className}) => {
   };
 
   const handleLogout = async () => {
-    dispatch(logout());
+    await dispatch(logout()).unwrap();
     navigate("/login");
   };
 
