@@ -94,7 +94,7 @@ export const fetchSections = createAsyncThunk(
 
 export const fetchExercisesAndClasses = createAsyncThunk(
   "modules/fetchExercisesAndClasses",
-  async (sectionId, { rejectWithValue, getState }) => {
+  async ({levelId, sectionId}, { rejectWithValue, getState }) => {
     try {
       const state = getState()
       const currentModule = state.modules.currentModule
@@ -111,7 +111,8 @@ export const fetchExercisesAndClasses = createAsyncThunk(
         }
       }
 
-      const response = await apiClient.get(`${SECTION_ENDPOINT}/individual/${sectionId}`)
+      const response = await apiClient.get(`${SECTION_ENDPOINT}/${levelId}/${sectionId}`)
+      console.log(response.data)
       return { sectionId, data: response.data }
     } catch (error) {
       return rejectWithValue(error.response.data)
@@ -215,10 +216,10 @@ const moduleSlice = createSlice({
       })
       .addCase(fetchExercisesAndClasses.fulfilled, (state, action) => {
         const { sectionId, data } = action.payload
+        const { exercises, classes } = data
         state.currentSection = sectionId
-        state.modules[state.currentModule].levels[state.currentLevel].sections[sectionId].exercises =
-          data.sectionExercises
-        state.modules[state.currentModule].levels[state.currentLevel].sections[sectionId].classes = data.sectionClasses
+        state.modules[state.currentModule].levels[state.currentLevel].sections[sectionId].exercises = exercises
+        state.modules[state.currentModule].levels[state.currentLevel].sections[sectionId].classes =   classes
         state.loading = false
       })
       .addCase(fetchExercisesAndClasses.rejected, (state, action) => {

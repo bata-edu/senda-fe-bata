@@ -36,7 +36,7 @@ export const LEVEL_INFO_ENDPOINT = `${LEVEL_ENDPOINT}`;
 export const ALL_LEVELS_ENDPOINT = `${LEVEL_ENDPOINT}/module`;
 export const FINAL_LEVEL_INFO = `${LEVEL_ENDPOINT}/finalProject`;
 
-export const MODULE_ENDPOINT = `${API_BASE_URL}/module`;
+export const MODULE_ENDPOINT = `${API_BASE_URL}/modules`;
 
 export const USER_ENDPOINT = `${API_BASE_URL}/user`;
 export const USER_DETAIL = `${USER_ENDPOINT}/detail`;
@@ -48,7 +48,7 @@ export const USER_TEACHER = 'teacher';
 export const USER_ADMIN = 'admin';
 export const USER_SCHOOL_ADMIN = 'schoolAdmin';
 
-export const SECTION_ENDPOINT = `${API_BASE_URL}/section`;
+export const SECTION_ENDPOINT = `${API_BASE_URL}/sections`;
 export const SECTION_INDIVIDUAL = `${SECTION_ENDPOINT}/individual`;
 
 export const SCHOOL_TEACHER_ENDPOINT = `${API_BASE_URL}/schoolTeacher`;

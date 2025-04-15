@@ -8,7 +8,6 @@ import {
   selectModuleLoading,
   selectModuleError,
   selectModuleId,
-  selectCurrentModuleId,
 } from "../../../features/module/moduleSlice";
 import {
   fetchUserProgress,
@@ -36,7 +35,6 @@ export const LevelList = () => {
   const moduleLoading = useSelector(selectModuleLoading);
   const moduleError = useSelector(selectModuleError);
   const moduleId = useSelector((state) => selectModuleId(state, moduleSlug))
-  const currentModuleId = useSelector(selectCurrentModuleId)
 
   const [currentProgress, setCurrentProgress] = useState(null);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
@@ -120,11 +118,11 @@ export const LevelList = () => {
     
     try {
       const moduleProgress = progress[moduleSlug];
-      const currentLevel = levels[moduleProgress.currentLevel];
+      const currentLevel = levels[moduleProgress.current_level_id];
       
       if (currentLevel) {
         const currentLevelIndex = currentLevel.order - 1;
-        const levelProgress = moduleProgress.levelProgress;
+        const levelProgress = 0;
         
         setCurrentProgress({
           currentLevelIndex,
@@ -209,8 +207,8 @@ export const LevelList = () => {
                   : "#DDDDDD";
               return (
                 <motion.div
-                  onClick={() => handleLevelClick(level._id)}
-                  key={level._id}
+                  onClick={() => handleLevelClick(level.id)}
+                  key={level.id}
                   className={`absolute w-full rounded-[50px] h-[400px] overflow-hidden flex items-start justify-start py-10 px-12 ${
                     index > currentProgress?.currentLevelIndex ? "pointer-events-none" : ""
                   }`}
