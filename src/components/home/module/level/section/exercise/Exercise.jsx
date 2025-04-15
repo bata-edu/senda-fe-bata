@@ -158,6 +158,7 @@ const Exercise = ({ content, advance }) => {
 
   return (
     <div className="space-y-6">
+      <p className="max-w-5xl mx-auto text-center">{content?.description}</p>
       {renderExerciseType(exerciseType)}
 
       {feedbackState === "incomplete" && (
