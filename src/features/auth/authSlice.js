@@ -38,20 +38,36 @@ const loadAuthState = () => {
       error: null,
     }
   }
+
+  export const checkAuth = createAsyncThunk("auth/checkAuth", async (_, thunkAPI) => {
+    if (typeof window !== "undefined") {
+      const token = localStorage.getItem("token")
+      const userStr = localStorage.getItem("user")
+  
+      if (token && userStr) {
+        return {
+          token,
+          user: JSON.parse(userStr),
+        }
+      }
+    }
+  
+    return thunkAPI.rejectWithValue("No auth")
+  })
   
   const initialState = loadAuthState();
   export const login = createAsyncThunk("auth/login", async (credentials, { rejectWithValue }) => {
     try {
       // En producción o con backend configurado, hacemos la petición real
       const response = await apiClient.post(LOGIN_ENDPOINT, credentials)
-      const { user, tokens } = response.data
+      const { user, token } = response.data
+      console.log(response.data)
   
       // Guardar en localStorage
-      localStorage.setItem("token", tokens.access.token)
+      localStorage.setItem("token", token)
       localStorage.setItem("user", JSON.stringify(user))
-      localStorage.setItem("refreshToken", tokens.refresh.token);
   
-      return { user, token: tokens.access.token }
+      return { user, token }
     } catch {
       return rejectWithValue("Error de autenticación")
     }
@@ -69,19 +85,6 @@ const loadAuthState = () => {
     reducers: {
       clearError: (state) => {
         state.error = null
-      },
-      checkAuth: (state) => {
-        // Verificar si el token existe en localStorage
-        if (typeof window !== "undefined") {
-          const token = localStorage.getItem("token")
-          const userStr = localStorage.getItem("user")
-  
-          if (!token || !userStr) {
-            state.isAuthenticated = false
-            state.user = null
-            state.token = null
-          }
-        }
       },
     },
     extraReducers: (builder) => {
@@ -105,9 +108,19 @@ const loadAuthState = () => {
           state.user = null
           state.token = null
         })
+        .addCase(checkAuth.fulfilled, (state, action) => {
+          state.token = action.payload.token
+          state.user = action.payload.user
+          state.isAuthenticated = true
+        })
+        .addCase(checkAuth.rejected, (state) => {
+          state.token = null
+          state.user = null
+          state.isAuthenticated = false
+        })
     },
   })
   
-  export const { clearError, checkAuth } = authSlice.actions
+  export const { clearError } = authSlice.actions
   export default authSlice.reducer
   
