@@ -115,7 +115,7 @@ export const FillBlank = ({ exercise, colors, setSelectedOption, selectedOption,
       </div>
       <div className="p-4 w-full">
         <h2 className="font-semibold text-xl text-center font-sans mb-6">
-          {exercise?.prompt || "Completa la siguiente frase:"}
+          {exercise?.prompt}
         </h2>
         <div className="flex flex-col items-center justify-center font-mono">{renderContent()}</div>
       </div>

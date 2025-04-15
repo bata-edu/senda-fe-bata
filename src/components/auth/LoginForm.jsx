@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   forgotPassword,
-  verifyEmail,
-  googleLogin,
 } from "../../features/auth/authService";
-import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import simpleLogo from "../../assets/simple-logo.svg";
@@ -58,7 +55,6 @@ const LoginForm = () => {
   };
 
   return (
-    <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
       <div className="min-h-screen flex flex-col bg-white">
         <Header />
 
@@ -163,7 +159,6 @@ const LoginForm = () => {
           </div>
         </div>
       </div>
-    </GoogleOAuthProvider>
   );
 };
 

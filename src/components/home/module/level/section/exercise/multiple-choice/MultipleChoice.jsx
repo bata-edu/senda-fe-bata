@@ -6,7 +6,11 @@ const MultipleChoice = ({ exercise, locked, setSelectedOption, colors, selectedO
   return (
     <div className="border-[#F4F5F7] border-8 rounded-lg w-full max-w-md mx-auto">
       <div className="p-4 border-b-[#F4F5F7] border-b-4 flex justify-center">
-        <span className="text-lg font-medium font-sans">Selecciona la respuesta correcta</span>
+                
+      <span className="text-lg font-medium font-sans">
+          {exercise?.prompt}
+        </span>
+      
       </div>
       <div className="p-4 w-full">
         <h2 className="font-semibold text-xl text-center font-sans mb-6">{exercise?.content}</h2>
