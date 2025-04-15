@@ -5,15 +5,11 @@ import {
   registerTeacher,
 } from "../../features/auth/authService";
 import { useNavigate } from "react-router-dom";
-import Swal from "sweetalert2";
-import withReactContent from "sweetalert2-react-content";
-import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
 import logoImage from "../../assets/logo.svg";
 import simpleLogo from "../../assets/simple-logo.svg";
 import SuccessDialog from "../common/dialog/successDialog";
 import { TextInput } from "../common/input/Input";
 
-const MySwal = withReactContent(Swal);
 
 const RegisterForm = () => {
   const navigate = useNavigate();
@@ -97,7 +93,6 @@ const RegisterForm = () => {
     confirmPasswordError;
 
   return (
-    <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
       <div className="min-h-screen flex flex-col bg-white">
         <header className="w-full bg-white shadow-sm">
           <div className="max-w-6xl p-4 flex items-center">
@@ -211,13 +206,7 @@ const RegisterForm = () => {
                 Crear cuenta
               </button>
             </form>
-            <div className="mt-6 flex flex-col space-y-2">
-              <GoogleLogin
-                text="signup_with"
-                onSuccess={handleGoogleRegister}
-                onError={() => setError("Error al autenticar con Google")}
-              />
-            </div>
+
             {error && <p className="text-sm text-red-500 mt-4">{error}</p>}
           </div>
         </div>
@@ -230,7 +219,6 @@ const RegisterForm = () => {
           />
         )}
       </div>
-    </GoogleOAuthProvider>
   );
 };
 
