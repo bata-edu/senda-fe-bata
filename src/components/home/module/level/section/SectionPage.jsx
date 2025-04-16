@@ -107,8 +107,7 @@ export const SectionPage = () => {
           console.log("Fetching section progress")
           await dispatch(
             fetchUserSectionProgress({
-              courseId: moduleSlug,
-              levelId,
+              moduleSlug,
               sectionId,
             }),
           ).unwrap()

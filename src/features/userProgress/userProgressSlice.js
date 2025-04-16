@@ -48,23 +48,22 @@ export const fetchUserModuleProgress = createAsyncThunk(
 
 export const fetchUserSectionProgress = createAsyncThunk(
   "userProgress/fetchUserSectionProgress",
-  async ({ moduleId, moduleSlug, levelId, sectionId }, { rejectWithValue, getState }) => {
+  async ({ moduleSlug, sectionId }, { rejectWithValue, getState }) => {
     try {
       // Check if section progress is already in state
       const state = getState()
       const currentSection = state.userProgress.currentSection
-
+      const currentModule = state.userProgress.progress[moduleSlug]
+      
       if (
         currentSection &&
-        currentSection.moduleId === moduleId &&
-        currentSection.levelId === levelId &&
         currentSection.sectionId === sectionId
       ) {
         return currentSection
       }
 
-      const response = await apiClient.get(`${USER_PROGRESS_ENDPOINT}/${moduleId}/${levelId}/${sectionId}`)
-      return { moduleId, moduleSlug, levelId, sectionId, progress: response.data }
+      const response = await apiClient.get(`${USER_PROGRESS_ENDPOINT}/${currentModule.id}/${sectionId}`)
+      return { sectionId, progress: response.data }
     } catch (error) {
       return rejectWithValue(error.response.data)
     }
