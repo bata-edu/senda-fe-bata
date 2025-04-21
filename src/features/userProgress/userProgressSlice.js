@@ -208,19 +208,19 @@ const userProgressSlice = createSlice({
 
       // Check if exercise is already completed
       const existingIndex = state.currentSection.progress.completed_exercises.findIndex(
-        (ex) => ex.exerciseId === exerciseId,
+        (ex) => ex.exercise_id === exerciseId,
       )
 
       if (existingIndex >= 0) {
         // Update existing exercise completion
         state.currentSection.progress.completed_exercises[existingIndex] = {
-          exerciseId,
+          exercise_id: exerciseId,
           isCorrect,
         }
       } else {
         // Add new exercise completion
         state.currentSection.progress.completed_exercises.push({
-          exerciseId,
+          exercise_id: exerciseId,
           isCorrect,
         })
       }
@@ -244,7 +244,6 @@ const userProgressSlice = createSlice({
     // Determine next content based on current progress
     determineNextContent: (state, action) => {
       const { sectionData } = action.payload
-      console.log(sectionData)
       if (!state.currentSection || !sectionData) return
       const completed_classes = state.currentSection.progress.completed_classes
       const completed_exercises = state.currentSection.progress.completed_exercises
@@ -269,9 +268,14 @@ const userProgressSlice = createSlice({
 
       // If we haven't attempted all exercises yet, go through them in order
       if (!allExercisesAttempted) {
-        // Find the first exercise that hasn't been completed yet
-        const nextExercise = sectionData.exercises.find((ex) => !completedExerciseIds.includes(ex.id))
-
+        const currentOrder = state.nextContentToShow?.order ?? -1
+      
+        const nextExercise = sectionData.exercises.find(
+          (ex) =>
+            !completedExerciseIds.includes(ex.id) &&
+            ex.order > currentOrder
+        )
+      
         if (nextExercise) {
           state.nextContentToShow = nextExercise
           state.contentType = "exercise"
@@ -279,6 +283,7 @@ const userProgressSlice = createSlice({
           return
         }
       }
+      
 
       // If all exercises have been attempted, check for incorrect ones
       const incorrectExercises = sectionData.exercises.filter((ex) => {

@@ -211,14 +211,14 @@ export const SectionPage = () => {
               {sectionData.exercises.map((exercise, index) => {
                 const completed = completed_exercises.find((e) => e.exercise_id === exercise.id)
                 const isCompleted = !!completed
-                const isCorrect = completed?.isCorrect
+                const isCorrect = completed?.is_correct
                 const isCurrent = currentContent?.id === exercise.id
 
                 return (
                   <div
                     key={index}
                     className={`h-2 flex-1 rounded-md ${
-                      isCompleted ? (isCorrect === false ? "bg-red-500" : "bg-green-500") : "bg-gray-300"
+                      isCompleted ? (isCorrect ? "bg-green-500" : "bg-red-500") : "bg-gray-300"
                     } ${isCurrent ? "animate-bounce" : ""}`}
                   />
                 )
