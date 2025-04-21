@@ -20,7 +20,6 @@ export const fetchUserProgress = createAsyncThunk(
       }
 
       const response = await apiClient.get(`${USER_PROGRESS_ENDPOINT}`)
-      console.log(response.data)
       return response.data
     } catch (error) {
       return rejectWithValue(error.response.data)
@@ -81,13 +80,13 @@ export const startCourse = createAsyncThunk("userProgress/startCourse", async (m
 
 export const completeClass = createAsyncThunk(
   "userProgress/completeClass",
-  async ({ moduleId, classId }, { rejectWithValue, dispatch }) => {
+  async ({ progressId, classId }, { rejectWithValue, dispatch }) => {
     try {
       // Optimistically update the state before API call
       dispatch(optimisticallyCompleteClass(classId))
 
       // Make the API call
-      await apiClient.post(`${COMPLETE_CLASS_ENDPOINT}/${moduleId}/${classId}`)
+      await apiClient.post(`${COMPLETE_CLASS_ENDPOINT}/${progressId}/${classId}`)
       return classId
     } catch (error) {
       // If API call fails, we need to revert the optimistic update
@@ -99,50 +98,17 @@ export const completeClass = createAsyncThunk(
 
 export const completeExercise = createAsyncThunk(
   "userProgress/completeExercise",
-  async ({ moduleId, exerciseId, body }, { rejectWithValue, dispatch, getState }) => {
+  async ({ progressId, exerciseId, userAnswers }, { rejectWithValue, dispatch, getState }) => {
     try {
       // Get the current section and exercise data to check correctness
       const state = getState()
-      const currentSection = state.userProgress.currentSection
-      const moduleSlug = currentSection.moduleSlug
-      const moduleData = state.modules.modules[moduleSlug]
-      const levelId = currentSection.levelId
-      const sectionId = currentSection.sectionId
-
-      // Find the exercise in the section data
-      const sectionData = moduleData.levels[levelId].sections[sectionId]
-      const exercise = sectionData.exercises.find((ex) => ex._id === exerciseId)
-
-      // Determine if the answer is correct by comparing with the exercise answers
+      const exercise = state.userProgress.nextContentToShow
       let isCorrect = false
-
       if (exercise) {
-        const userAnswers = body.userAnswers
         const correctAnswers = exercise.answers || []
-
-        // Check correctness based on exercise template
-        if (exercise.template === 1 || exercise.template === 2) {
-          // drag and drop or multiple choice
-          // For these types, we need to check if the user selected the correct answers in the correct order
-          if (Array.isArray(userAnswers)) {
-            isCorrect =
-              userAnswers.length === correctAnswers.length &&
-              userAnswers.every((answer, index) => answer === correctAnswers[index])
-          } else {
-            // Single answer case
-            isCorrect = userAnswers === correctAnswers[0]
-          }
-        } else if (exercise.template === 3) {
-          // fill blank
-          // For fill blank, check if all blanks are filled correctly
-          if (Array.isArray(userAnswers)) {
-            isCorrect =
-              userAnswers.length === correctAnswers.length &&
-              userAnswers.every((option) => correctAnswers.includes(option))
-          } else {
-            isCorrect = correctAnswers.includes(userAnswers)
-          }
-        }
+        isCorrect =
+          userAnswers.length === correctAnswers.length &&
+          userAnswers.every((answer, index) => answer === correctAnswers[index])
       }
 
       // Optimistically update the state before API call
@@ -154,7 +120,7 @@ export const completeExercise = createAsyncThunk(
       )
 
       // Make the API call
-      await apiClient.post(`${COMPLETE_EXERCISE_ENDPOINT}/${moduleId}/${exerciseId}`, body)
+      await apiClient.post(`${COMPLETE_EXERCISE_ENDPOINT}/${progressId}/${exerciseId}`, {is_correct: isCorrect})
 
       return {
         exerciseId,
@@ -163,7 +129,7 @@ export const completeExercise = createAsyncThunk(
     } catch (error) {
       // If API call fails, we need to revert the optimistic update
       dispatch(revertOptimisticExerciseCompletion(exerciseId))
-      return rejectWithValue(error.response.data)
+      return rejectWithValue(error)
     }
   },
 )
@@ -217,8 +183,8 @@ const userProgressSlice = createSlice({
       const classId = action.payload
 
       // Add to completed classes if not already there
-      if (!state.currentSection.progress.completedClasses.includes(classId)) {
-        state.currentSection.progress.completedClasses.push(classId)
+      if (!state.currentSection.progress.completed_classes.includes(classId)) {
+        state.currentSection.progress.completed_classes.push(classId)
       }
 
       // Add to pending completions to track API calls
@@ -229,7 +195,7 @@ const userProgressSlice = createSlice({
       const classId = action.payload
 
       // Remove from completed classes
-      state.currentSection.progress.completedClasses = state.currentSection.progress.completedClasses.filter(
+      state.currentSection.progress.completed_classes = state.currentSection.progress.completed_classes.filter(
         (id) => id !== classId,
       )
 
@@ -241,19 +207,19 @@ const userProgressSlice = createSlice({
       const { exerciseId, isCorrect } = action.payload
 
       // Check if exercise is already completed
-      const existingIndex = state.currentSection.progress.completedExercises.findIndex(
+      const existingIndex = state.currentSection.progress.completed_exercises.findIndex(
         (ex) => ex.exerciseId === exerciseId,
       )
 
       if (existingIndex >= 0) {
         // Update existing exercise completion
-        state.currentSection.progress.completedExercises[existingIndex] = {
+        state.currentSection.progress.completed_exercises[existingIndex] = {
           exerciseId,
           isCorrect,
         }
       } else {
         // Add new exercise completion
-        state.currentSection.progress.completedExercises.push({
+        state.currentSection.progress.completed_exercises.push({
           exerciseId,
           isCorrect,
         })
@@ -267,7 +233,7 @@ const userProgressSlice = createSlice({
       const exerciseId = action.payload
 
       // Remove from completed exercises
-      state.currentSection.progress.completedExercises = state.currentSection.progress.completedExercises.filter(
+      state.currentSection.progress.completed_exercises = state.currentSection.progress.completed_exercises.filter(
         (ex) => ex.exerciseId !== exerciseId,
       )
 
@@ -278,14 +244,14 @@ const userProgressSlice = createSlice({
     // Determine next content based on current progress
     determineNextContent: (state, action) => {
       const { sectionData } = action.payload
-
+      console.log(sectionData)
       if (!state.currentSection || !sectionData) return
-      const completedClasses = state.currentSection.progress.completedClasses
-      const completedExercises = state.currentSection.progress.completedExercises
+      const completed_classes = state.currentSection.progress.completed_classes
+      const completed_exercises = state.currentSection.progress.completed_exercises
 
       // First, check if there are any classes left to complete
-      if (sectionData.classes.length > completedClasses.length) {
-        const nextClassIndex = completedClasses.length
+      if (sectionData.classes.length > completed_classes.length) {
+        const nextClassIndex = completed_classes.length
         state.nextContentToShow = sectionData.classes[nextClassIndex]
         state.contentType = "class"
         state.reviewingIncorrectExercises = false
@@ -294,8 +260,8 @@ const userProgressSlice = createSlice({
       }
 
       // If all classes are completed, check if we need to go through exercises
-      const allExerciseIds = sectionData.exercises.map((ex) => ex._id)
-      const completedExerciseIds = completedExercises.map((ex) => ex.exerciseId)
+      const allExerciseIds = sectionData.exercises.map((ex) => ex.id)
+      const completedExerciseIds = completed_exercises.map((ex) => ex.exercise_id)
 
       // Check if all exercises have been attempted at least once
       const allExercisesAttempted = allExerciseIds.every((id) => completedExerciseIds.includes(id))
@@ -304,7 +270,7 @@ const userProgressSlice = createSlice({
       // If we haven't attempted all exercises yet, go through them in order
       if (!allExercisesAttempted) {
         // Find the first exercise that hasn't been completed yet
-        const nextExercise = sectionData.exercises.find((ex) => !completedExerciseIds.includes(ex._id))
+        const nextExercise = sectionData.exercises.find((ex) => !completedExerciseIds.includes(ex.id))
 
         if (nextExercise) {
           state.nextContentToShow = nextExercise
@@ -316,7 +282,7 @@ const userProgressSlice = createSlice({
 
       // If all exercises have been attempted, check for incorrect ones
       const incorrectExercises = sectionData.exercises.filter((ex) => {
-        const completed = completedExercises.find((done) => done.exerciseId === ex._id)
+        const completed = completed_exercises.find((done) => done.exercise_id === ex.id)
         return completed && !completed.isCorrect
       })
 
@@ -325,8 +291,8 @@ const userProgressSlice = createSlice({
         state.reviewingIncorrectExercises = true
 
         // Buscar el índice del último incorrecto mostrado (si existe)
-        const lastIncorrectId = state.nextContentToShow?._id
-        const currentIndex = incorrectExercises.findIndex((ex) => ex._id === lastIncorrectId)
+        const lastIncorrectId = state.nextContentToShow?.id
+        const currentIndex = incorrectExercises.findIndex((ex) => ex.id === lastIncorrectId)
 
         // Mostrar el siguiente incorrecto en la lista (si hay uno)
         const nextIncorrect = incorrectExercises[currentIndex + 1] || incorrectExercises[0]

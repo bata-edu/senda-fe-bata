@@ -91,10 +91,9 @@ export const SectionPage = () => {
           !sectionData &&
           !exercisesAndClassesLoaded.current
         ) {
-          const sectionDataFromStore = modules[moduleSlug].levels[levelId].sections[sectionId]
-          setSectionData(sectionDataFromStore)
           await dispatch(fetchExercisesAndClasses({levelId, sectionId})).unwrap()
           exercisesAndClassesLoaded.current = true
+          setSectionData(modules[moduleSlug].levels[levelId].sections[sectionId])
           return
         }
         if (!progress) {
@@ -102,8 +101,7 @@ export const SectionPage = () => {
           dispatch(fetchUserProgress())
           return;
         }
-        if (!progress || !currentSection || !currentSection.progress) {
-          setSectionData(modules[moduleSlug].levels[levelId].sections[sectionId])
+        if (!progress || !currentSection || !currentSection.progress ) {
           console.log("Fetching section progress")
           await dispatch(
             fetchUserSectionProgress({
@@ -122,11 +120,11 @@ export const SectionPage = () => {
     }
 
     loadData()
-  }, [dispatch, moduleSlug, levelId, sectionId, currentSection, sectionData, modules])
+  }, [dispatch, moduleSlug, levelId, sectionId, currentSection, sectionData, modules, progress])
 
   const [initialized, setInitialized] = useState(false)
   useEffect(() => {
-    if (!initialized && sectionData && currentSection) {
+    if (!initialized && sectionData?.classes && sectionData?.exercises && currentSection) {
       console.log("Determinando contenido")
       dispatch(determineNextContent({ sectionData }))
       setInitialized(true)
@@ -136,7 +134,7 @@ export const SectionPage = () => {
   const handleCompleteContent = async () => {
     if (contentType === "section-completed") {
       try {
-        await dispatch(advanceProgress({progressId: progress[moduleSlug]._id, sectionId})).unwrap()
+        await dispatch(advanceProgress({progressId: progress[moduleSlug].id, sectionId})).unwrap()
         dispatch(fetchUserProgress())
         navigate(`/learn/modules/${moduleSlug}/levels/${levelId}`)
       } catch (err) {
@@ -152,8 +150,8 @@ export const SectionPage = () => {
         console.log("Completando clase")
         await dispatch(
           completeClass({
-            moduleSlug,
-            classId: currentContent._id,
+            progressId: progress[moduleSlug].id,
+            classId: currentContent.id,
           }),
         ).unwrap()
 
@@ -170,9 +168,9 @@ export const SectionPage = () => {
     try {
       dispatch(
         completeExercise({
-          moduleSlug,
-          exerciseId: currentContent._id,
-          body: { userAnswers },
+          progressId: progress[moduleSlug].id,
+          exerciseId: currentContent.id,
+          userAnswers,
         }),
       )
 
@@ -186,9 +184,8 @@ export const SectionPage = () => {
   const renderProgress = () => {
     if (!sectionData || !currentSection?.progress) return null
 
-    const completedClasses = currentSection?.progress?.completedClasses || []
-    const completedExercises = currentSection?.progress?.completedExercises || []
-
+    const completed_classes = currentSection?.progress?.completed_classes || []
+    const completed_exercises = currentSection?.progress?.completed_exercises || []
     const totalClasses = sectionData.classes?.length || 0
     const totalExercises = sectionData.exercises?.length || 0
 
@@ -199,7 +196,7 @@ export const SectionPage = () => {
             {[...Array(totalClasses)].map((_, index) => (
               <div
                 key={index}
-                className={`h-2 flex-1 rounded-md ${index < completedClasses.length ? "bg-[#4558C8]" : "bg-gray-300"}`}
+                className={`h-2 flex-1 rounded-md ${index < completed_classes?.length ? "bg-[#4558C8]" : "bg-gray-300"}`}
               />
             ))}
           </div>
@@ -212,10 +209,10 @@ export const SectionPage = () => {
             )}
             <div className="flex gap-1">
               {sectionData.exercises.map((exercise, index) => {
-                const completed = completedExercises.find((e) => e.exerciseId === exercise._id)
+                const completed = completed_exercises.find((e) => e.exercise_id === exercise.id)
                 const isCompleted = !!completed
                 const isCorrect = completed?.isCorrect
-                const isCurrent = currentContent?._id === exercise._id
+                const isCurrent = currentContent?.id === exercise.id
 
                 return (
                   <div

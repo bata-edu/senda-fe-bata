@@ -47,7 +47,7 @@ const loginUser = async (email, password) => {
 
 // Hacer register y almacenar los datos
 const registerUser = async ({name, lastName, email, password, confirmPassword}) => {
-  const response = await apiClient.post(REGISTER_ENDPOINT, { name, lastName, email, password, confirmPassword });
+  const response = await apiClient.post(REGISTER_ENDPOINT, { name, last_name: lastName, email, password });
   return response.data;
 };
 

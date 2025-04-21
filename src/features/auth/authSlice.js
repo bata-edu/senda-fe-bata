@@ -61,7 +61,6 @@ const loadAuthState = () => {
       // En producción o con backend configurado, hacemos la petición real
       const response = await apiClient.post(LOGIN_ENDPOINT, credentials)
       const { user, token } = response.data
-      console.log(response.data)
   
       // Guardar en localStorage
       localStorage.setItem("token", token)
