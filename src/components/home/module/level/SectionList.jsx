@@ -11,19 +11,19 @@ import { GuideViewer } from "./section/Guide"
 import ArrowBack from "../../../../assets/icons/arrowBack.svg";
 import { fetchUserProgress, clearSectionProgress } from "../../../../features/userProgress/userProgressSlice";
 export const SectionList = () => {
-  const { moduleSlug, levelId } = useParams();
+  const { moduleId, levelId } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { modules } = useSelector((state) => state.modules);
   const { progress } = useSelector((state) => state.userProgress || {});
-  const levels = useSelector((state) => selectLevels(state, moduleSlug));
+  const levels = useSelector((state) => selectLevels(state, moduleId));
   const [level, setLevel] = useState(null);
   const [currentSectionIndex, setCurrentSectionIndex] = useState(null);
   const [loading, setLoading] = useState(true);
   const [loadingMessage, setLoadingMessage] = useState("Cargando nivel...");
 
     const courseImage = {
-    "python": {
+    "671909eecc62ee9e8f06c578": {
       course: "Python",
       border: "#C694EC",
       backgroundCurrent: "#9B4CD1",
@@ -36,7 +36,7 @@ export const SectionList = () => {
         <img src={BookWhite} alt="Logo Bata" className="h-16 mx-auto " />,
       ],
     },
-    "javascript": {
+    "67190a2ecc62ee9e8f06c57b": {
       course: "JavaScript",
       border: "#EBF99D",
       backgroundCurrent: "#EBF99D",
@@ -49,7 +49,7 @@ export const SectionList = () => {
         <img src={BookWhite} alt="Logo Bata" className="h-16 mx-auto " />,
       ],
     },
-    "css": {
+    "6749b2b80a8216bdad69e17b": {
       course: "Css",
       border: "#7B97DF",
       backgroundCurrent: "#3D48B8",
@@ -62,7 +62,7 @@ export const SectionList = () => {
         <img src={BookWhite} alt="Logo Bata" className="h-16 mx-auto " />,
       ],
     },
-    "html": {
+    "676ee8640324ad0b3cda0bc6": {
       course: "Html",
       border: "#F59D7C",
       backgroundCurrent: "#EB4624",
@@ -92,35 +92,35 @@ export const SectionList = () => {
   };
 
   useEffect(() => { 
-    if (!modules || !modules[moduleSlug]) {
+    if (!modules || !modules[moduleId]) {
       setLoadingMessage("Cargando módulo...")
       dispatch(fetchModules())
       return;
     }
     if (!levels || !levels[levelId]) {
       setLoadingMessage("Cargando nivel...")
-      dispatch(fetchLevels(moduleSlug))
+      dispatch(fetchLevels(moduleId))
       return;
     }
-    
+
+    if (!progress || !progress[moduleId] || !progress[moduleId].currentSection) {
+      setLoadingMessage("Cargando progreso...")
+      dispatch(fetchUserProgress())
+      return;
+    }
+
     if (!levels || !levels[levelId] || !levels[levelId].sections) {
       setLoadingMessage("Cargando secciones...")
       dispatch(fetchSections(levelId))
       return;
     }
 
-    if (!progress || !progress[moduleSlug] || !progress[moduleSlug].current_section_id) {
-      setLoadingMessage("Cargando progreso...")
-      dispatch(fetchUserProgress())
-      return;
-    }
-
-    const currentSectionIndex = levels[levelId].sections[progress[moduleSlug].current_section_id].order;
+    const currentSectionIndex = levels[levelId].sections[progress[moduleId].currentSection].order;
     setLevel(levels[levelId]);
     setCurrentSectionIndex(currentSectionIndex);
     setLoading(false);
   
-  }, [levels, levelId, progress, moduleSlug, dispatch, modules, level]);
+  }, [levels, levelId, progress, moduleId, dispatch, modules, level]);
 
   if (loading) {
     return (
@@ -131,21 +131,21 @@ export const SectionList = () => {
   }
   const handleSectionClick = (sectionId) => {
     dispatch(clearSectionProgress(sectionId));
-    navigate(`/learn/modules/${moduleSlug}/levels/${levelId}/sections/${sectionId}`);
+    navigate(`/learn/modules/${moduleId}/levels/${levelId}/sections/${sectionId}`);
   };
 
   return (
     <div className="flex flex-col w-full h-full items-center">
       <div
         style={{
-          background: courseImage[moduleSlug].backgroundCurrent,
-          border: `2px solid ${courseImage[moduleSlug].backgroundDone}`,
+          background: courseImage[moduleId].backgroundCurrent,
+          border: `2px solid ${courseImage[moduleId].backgroundDone}`,
         }}
         className={`max-w-md flex flex-col py-3 px-6 mt-4 rounded-xl border-2 border-[#F9BEA8] w-full`}
       >
         <div className="w-full flex justify-between items-center">
           <button
-            onClick={() => navigate(`/learn/modules/${moduleSlug}`)}
+            onClick={() => navigate(`/learn/modules/${moduleId}`)}
             className="flex items-center"
           >
             <img src={ArrowBack} alt="arrow back" />
@@ -168,7 +168,7 @@ export const SectionList = () => {
 
           const borderColor =
             currentSectionIndex > sectionIndex
-              ? courseImage[moduleSlug].border
+              ? courseImage[moduleId].border
               : "#C8C8C8";
 
           const positions = [
@@ -267,18 +267,18 @@ export const SectionList = () => {
                 style={{
                   background: (() => {
                     if (sectionIndex < currentSectionIndex || currentSectionIndex === -1) {
-                      return courseImage[moduleSlug]?.backgroundDone;
+                      return courseImage[moduleId]?.backgroundDone;
                     } else if (sectionIndex === currentSectionIndex) {
-                      return courseImage[moduleSlug]?.backgroundCurrent;
+                      return courseImage[moduleId]?.backgroundCurrent;
                     } else {
                       return "";
                     }
                   })(),
-                  border: `2px solid ${courseImage[moduleSlug]?.border}`,
+                  border: `2px solid ${courseImage[moduleId]?.border}`,
                 }}
                 className={`w-20 h-20 text-white py-2 px-4 rounded-lg shadow-md`}
               >
-                {courseImage[moduleSlug]?.icons[iconIndex]}
+                {courseImage[moduleId]?.icons[iconIndex]}
               </div>
             </div>
           );
