@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import {
   registerUser,
-  googleRegister,
   registerTeacher,
 } from "../../features/auth/authService";
 import { useNavigate } from "react-router-dom";
@@ -70,15 +69,6 @@ const RegisterForm = () => {
       }
     } catch (err) {
       setError(err.response?.data?.message || "Error al registrar");
-    }
-  };
-
-  const handleGoogleRegister = async (response) => {
-    try {
-      await googleRegister(response.credential);
-      setShowSuccessDialog(true);
-    } catch (err) {
-      setError(err.response?.data?.message || "Error al registrar con Google");
     }
   };
 
