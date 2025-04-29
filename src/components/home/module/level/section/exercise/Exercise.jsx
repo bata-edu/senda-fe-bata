@@ -98,8 +98,8 @@ const Exercise = ({ content, advance }) => {
       return
     }
 
-    const isCorrect = checkCorrectness()
-    setFeedbackState(isCorrect ? "correct" : "incorrect")
+    const is_correct = checkCorrectness()
+    setFeedbackState(is_correct ? "correct" : "incorrect")
     setIsAnswered(true)
     setIsSubmitting(false)
   }

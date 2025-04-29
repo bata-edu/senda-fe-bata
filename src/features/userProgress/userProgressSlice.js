@@ -103,10 +103,10 @@ export const completeExercise = createAsyncThunk(
       // Get the current section and exercise data to check correctness
       const state = getState()
       const exercise = state.userProgress.nextContentToShow
-      let isCorrect = false
+      let is_correct = false
       if (exercise) {
         const correctAnswers = exercise.answers || []
-        isCorrect =
+        is_correct =
           userAnswers.length === correctAnswers.length &&
           userAnswers.every((answer, index) => answer === correctAnswers[index])
       }
@@ -115,16 +115,16 @@ export const completeExercise = createAsyncThunk(
       dispatch(
         optimisticallyCompleteExercise({
           exerciseId,
-          isCorrect,
+          is_correct,
         }),
       )
 
       // Make the API call
-      await apiClient.post(`${COMPLETE_EXERCISE_ENDPOINT}/${progressId}/${exerciseId}`, {is_correct: isCorrect})
+      await apiClient.post(`${COMPLETE_EXERCISE_ENDPOINT}/${progressId}/${exerciseId}`, {is_correct: is_correct})
 
       return {
         exerciseId,
-        isCorrect,
+        is_correct,
       }
     } catch (error) {
       // If API call fails, we need to revert the optimistic update
@@ -204,7 +204,7 @@ const userProgressSlice = createSlice({
     },
 
     optimisticallyCompleteExercise: (state, action) => {
-      const { exerciseId, isCorrect } = action.payload
+      const { exerciseId, is_correct } = action.payload
 
       // Check if exercise is already completed
       const existingIndex = state.currentSection.progress.completed_exercises.findIndex(
@@ -215,13 +215,13 @@ const userProgressSlice = createSlice({
         // Update existing exercise completion
         state.currentSection.progress.completed_exercises[existingIndex] = {
           exercise_id: exerciseId,
-          isCorrect,
+          is_correct,
         }
       } else {
         // Add new exercise completion
         state.currentSection.progress.completed_exercises.push({
           exercise_id: exerciseId,
-          isCorrect,
+          is_correct,
         })
       }
 
@@ -268,7 +268,10 @@ const userProgressSlice = createSlice({
 
       // If we haven't attempted all exercises yet, go through them in order
       if (!allExercisesAttempted) {
-        const currentOrder = state.nextContentToShow?.order ?? -1
+        let currentOrder = 0
+        if (state.contentType === "exercise") {
+          currentOrder = state.nextContentToShow?.order ?? -1
+        }
       
         const nextExercise = sectionData.exercises.find(
           (ex) =>
@@ -288,7 +291,7 @@ const userProgressSlice = createSlice({
       // If all exercises have been attempted, check for incorrect ones
       const incorrectExercises = sectionData.exercises.filter((ex) => {
         const completed = completed_exercises.find((done) => done.exercise_id === ex.id)
-        return completed && !completed.isCorrect
+        return completed && !completed.is_correct
       })
 
       // If there are incorrect exercises, go through them
