@@ -34,7 +34,7 @@ import { GuideViewer } from "./Guide"
 export const SectionPage = () => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
-  const { moduleId, levelId, sectionId } = useParams()
+  const { moduleSlug, levelId, sectionId } = useParams()
 
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -59,25 +59,25 @@ export const SectionPage = () => {
 
   // Load all data needed (modules, sections, progress)
   useEffect(() => {
-    if (!moduleId || !levelId || !sectionId) return
+    if (!moduleSlug || !levelId || !sectionId) return
     const loadData = async () => {
       try {
         // Load modules if not loaded
-        if (!modules || !modules[moduleId]) {
+        if (!modules || !modules[moduleSlug]) {
           console.log("Fetching modules")
           await dispatch(fetchModules()).unwrap()
           modulesLoaded.current = true
           return
         }
         // Load levels if not loaded
-        if (modules && modules[moduleId] && !modules[moduleId].levels && !levelsLoaded.current) {
+        if (modules && modules[moduleSlug] && !modules[moduleSlug].levels && !levelsLoaded.current) {
           console.log("Fetching levels")
-          await dispatch(fetchLevels(moduleId)).unwrap()
+          await dispatch(fetchLevels(moduleSlug)).unwrap()
           levelsLoaded.current = true
           return
         }
         // Load sections if not loaded
-        if (modules && modules[moduleId] && !modules[moduleId].levels[levelId].sections && !sectionsLoaded.current) {
+        if (modules && modules[moduleSlug] && !modules[moduleSlug].levels[levelId].sections && !sectionsLoaded.current) {
           console.log("Fetching sections")
           await dispatch(fetchSections(levelId)).unwrap()
           sectionsLoaded.current = true
@@ -86,15 +86,14 @@ export const SectionPage = () => {
         // Load exercises and classes if not loaded
         if (
           modules &&
-          modules[moduleId] &&
-          modules[moduleId].levels[levelId].sections[sectionId] &&
+          modules[moduleSlug] &&
+          modules[moduleSlug].levels[levelId].sections[sectionId] &&
           !sectionData &&
           !exercisesAndClassesLoaded.current
         ) {
-          const sectionDataFromStore = modules[moduleId].levels[levelId].sections[sectionId]
-          setSectionData(sectionDataFromStore)
-          await dispatch(fetchExercisesAndClasses(sectionId)).unwrap()
+          await dispatch(fetchExercisesAndClasses({levelId, sectionId})).unwrap()
           exercisesAndClassesLoaded.current = true
+          setSectionData(modules[moduleSlug].levels[levelId].sections[sectionId])
           return
         }
         if (!progress) {
@@ -102,13 +101,11 @@ export const SectionPage = () => {
           dispatch(fetchUserProgress())
           return;
         }
-        if (!progress || !currentSection || !currentSection.progress) {
-          setSectionData(modules[moduleId].levels[levelId].sections[sectionId])
+        if (!progress || !currentSection || !currentSection.progress ) {
           console.log("Fetching section progress")
           await dispatch(
             fetchUserSectionProgress({
-              courseId: moduleId,
-              levelId,
+              moduleSlug,
               sectionId,
             }),
           ).unwrap()
@@ -123,11 +120,11 @@ export const SectionPage = () => {
     }
 
     loadData()
-  }, [dispatch, moduleId, levelId, sectionId, currentSection, sectionData, modules])
+  }, [dispatch, moduleSlug, levelId, sectionId, currentSection, sectionData, modules, progress])
 
   const [initialized, setInitialized] = useState(false)
   useEffect(() => {
-    if (!initialized && sectionData && currentSection) {
+    if (!initialized && sectionData?.classes && sectionData?.exercises && currentSection) {
       console.log("Determinando contenido")
       dispatch(determineNextContent({ sectionData }))
       setInitialized(true)
@@ -137,9 +134,9 @@ export const SectionPage = () => {
   const handleCompleteContent = async () => {
     if (contentType === "section-completed") {
       try {
-        await dispatch(advanceProgress({progressId: progress[moduleId]._id, sectionId})).unwrap()
+        await dispatch(advanceProgress({progressId: progress[moduleSlug].id, sectionId})).unwrap()
         dispatch(fetchUserProgress())
-        navigate(`/learn/modules/${moduleId}/levels/${levelId}`)
+        navigate(`/learn/modules/${moduleSlug}/levels/${levelId}`)
       } catch (err) {
         console.error("Error advancing progress:", err)
       }
@@ -153,8 +150,8 @@ export const SectionPage = () => {
         console.log("Completando clase")
         await dispatch(
           completeClass({
-            moduleId,
-            classId: currentContent._id,
+            progressId: progress[moduleSlug].id,
+            classId: currentContent.id,
           }),
         ).unwrap()
 
@@ -171,9 +168,9 @@ export const SectionPage = () => {
     try {
       dispatch(
         completeExercise({
-          moduleId,
-          exerciseId: currentContent._id,
-          body: { userAnswers },
+          progressId: progress[moduleSlug].id,
+          exerciseId: currentContent.id,
+          userAnswers,
         }),
       )
 
@@ -187,9 +184,8 @@ export const SectionPage = () => {
   const renderProgress = () => {
     if (!sectionData || !currentSection?.progress) return null
 
-    const completedClasses = currentSection?.progress?.completedClasses || []
-    const completedExercises = currentSection?.progress?.completedExercises || []
-
+    const completed_classes = currentSection?.progress?.completed_classes || []
+    const completed_exercises = currentSection?.progress?.completed_exercises || []
     const totalClasses = sectionData.classes?.length || 0
     const totalExercises = sectionData.exercises?.length || 0
 
@@ -200,7 +196,7 @@ export const SectionPage = () => {
             {[...Array(totalClasses)].map((_, index) => (
               <div
                 key={index}
-                className={`h-2 flex-1 rounded-md ${index < completedClasses.length ? "bg-[#4558C8]" : "bg-gray-300"}`}
+                className={`h-2 flex-1 rounded-md ${index < completed_classes?.length ? "bg-[#4558C8]" : "bg-gray-300"}`}
               />
             ))}
           </div>
@@ -213,16 +209,16 @@ export const SectionPage = () => {
             )}
             <div className="flex gap-1">
               {sectionData.exercises.map((exercise, index) => {
-                const completed = completedExercises.find((e) => e.exerciseId === exercise._id)
+                const completed = completed_exercises.find((e) => e.exercise_id === exercise.id)
                 const isCompleted = !!completed
-                const isCorrect = completed?.isCorrect
-                const isCurrent = currentContent?._id === exercise._id
+                const isCorrect = completed?.is_correct
+                const isCurrent = currentContent?.id === exercise.id
 
                 return (
                   <div
                     key={index}
                     className={`h-2 flex-1 rounded-md ${
-                      isCompleted ? (isCorrect === false ? "bg-red-500" : "bg-green-500") : "bg-gray-300"
+                      isCompleted ? (isCorrect ? "bg-green-500" : "bg-red-500") : "bg-gray-300"
                     } ${isCurrent ? "animate-bounce" : ""}`}
                   />
                 )
@@ -240,7 +236,7 @@ export const SectionPage = () => {
         <div className="flex flex-col justify-center items-center h-[50vh]">
           <p className="text-red-500 mb-4">{error}</p>
           <button
-            onClick={() => navigate(`/learn/modules/${moduleId}/levels/${levelId}`)}
+            onClick={() => navigate(`/learn/modules/${moduleSlug}/levels/${levelId}`)}
             className="bg-[#4558C8] text-white px-6 py-2 rounded-lg"
           >
             Volver
@@ -301,7 +297,7 @@ export const SectionPage = () => {
         <div className="absolute left-4 top-4">
           <button
             className="flex items-center pl-4 z-10"
-            onClick={() => navigate(`/learn/modules/${moduleId}/levels/${levelId}`)}
+            onClick={() => navigate(`/learn/modules/${moduleSlug}/levels/${levelId}`)}
           >
             <img src={BackLogo || "/placeholder.svg"} alt="Back" className="h-4 mx-auto my-3" />
             <span className="ml-2">Salir</span>
@@ -309,7 +305,7 @@ export const SectionPage = () => {
         </div>
         <div className="max-w-md w-full justify-between mx-auto flex gap-2 items-center border-[#E4E7EC] border-2 rounded-xl py-2 px-2 sm:px-6">
           <div className="flex gap-2">
-            {courseImage[moduleId]?.image}
+            {courseImage[moduleSlug]?.image}
             <span className="font-sans text-lg font-semibold">Sección {localStorage.getItem("sectionOrder")}</span>
           </div>
           {sectionData?.guide && <GuideViewer guide={sectionData.guide} icon text="Ver guía" />}
