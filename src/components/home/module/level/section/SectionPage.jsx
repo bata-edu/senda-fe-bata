@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { useDispatch, useSelector } from "react-redux"
 import {
-  advanceProgress,
+  completeSection,
   completeClass,
   completeExercise,
   fetchUserSectionProgress,
@@ -134,7 +134,7 @@ export const SectionPage = () => {
   const handleCompleteContent = async () => {
     if (contentType === "section-completed") {
       try {
-        await dispatch(advanceProgress({progressId: progress[moduleSlug].id, sectionId})).unwrap()
+        await dispatch(completeSection({progressId: progress[moduleSlug].id, sectionId})).unwrap()
         dispatch(fetchUserProgress())
         navigate(`/learn/modules/${moduleSlug}/levels/${levelId}`)
       } catch (err) {

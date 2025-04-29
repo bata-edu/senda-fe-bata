@@ -40,7 +40,7 @@ export const MODULE_ENDPOINT = `${API_BASE_URL}/modules`;
 
 export const USER_ENDPOINT = `${API_BASE_URL}/user`;
 export const USER_DETAIL = `${USER_ENDPOINT}/detail`;
-export const USER_FREE_MODE = `${USER_ENDPOINT}/freeModeProgress`;
+export const USER_FREE_MODE = `/free_mode_progress`;
 export const RANK = `${USER_ENDPOINT}/rank-list`;
 
 export const USER_STUDENT = 'student';

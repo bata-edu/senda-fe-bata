@@ -89,7 +89,7 @@ const FreeCodeList = () => {
       sortBy: "updatedAt:desc",
       name: debouncedSearchTerm,
     };
-    await dispatch(fetchUserFreeModeProgress({ query }));
+    await dispatch(fetchUserFreeModeProgress({ query })).unwrap();
 
     setLoading(false);
   };
@@ -180,7 +180,7 @@ const FreeCodeList = () => {
               </button>
             </div>
             <GenericTable
-              data={freeModeProgressList.results}
+              data={freeModeProgressList.data}
               columns={columns}
               actions={actions}
               minWidth={800}

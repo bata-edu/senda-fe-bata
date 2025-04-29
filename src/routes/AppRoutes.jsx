@@ -20,7 +20,6 @@ import LandingPage from "../pages/landing/LandingPage";
 import Profile from "../pages/student/ProfilePage";
 
 import FreeCodeList from "../pages/student/FreeCodeList";
-import TeacherAndStudentGuard from "../utils/guards/teacherAndStudentGuard";
 
 const AppRoutes = () => {
   useEffect(() => {

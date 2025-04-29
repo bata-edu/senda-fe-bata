@@ -134,11 +134,11 @@ export const completeExercise = createAsyncThunk(
   },
 )
 
-export const advanceProgress = createAsyncThunk(
-  "userProgress/advanceProgress",
-  async ({ moduleId, sectionId }, { rejectWithValue }) => {
+export const completeSection = createAsyncThunk(
+  "userProgress/completeSection",
+  async ({ progressId, sectionId }, { rejectWithValue }) => {
     try {
-      const response = await apiClient.post(`${USER_PROGRESS_ENDPOINT}/advance/${moduleId}/${sectionId}`)
+      const response = await apiClient.post(`${USER_PROGRESS_ENDPOINT}/complete-section/${progressId}/${sectionId}`)
       return response.data
     } catch (error) {
       return rejectWithValue(error.response.data)
@@ -409,16 +409,16 @@ const userProgressSlice = createSlice({
         state.loadingCurrentSection = false
       })
       // Advance progress
-      .addCase(advanceProgress.pending, (state) => {
+      .addCase(completeSection.pending, (state) => {
         state.loading = true
         state.error = null
       })
-      .addCase(advanceProgress.fulfilled, (state, action) => {
+      .addCase(completeSection.fulfilled, (state, action) => {
         state.currentProgress = action.payload
         state.sectionCompleted = false
         state.loading = false
       })
-      .addCase(advanceProgress.rejected, (state, action) => {
+      .addCase(completeSection.rejected, (state, action) => {
         state.error = action.payload
         state.loading = false
       })

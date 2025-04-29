@@ -13,7 +13,7 @@ export const fetchUserFreeModeProgress = createAsyncThunk(
     try {
       const queryString = query ? `?${buildQueryString(query)}` : '';
       const response = await apiClient.get(
-        `${USER_ENDPOINT}/freeModeProgress${queryString}`
+        `/free_mode_progress${queryString}`
       );
       return response.data;
     } catch (error) {
@@ -40,7 +40,7 @@ export const fetchUserFreeModeProgressById = createAsyncThunk(
   async ({ id }, { rejectWithValue }) => {
     try {
       const response = await apiClient.get(
-        `${USER_ENDPOINT}/freeModeProgress/${id}`
+        `free_mode_progress/${id}`
       );
       return response.data;
     } catch (error) {
@@ -54,7 +54,7 @@ export const updateUserFreeModeProgress = createAsyncThunk(
   async ({ code, id }, { rejectWithValue }) => {
     try {
       const response = await apiClient.patch(
-        `${USER_ENDPOINT}/freeModeProgress/${id}`,
+        `free_mode_progress/${id}`,
         code
       );
       return response.data;
@@ -71,7 +71,7 @@ export const createUserFreeModeProgress = createAsyncThunk(
   async ({ body }, { rejectWithValue }) => {
     try {
       const response = await apiClient.post(
-        `${USER_ENDPOINT}/freeModeProgress`,
+        `free_mode_progress`,
         body
       );
       return response.data;
