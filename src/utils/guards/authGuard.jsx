@@ -1,34 +1,44 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useSelector, useDispatch } from "react-redux"
 import { checkAuth } from "../../features/auth/authSlice"
-import { useNavigate, useLocation } from "react-router-dom"
+import { useNavigate, useLocation } from "react-router-dom";
+import { LoadingFullScreen } from "../../pages/LoadingPage";
 
 export default function AuthGuard({ children }) {
   const dispatch = useDispatch()
-  const { isAuthenticated } = useSelector((state) => state.auth)
-  // const [isChecking, setIsChecking] = useState(true)
-  const navigate = useNavigate()
-  const location = useLocation()
+  const { isAuthenticated, user } = useSelector((state) => state.auth)
+  const [isChecking, setIsChecking] = useState(true)
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
-    if (isAuthenticated) return;
-    const verifyAuthAndRedirect = async () => {
-      await dispatch(checkAuth()).unwrap();
-      console.log("Checking auth...")
+    const checkAuthentication = async () => {
+      dispatch(checkAuth())
+      setIsChecking(false)
     }
-    verifyAuthAndRedirect()
 
-    const publicRoutes = ["/", "/login"]
-    const isPublic = publicRoutes.includes(location.pathname)
-    if (!isAuthenticated && !isPublic) {
+    checkAuthentication()
+  }, [dispatch])
+
+  useEffect(() => {
+    if (isChecking) return;
+    const publicRoutes = ["/login", "/"]
+    const isPublicRoute = publicRoutes.includes(location.pathname)
+    if (!isAuthenticated && !isPublicRoute) {
       navigate("/login")
-      return;
+    } else if (isAuthenticated && location.pathname === "/login") {
+      navigate("/learn/modules")
     }
-  }, [dispatch, isAuthenticated, location.pathname, navigate])
+  }, [isAuthenticated, user, location.pathname, navigate, isChecking])
 
-  if (!isAuthenticated) return;
+  // Mostrar un indicador de carga mientras se verifica la autenticación
+  if (isChecking) {
+    return (
+      <LoadingFullScreen/>
+    )
+  }
+
   return <>{children}</>
-
 }

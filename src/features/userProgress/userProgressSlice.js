@@ -9,84 +9,56 @@ import {
 import apiClient from "../../utils/interceptors/authInterceptor"
 
 // Core thunks
-export const fetchUserProgress = createAsyncThunk(
-  "userProgress/fetchUserProgress",
-  async (_, { rejectWithValue, getState }) => {
-    try {
-      // Check if progress is already loaded
-      const state = getState()
-      if (state.userProgress.progress) {
-        return state.userProgress.progress
-      }
-
-      const response = await apiClient.get(`${USER_PROGRESS_ENDPOINT}`)
-      return response.data
-    } catch (error) {
-      return rejectWithValue(error.response.data)
-    }
-  },
-)
-
+export const fetchUserProgress = createAsyncThunk("userProgress/fetchUserProgress", async (_, { rejectWithValue }) => {
+  try {
+    const response = await apiClient.get(`${USER_PROGRESS_ENDPOINT}`)
+    return response.data
+  } catch (error) {
+    return rejectWithValue(error.response.data)
+  }
+})
+// Core thunks
 export const fetchUserModuleProgress = createAsyncThunk(
-  "userProgress/fetchUserModuleProgress",
-  async ({ moduleId, moduleSlug }, { rejectWithValue, getState }) => {
-    try {
-      // Check if module progress is already loaded
-      const state = getState()
-      if (state.userProgress.progress && state.userProgress.progress[moduleSlug]) {
-        return { moduleId, moduleSlug, data: state.userProgress.progress[moduleSlug] }
-      }
-
-      const response = await apiClient.get(`${USER_PROGRESS_ENDPOINT}/${moduleId}`)
-      return { moduleId, moduleSlug, data: response.data }
-    } catch (error) {
-      return rejectWithValue(error.response.data)
-    }
-  },
-)
+  "userProgress/fetchUserModuleProgress", async (moduleId, { rejectWithValue, dispatch }) => {
+  try {
+    const response = await apiClient.get(`${USER_PROGRESS_ENDPOINT}/${moduleId}`)
+    return {moduleId, data:response.data}
+  } catch (error) {
+    return rejectWithValue(error.response.data)
+  }
+})
 
 export const fetchUserSectionProgress = createAsyncThunk(
   "userProgress/fetchUserSectionProgress",
-  async ({ moduleSlug, sectionId }, { rejectWithValue, getState }) => {
+  async ({ courseId, levelId, sectionId }, { rejectWithValue }) => {
     try {
-      // Check if section progress is already in state
-      const state = getState()
-      const currentSection = state.userProgress.currentSection
-      const currentModule = state.userProgress.progress[moduleSlug]
-      
-      if (
-        currentSection &&
-        currentSection.sectionId === sectionId
-      ) {
-        return currentSection
-      }
-
-      const response = await apiClient.get(`${USER_PROGRESS_ENDPOINT}/${currentModule.id}/${sectionId}`)
-      return { sectionId, progress: response.data }
+      const response = await apiClient.get(`${USER_PROGRESS_ENDPOINT}/${courseId}/${levelId}/${sectionId}`)
+      return { moduleId: courseId, levelId, sectionId, progress: response.data }
     } catch (error) {
       return rejectWithValue(error.response.data)
     }
   },
 )
 
-export const startCourse = createAsyncThunk("userProgress/startCourse", async (moduleId, { rejectWithValue }) => {
+export const startCourse = createAsyncThunk("userProgress/startCourse", async (courseId, { rejectWithValue }) => {
   try {
-    const response = await apiClient.post(`${START_COURSE_ENDPOINT}/${moduleId}`)
+    const response = await apiClient.post(`${START_COURSE_ENDPOINT}/${courseId}`)
     return response.data
   } catch (error) {
     return rejectWithValue(error.response.data)
   }
 })
 
+// Content completion thunks
 export const completeClass = createAsyncThunk(
   "userProgress/completeClass",
-  async ({ progressId, classId }, { rejectWithValue, dispatch }) => {
+  async ({ moduleId, classId }, { rejectWithValue, dispatch }) => {
     try {
       // Optimistically update the state before API call
       dispatch(optimisticallyCompleteClass(classId))
 
       // Make the API call
-      await apiClient.post(`${COMPLETE_CLASS_ENDPOINT}/${progressId}/${classId}`)
+      await apiClient.post(`${COMPLETE_CLASS_ENDPOINT}/${moduleId}/${classId}`)
       return classId
     } catch (error) {
       // If API call fails, we need to revert the optimistic update
@@ -96,19 +68,52 @@ export const completeClass = createAsyncThunk(
   },
 )
 
+// Update the completeExercise thunk to correctly check exercise correctness
 export const completeExercise = createAsyncThunk(
   "userProgress/completeExercise",
-  async ({ progressId, exerciseId, userAnswers }, { rejectWithValue, dispatch, getState }) => {
+  async ({ moduleId, exerciseId, body }, { rejectWithValue, dispatch, getState }) => {
     try {
       // Get the current section and exercise data to check correctness
       const state = getState()
-      const exercise = state.userProgress.nextContentToShow
+      const currentSection = state.userProgress.currentSection
+      const moduleData = state.modules.modules[moduleId]
+      const levelId = currentSection.levelId
+      const sectionId = currentSection.sectionId
+
+      // Find the exercise in the section data
+      const sectionData = moduleData.levels[levelId].sections[sectionId]
+      const exercise = sectionData.exercises.find((ex) => ex._id === exerciseId)
+
+      // Determine if the answer is correct by comparing with the exercise answers
       let isCorrect = false
+
       if (exercise) {
+        const userAnswers = body.userAnswers
         const correctAnswers = exercise.answers || []
-        isCorrect =
-          userAnswers.length === correctAnswers.length &&
-          userAnswers.every((answer, index) => answer === correctAnswers[index])
+
+        // Check correctness based on exercise template
+        if (exercise.template === 1 || exercise.template === 2) {
+          // drag and drop or multiple choice
+          // For these types, we need to check if the user selected the correct answers in the correct order
+          if (Array.isArray(userAnswers)) {
+            isCorrect =
+              userAnswers.length === correctAnswers.length &&
+              userAnswers.every((answer, index) => answer === correctAnswers[index])
+          } else {
+            // Single answer case
+            isCorrect = userAnswers === correctAnswers[0]
+          }
+        } else if (exercise.template === 3) {
+          // fill blank
+          // For fill blank, check if all blanks are filled correctly
+          if (Array.isArray(userAnswers)) {
+            isCorrect =
+              userAnswers.length === correctAnswers.length &&
+              userAnswers.every((option) => correctAnswers.includes(option))
+          } else {
+            isCorrect = correctAnswers.includes(userAnswers)
+          }
+        }
       }
 
       // Optimistically update the state before API call
@@ -120,7 +125,7 @@ export const completeExercise = createAsyncThunk(
       )
 
       // Make the API call
-      await apiClient.post(`${COMPLETE_EXERCISE_ENDPOINT}/${progressId}/${exerciseId}`, {is_correct: isCorrect})
+      await apiClient.post(`${COMPLETE_EXERCISE_ENDPOINT}/${moduleId}/${exerciseId}`, body)
 
       return {
         exerciseId,
@@ -129,16 +134,16 @@ export const completeExercise = createAsyncThunk(
     } catch (error) {
       // If API call fails, we need to revert the optimistic update
       dispatch(revertOptimisticExerciseCompletion(exerciseId))
-      return rejectWithValue(error)
+      return rejectWithValue(error.response.data)
     }
   },
 )
 
 export const advanceProgress = createAsyncThunk(
   "userProgress/advanceProgress",
-  async ({ moduleId, sectionId }, { rejectWithValue }) => {
+  async ({progressId, sectionId}, { rejectWithValue }) => {
     try {
-      const response = await apiClient.post(`${USER_PROGRESS_ENDPOINT}/advance/${moduleId}/${sectionId}`)
+      const response = await apiClient.post(`${USER_PROGRESS_ENDPOINT}/advance/${progressId}/${sectionId}`)
       return response.data
     } catch (error) {
       return rejectWithValue(error.response.data)
@@ -161,14 +166,12 @@ const initialState = {
   reviewingIncorrectExercises: false,
   // Track if we've completed all exercises at least once
   allExercisesAttempted: false,
-  loading: false,
 }
 
 const userProgressSlice = createSlice({
   name: "userProgress",
   initialState,
   reducers: {
-    // Existing reducers remain the same
     clearSectionProgress: (state) => {
       state.currentSection = null
       state.nextContentToShow = null
@@ -183,8 +186,8 @@ const userProgressSlice = createSlice({
       const classId = action.payload
 
       // Add to completed classes if not already there
-      if (!state.currentSection.progress.completed_classes.includes(classId)) {
-        state.currentSection.progress.completed_classes.push(classId)
+      if (!state.currentSection.progress.completedClasses.includes(classId)) {
+        state.currentSection.progress.completedClasses.push(classId)
       }
 
       // Add to pending completions to track API calls
@@ -195,7 +198,7 @@ const userProgressSlice = createSlice({
       const classId = action.payload
 
       // Remove from completed classes
-      state.currentSection.progress.completed_classes = state.currentSection.progress.completed_classes.filter(
+      state.currentSection.progress.completedClasses = state.currentSection.progress.completedClasses.filter(
         (id) => id !== classId,
       )
 
@@ -207,20 +210,20 @@ const userProgressSlice = createSlice({
       const { exerciseId, isCorrect } = action.payload
 
       // Check if exercise is already completed
-      const existingIndex = state.currentSection.progress.completed_exercises.findIndex(
-        (ex) => ex.exercise_id === exerciseId,
+      const existingIndex = state.currentSection.progress.completedExercises.findIndex(
+        (ex) => ex.exerciseId === exerciseId,
       )
 
       if (existingIndex >= 0) {
         // Update existing exercise completion
-        state.currentSection.progress.completed_exercises[existingIndex] = {
-          exercise_id: exerciseId,
+        state.currentSection.progress.completedExercises[existingIndex] = {
+          exerciseId,
           isCorrect,
         }
       } else {
         // Add new exercise completion
-        state.currentSection.progress.completed_exercises.push({
-          exercise_id: exerciseId,
+        state.currentSection.progress.completedExercises.push({
+          exerciseId,
           isCorrect,
         })
       }
@@ -233,7 +236,7 @@ const userProgressSlice = createSlice({
       const exerciseId = action.payload
 
       // Remove from completed exercises
-      state.currentSection.progress.completed_exercises = state.currentSection.progress.completed_exercises.filter(
+      state.currentSection.progress.completedExercises = state.currentSection.progress.completedExercises.filter(
         (ex) => ex.exerciseId !== exerciseId,
       )
 
@@ -244,13 +247,14 @@ const userProgressSlice = createSlice({
     // Determine next content based on current progress
     determineNextContent: (state, action) => {
       const { sectionData } = action.payload
+
       if (!state.currentSection || !sectionData) return
-      const completed_classes = state.currentSection.progress.completed_classes
-      const completed_exercises = state.currentSection.progress.completed_exercises
+      const completedClasses = state.currentSection.progress.completedClasses
+      const completedExercises = state.currentSection.progress.completedExercises
 
       // First, check if there are any classes left to complete
-      if (sectionData.classes.length > completed_classes.length) {
-        const nextClassIndex = completed_classes.length
+      if (sectionData.classes.length > completedClasses.length) {
+        const nextClassIndex = completedClasses.length
         state.nextContentToShow = sectionData.classes[nextClassIndex]
         state.contentType = "class"
         state.reviewingIncorrectExercises = false
@@ -259,8 +263,8 @@ const userProgressSlice = createSlice({
       }
 
       // If all classes are completed, check if we need to go through exercises
-      const allExerciseIds = sectionData.exercises.map((ex) => ex.id)
-      const completedExerciseIds = completed_exercises.map((ex) => ex.exercise_id)
+      const allExerciseIds = sectionData.exercises.map((ex) => ex._id)
+      const completedExerciseIds = completedExercises.map((ex) => ex.exerciseId)
 
       // Check if all exercises have been attempted at least once
       const allExercisesAttempted = allExerciseIds.every((id) => completedExerciseIds.includes(id))
@@ -268,14 +272,9 @@ const userProgressSlice = createSlice({
 
       // If we haven't attempted all exercises yet, go through them in order
       if (!allExercisesAttempted) {
-        const currentOrder = state.nextContentToShow?.order ?? -1
-      
-        const nextExercise = sectionData.exercises.find(
-          (ex) =>
-            !completedExerciseIds.includes(ex.id) &&
-            ex.order > currentOrder
-        )
-      
+        // Find the first exercise that hasn't been completed yet
+        const nextExercise = sectionData.exercises.find((ex) => !completedExerciseIds.includes(ex._id))
+
         if (nextExercise) {
           state.nextContentToShow = nextExercise
           state.contentType = "exercise"
@@ -283,25 +282,25 @@ const userProgressSlice = createSlice({
           return
         }
       }
-      
 
       // If all exercises have been attempted, check for incorrect ones
       const incorrectExercises = sectionData.exercises.filter((ex) => {
-        const completed = completed_exercises.find((done) => done.exercise_id === ex.id)
+        const completed = completedExercises.find((done) => done.exerciseId === ex._id)
         return completed && !completed.isCorrect
       })
 
       // If there are incorrect exercises, go through them
       if (incorrectExercises.length > 0) {
         state.reviewingIncorrectExercises = true
-
+      
         // Buscar el índice del último incorrecto mostrado (si existe)
-        const lastIncorrectId = state.nextContentToShow?.id
-        const currentIndex = incorrectExercises.findIndex((ex) => ex.id === lastIncorrectId)
-
+        console.log(state.nextContentToShow)
+        const lastIncorrectId = state.nextContentToShow?._id
+        const currentIndex = incorrectExercises.findIndex((ex) => ex._id === lastIncorrectId)
+      
         // Mostrar el siguiente incorrecto en la lista (si hay uno)
         const nextIncorrect = incorrectExercises[currentIndex + 1] || incorrectExercises[0]
-
+      
         state.nextContentToShow = nextIncorrect
         state.contentType = "exercise"
         return
@@ -318,32 +317,23 @@ const userProgressSlice = createSlice({
     builder
       // Fetch all progress
       .addCase(fetchUserProgress.pending, (state) => {
-        state.loading = true
         state.error = null
       })
       .addCase(fetchUserProgress.fulfilled, (state, action) => {
         state.progress = action.payload
-        state.loading = false
       })
       .addCase(fetchUserProgress.rejected, (state, action) => {
         state.error = action.payload
-        state.loading = false
-      })
+      })      
       .addCase(fetchUserModuleProgress.pending, (state) => {
-        state.loading = true
         state.error = null
       })
       .addCase(fetchUserModuleProgress.fulfilled, (state, action) => {
-        const { data, moduleSlug } = action.payload
-        if (!state.progress) {
-          state.progress = {}
-        }
-        state.progress[moduleSlug] = data
-        state.loading = false
+        const { data, moduleId} = action.payload
+        state.progress[moduleId] = data
       })
       .addCase(fetchUserModuleProgress.rejected, (state, action) => {
         state.error = action.payload
-        state.loading = false
       })
       // Fetch user section progress
       .addCase(fetchUserSectionProgress.pending, (state) => {
@@ -366,16 +356,13 @@ const userProgressSlice = createSlice({
       })
       // Start course
       .addCase(startCourse.pending, (state) => {
-        state.loading = true
         state.error = null
       })
       .addCase(startCourse.fulfilled, (state, action) => {
         state.progress = action.payload
-        state.loading = false
       })
       .addCase(startCourse.rejected, (state, action) => {
         state.error = action.payload
-        state.loading = false
       })
       // Complete class - now just confirms the optimistic update
       .addCase(completeClass.pending, (state) => {
@@ -407,17 +394,14 @@ const userProgressSlice = createSlice({
       })
       // Advance progress
       .addCase(advanceProgress.pending, (state) => {
-        state.loading = true
         state.error = null
       })
       .addCase(advanceProgress.fulfilled, (state, action) => {
         state.currentProgress = action.payload
         state.sectionCompleted = false
-        state.loading = false
       })
       .addCase(advanceProgress.rejected, (state, action) => {
         state.error = action.payload
-        state.loading = false
       })
       // Reset state
       .addCase(RESET_STATE, () => initialState)
@@ -432,7 +416,7 @@ export const selectCurrentSection = (state) => state.userProgress.currentSection
 export const selectNextContent = (state) => state.userProgress.nextContentToShow
 export const selectContentType = (state) => state.userProgress.contentType
 export const selectSectionCompleted = (state) => state.userProgress.sectionCompleted
-export const selectIsLoading = (state) => state.userProgress.loadingCurrentSection || state.userProgress.loading
+export const selectIsLoading = (state) => state.userProgress.loadingCurrentSection
 export const selectReviewingIncorrectExercises = (state) => state.userProgress.reviewingIncorrectExercises
 export const selectAllExercisesAttempted = (state) => state.userProgress.allExercisesAttempted
 
@@ -446,3 +430,4 @@ export const {
 } = userProgressSlice.actions
 
 export default userProgressSlice.reducer
+

@@ -1,47 +1,39 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
   fetchLevels,
-  fetchModule,
+  fetchModules,
   selectLevels,
-  selectModuleLoading,
-  selectModuleError,
-  selectModuleId,
 } from "../../../features/module/moduleSlice";
-import {
-  fetchUserProgress,
-  fetchUserModuleProgress,
-  selectProgress
-} from "../../../features/userProgress/userProgressSlice";
 import LoadingPage from "../../../pages/LoadingPage";
 
 import ArrowRight from "../../../assets/icons/arrowRight";
 import { motion } from "framer-motion";
+// import StreaksNDiamonds from "../../common/Streaks&Diamons/Streaks&Diamons";
 import Html from "../../../assets/icons/html.svg";
 import Python from "../../../assets/icons/python.svg";
 import Js from "../../../assets/icons/js.svg";
 import Css from "../../../assets/icons/css.svg";
 import ArrowBack from "../../../assets/icons/arrowBack.svg";
 import { useParams } from 'react-router-dom';
+import { fetchUserModuleProgress, fetchUserProgress } from "../../../features/userProgress/userProgressSlice";
 
 export const LevelList = () => {
-  const { moduleSlug } = useParams(); 
-  const navigate = useNavigate();
   const dispatch = useDispatch();
-  
-  const progress = useSelector(selectProgress);
-  const levels = useSelector((state) => selectLevels(state, moduleSlug));
-  const moduleLoading = useSelector(selectModuleLoading);
-  const moduleError = useSelector(selectModuleError);
-  const moduleId = useSelector((state) => selectModuleId(state, moduleSlug))
-
+  const navigate = useNavigate();
+  const { moduleId } = useParams();
+  const levels = useSelector((state) => selectLevels(state, moduleId));
+  const { progress } = useSelector((state) => state.userProgress);
+  const [loading, setLoading] = useState(true);
   const [currentProgress, setCurrentProgress] = useState(null);
-  const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const modulesLoaded = useRef(false);
+  const progressLoaded = useRef(false);
+  const levelsLoaded = useRef(false);
 
   const courseImage = {
-    "python": {
-      image: <img src={Python || "/placeholder.svg"} alt="Python logo" />,
+    "671909eecc62ee9e8f06c578": {
+      image: <img src={Python} alt="Html logo" />,
       course: "Python",
       backgroundCurrent: "#4A3167",
       backgroundDone: "#9B4CD1",
@@ -52,8 +44,8 @@ export const LevelList = () => {
       barCurrent: "#6F3396",
       barUnfilled: "#E1B9FF",
     },
-    "javascript": {
-      image: <img src={Js || "/placeholder.svg"} alt="JS logo" />,
+    "67190a2ecc62ee9e8f06c57b": {
+      image: <img src={Js} alt="JS logo" />,
       course: "JavaScript",
       backgroundCurrent: "#C6E635",
       backgroundDone: "#EBF99D",
@@ -64,8 +56,20 @@ export const LevelList = () => {
       barCurrent: "#627C0F",
       barUnfilled: "#EBF99D",
     },
-    "html": {
-      image: <img src={Html || "/placeholder.svg"} alt="Html logo" />,
+    "676ee8640324ad0b3cda0bc6": {
+      image: <img src={Html} alt="Html logo" />,
+      course: "HTML V2",
+      backgroundCurrent: "#EE5E37",
+      backgroundDone: "#F59D7C",
+      borderCurrent: "#B72017",
+      borderDone: "#EB4624",
+      borderDisable: "#C8C8C8",
+      barDone: "#EB4624",
+      barCurrent: "#B72017",
+      barUnfilled: "#F59D7C",
+    },
+    "66fc2fb14c227e973f81b4d1": {
+      image: <img src={Html} alt="Html logo" />,
       course: "HTML",
       backgroundCurrent: "#EE5E37",
       backgroundDone: "#F59D7C",
@@ -76,9 +80,9 @@ export const LevelList = () => {
       barCurrent: "#B72017",
       barUnfilled: "#F59D7C",
     },
-    "css": {
-      image: <img src={Css || "/placeholder.svg"} alt="CSS logo" />,
-      course: "CSS",
+    "6749b2b80a8216bdad69e17b": {
+      image: <img src={Css} alt="Html logo" />,
+      course: "Css",
       backgroundCurrent: "#3D48B8",
       backgroundDone: "#3D48B8",
       borderCurrent: "#7B97DF",
@@ -89,144 +93,132 @@ export const LevelList = () => {
       barUnfilled: "#5B75D6",
     },
   };
-
   useEffect(() => {
-    if (!moduleSlug) return;    
-    const loadInitialData = async () => {
+    const fetchData = async () => {
       try {
-        await dispatch(fetchModule(moduleSlug)).unwrap();
-        await dispatch(fetchLevels(moduleSlug)).unwrap();
-        if (!progress) {
+        if (!modulesLoaded.current) {
+          await dispatch(fetchModules()).unwrap();
+          modulesLoaded.current = true;
+        }
+
+        if (!levelsLoaded.current) {
+          await dispatch(fetchLevels(moduleId)).unwrap();
+          levelsLoaded.current = true;
+        }
+  
+        if (!progressLoaded.current) {
           await dispatch(fetchUserProgress()).unwrap();
+          progressLoaded.current = true;
         }
-        if (progress && !progress[moduleSlug] && moduleId) {
-          await dispatch(fetchUserModuleProgress({ moduleId, moduleSlug })).unwrap()
+  
+        if (progress && !progress[moduleId]) {
+          await dispatch(fetchUserModuleProgress(moduleId)).unwrap(); 
+          return
         }
-        setIsInitialLoad(false);
+        const setLoadedState = (currentLevelIndex, levelProgress) => {
+          setCurrentProgress({
+            currentLevelIndex,
+            levelProgress
+          });   
+          setLoading(false);
+        }
+        if (levels && progress) {
+          const moduleProgress = progress[moduleId];
+          const currentLevel = levels[moduleProgress.currentLevel]
+          const currentLevelIndex =  currentLevel.order -1
+          const levelProgress = moduleProgress.levelProgress
+          setLoadedState(currentLevelIndex, levelProgress)
+        }
       } catch (error) {
-        console.error("Error loading initial data:", error);
-        setIsInitialLoad(false);
+        console.error("Error fetching data", error);
+        setLoading(false);
       }
     };
-    
-    loadInitialData();
-  }, [moduleSlug, dispatch, progress, moduleId]);
+    if (!moduleId) return;
+    fetchData();
+  }, [moduleId, dispatch, levels, progress]);
 
-  // This effect updates the current progress when data changes
   useEffect(() => {
-    if (!moduleSlug || !levels || !progress || !progress[moduleSlug]) return;
-    
-    try {
-      const moduleProgress = progress[moduleSlug];
-      const currentLevel = levels[moduleProgress.current_level_id];
-      
-      if (currentLevel) {
-        const currentLevelIndex = currentLevel.order - 1;
-        const levelProgress = 0;
-        
-        setCurrentProgress({
-          currentLevelIndex,
-          levelProgress
-        });
-      }
-    } catch (error) {
-      console.error("Error setting progress:", error);
-    }
-  }, [moduleSlug, levels, progress]);
+    modulesLoaded.current = false;
+    progressLoaded.current = false;
+    levelsLoaded.current = false;
+    setLoading(true);
+  }, [moduleId]);
 
-  // Reset state when module changes
-  useEffect(() => {
-    setIsInitialLoad(true);
-    setCurrentProgress(null);
-  }, [moduleSlug]);
 
   const handleLevelClick = (levelId) => {
-    navigate(`/learn/modules/${moduleSlug}/levels/${levelId}`);
+    navigate(`/learn/modules/${moduleId}/levels/${levelId}`);
   };
 
-  // Show loading state during initial load
-  if (isInitialLoad || moduleLoading) {
-    return <LoadingPage message={"Cargando niveles..."} />;
-  }
-
-  // Show error state
-  if (moduleError) {
-    return <div className="text-center p-8">Error: {moduleError.message || "Ocurrió un error al cargar los datos"}</div>;
-  }
-
-  // Show loading state if we have levels but no progress yet
-  // if (!currentProgress?) {
-  //   return <LoadingPage message={"Cargando progreso..."} />;
-  // }
-
+  if (loading || !levels) return(<LoadingPage message={"Cargando niveles..."}/>)
+  if (!currentProgress) return(<LoadingPage message={"Cargando progreso..."}/>)
   return (
     <div className="w-full max-w-5xl px-4 mx-auto">
-      {moduleSlug && levels ? (
+      {moduleId && levels ? (
         <>
           <div className="flex max-w-md">
             <div
               style={{
-                background: courseImage[moduleSlug].backgroundCurrent,
-                border: `2px solid ${courseImage[moduleSlug].backgroundDone}`,
+                background: courseImage[moduleId].backgroundCurrent,
+                border: `2px solid ${courseImage[moduleId].backgroundDone}`,
               }}
-              className={`flex flex-col py-3 px-6 mt-4 rounded-xl border-2 border-[#F9BEA8] w-full`}
+              className={`flex flex-col py-3 px-6  mt-4 rounded-xl border-2 border-[#F9BEA8] w-full`}
             >
-              <button
-                onClick={() => navigate(`/learn/modules`)}
-                className="flex items-center"
-              >
-                <img src={ArrowBack || "/placeholder.svg"} alt="arrow back" />
-                <span
-                  className={`text-white text-lg font-sans ml-2 font-medium`}
+                <button
+                  onClick={() => navigate(`/learn/modules`)}
+                  className="flex items-center"
                 >
-                  Volver
-                </span>
-              </button>
-              <div className="flex mt-3">
-                {courseImage[moduleSlug]?.image}
-                <span className="ml-2 text-white font-sans text-xl font-medium">
-                  {courseImage[moduleSlug]?.course}
-                </span>
+                  <img src={ArrowBack} alt="arrow back" />
+                  <span
+                    className={`text-white  text-lg font-sans ml-2 font-medium`}
+                  >
+                    Volver
+                  </span>
+                </button>
+                <div className="flex mt-3">
+                  {courseImage[moduleId]?.image}
+                  <span className="ml-2 text-white font-sans text-xl font-medium">
+                    {courseImage[moduleId]?.course}
+                  </span>
+                </div>
               </div>
-            </div>
             {/* <StreaksNDiamonds /> */}
           </div>
           <div className="relative w-full mt-32">
             {Object.values(levels)?.map((level, index) => {
               const progressBarColor =
-                index < currentProgress?.currentLevelIndex
-                  ? courseImage[moduleSlug]?.barDone
-                  : index === currentProgress?.currentLevelIndex
-                  ? courseImage[moduleSlug]?.barCurrent
+                index < currentProgress.currentLevelIndex
+                  ? courseImage[moduleId]?.barDone
+                  : index === currentProgress.currentLevelIndex
+                  ? courseImage[moduleId]?.barCurrent
                   : "#DDDDDD";
               const remainingProgressBarColor =
-                index < currentProgress?.currentLevelIndex
-                  ? courseImage[moduleSlug]?.barDone
-                  : index === currentProgress?.currentLevelIndex
-                  ? courseImage[moduleSlug]?.barUnfilled
+                index < currentProgress.currentLevelIndex
+                  ? courseImage[moduleId]?.barDone
+                  : index === currentProgress.currentLevelIndex
+                  ? courseImage[moduleId]?.barUnfilled
                   : "#DDDDDD";
               return (
                 <motion.div
-                  onClick={() => handleLevelClick(level.id)}
-                  key={level.id}
+                  onClick={() => handleLevelClick(level._id)}
+                  key={level._id}
                   className={`absolute w-full rounded-[50px] h-[400px] overflow-hidden flex items-start justify-start py-10 px-12 ${
-                    index > currentProgress?.currentLevelIndex ? "pointer-events-none" : ""
-                  }`}
-                  style={{
+                    index > currentProgress.currentLevelIndex ? "pointer-events-none" : ""
+                  }`}                  style={{
                     top: `${index * 250}px`,
                     zIndex: index,
                     border: `2px solid ${
-                      index < currentProgress?.currentLevelIndex
-                        ? courseImage[moduleSlug].borderDone
-                        : index === currentProgress?.currentLevelIndex
-                        ? courseImage[moduleSlug].borderCurrent
-                        : courseImage[moduleSlug].borderDisable
+                      index < currentProgress.currentLevelIndex
+                        ? courseImage[moduleId].borderDone
+                        : index === currentProgress.currentLevelIndex
+                        ? courseImage[moduleId].borderCurrent
+                        : courseImage[moduleId].borderDisable
                     }`,
                     backgroundColor:
-                      index < currentProgress?.currentLevelIndex
-                        ? courseImage[moduleSlug].backgroundDone
-                        : index === currentProgress?.currentLevelIndex
-                        ? courseImage[moduleSlug].backgroundCurrent
+                      index < currentProgress.currentLevelIndex
+                        ? courseImage[moduleId].backgroundDone
+                        : index === currentProgress.currentLevelIndex
+                        ? courseImage[moduleId].backgroundCurrent
                         : "white",
                   }}
                   whileHover={{
@@ -237,7 +229,7 @@ export const LevelList = () => {
                   <div className="flex flex-col justify-start">
                     <span
                       className={`font-mono text-5xl ${
-                        index <= currentProgress?.currentLevelIndex
+                        index <= currentProgress.currentLevelIndex
                           ? "text-white"
                           : "text-[#ADADAD]"
                       }`}
@@ -247,7 +239,7 @@ export const LevelList = () => {
                     <div className="mt-2">
                       <p
                         className={`font-mono text-2xl ${
-                          index <= currentProgress?.currentLevelIndex
+                          index <= currentProgress.currentLevelIndex
                             ? "text-white"
                             : "text-[#ADADAD]"
                         }`}
@@ -258,19 +250,19 @@ export const LevelList = () => {
                     </div>
                     <div className="flex flex-row-reverse items-center">
                       <span className="font-mono text-3xl text-white ml-12">
-                        {index < currentProgress?.currentLevelIndex
+                        {index < currentProgress.currentLevelIndex
                           ? "100%"
-                          : index === currentProgress?.currentLevelIndex
+                          : index === currentProgress.currentLevelIndex
                           ? currentProgress?.levelProgress.toFixed(2) + "%"
                           : "0%"}
                       </span>
                       <div
                         style={{
                           background:
-                            index < currentProgress?.currentLevelIndex
-                              ? courseImage[moduleSlug].barUnfilled
-                              : index === currentProgress?.currentLevelIndex
-                              ? courseImage[moduleSlug].barUnfilled
+                            index < currentProgress.currentLevelIndex
+                              ? courseImage[moduleId].barUnfilled
+                              : index === currentProgress.currentLevelIndex
+                              ? courseImage[moduleId].barUnfilled
                               : "#DDDDDD",
                         }}
                         className="w-full rounded-md h-4 "
@@ -286,16 +278,8 @@ export const LevelList = () => {
                           animate={{
                             background: `linear-gradient(
                       to right,
-                      ${progressBarColor} ${
-                              index < currentProgress?.currentLevelIndex
-                                ? 100
-                                : currentProgress?.levelProgress
-                            }%, 
-                      ${remainingProgressBarColor} ${
-                              index < currentProgress?.currentLevelIndex
-                                ? 100
-                                : currentProgress?.levelProgress
-                            }%
+                      ${progressBarColor} ${currentProgress?.levelProgress}%, 
+                      ${remainingProgressBarColor} ${currentProgress?.levelProgress}%
                     )`,
                           }}
                           transition={{ duration: 1 }}
