@@ -65,12 +65,14 @@ export const ModuleList = () => {
     };
   }, [dispatch]);
 
-  const handleModuleClick = (moduleId) => {
-    dispatch(clearLevels(moduleId));
-    navigate(`/learn/modules/${moduleId}`);
+  const handleModuleClick = (slug) => {
+    // dispatch(clearLevels(slug));
+    navigate(`/learn/modules/${slug}`);
   };
 
   if (!modules) return <LoadingPage message="Cargando módulos..." />;
+  const moduleList = Object.values(modules) 
+  if (!moduleList) return <LoadingPage message="Cargando módulos..." />;
   if (!progress) return <LoadingPage message="Cargando progreso..." />;
 
   return (
@@ -92,8 +94,8 @@ export const ModuleList = () => {
 
           return (
             <motion.div
-              onClick={() => handleModuleClick(module._id)}
-              key={module._id}
+              onClick={() => handleModuleClick(module.slug)}
+              key={module.id}
               className="absolute w-full cursor-pointer rounded-[50px] h-[300px] flex flex-col items-center justify-start py-10 px-6 sm:px-12"
               initial={{
                 background: `linear-gradient(to right, ${moduleColor} 0%, ${transparentModuleColor} 0%)`,
