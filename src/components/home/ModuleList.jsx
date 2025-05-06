@@ -123,15 +123,7 @@ export const ModuleList = () => {
               </div>
               <div className="flex justify-between w-full mt-4 gap-2">
                 <div className="flex gap-1 sm:gap-3">
-                  {["Label", "Label"].map((tag, i) => (
-                    <div
-                      key={i}
-                      className="border-2 rounded-full flex items-center px-4"
-                      style={{ borderColor: textColor, color: textColor }}
-                    >
-                      <span className="text-xl">{tag}</span>
-                    </div>
-                  ))}
+                      <span style={{ color: textColor }} className="text-xl">{module?.description}</span>
                 </div>
                 <div>
                   <ArrowRight color={textColor} />
