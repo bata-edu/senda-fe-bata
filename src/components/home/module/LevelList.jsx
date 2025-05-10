@@ -252,8 +252,7 @@ export const LevelList = () => {
                             : "text-[#ADADAD]"
                         }`}
                       >
-                        Lorem Ipsumes simplemente el texto de relleno de las
-                        imprentas.
+                        {level.description || ""}
                       </p>
                     </div>
                     <div className="flex flex-row-reverse items-center">
