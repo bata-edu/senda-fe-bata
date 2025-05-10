@@ -99,17 +99,16 @@ const EditorPage = () => {
   //     }
     // } else{
       const parseCode = (code) => {
-        const parsedCode = JSON.parse(code);
-        if(parsedCode.html){
-          const htmlDecoded = decodeHTML(parsedCode.html);
+        if(code.html){
+          const htmlDecoded = decodeHTML(code.html);
           setHtmlCode(htmlDecoded);
         }
-        if(parsedCode.css){
-          const cssDecoded = decodeHTML(parsedCode.css);
+        if(code.css){
+          const cssDecoded = decodeHTML(code.css);
           setCssCode(cssDecoded);
         }
-        if(parsedCode.javascript){
-          const jsDecoded = decodeHTML(parsedCode.javascript);
+        if(code.javascript){
+          const jsDecoded = decodeHTML(code.javascript);
           setJsCode(jsDecoded);
         }
       }

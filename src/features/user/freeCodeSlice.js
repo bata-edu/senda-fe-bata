@@ -53,10 +53,7 @@ export const updateUserFreeModeProgress = createAsyncThunk(
   "freeCode/updateUserFreeModeProgress",
   async ({ code, id }, { rejectWithValue }) => {
     try {
-      const response = await apiClient.patch(
-        `free_mode_progress/${id}`,
-        code
-      );
+      const response = await apiClient.patch(`free_mode_progress/${id}`,{ code });
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
