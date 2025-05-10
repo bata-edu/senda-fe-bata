@@ -259,7 +259,7 @@ export const LevelList = () => {
                             : "text-[#ADADAD]"
                         }`}
                       >
-                        {level.description || defaultLevelDescriptions[index]}
+                        {(level.description && level.description)  !== "" ? level.description : defaultLevelDescriptions[index]}
                       </p>
                     </div>
                     <div className="flex flex-row-reverse items-center">
