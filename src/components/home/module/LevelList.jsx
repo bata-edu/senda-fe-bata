@@ -144,6 +144,13 @@ export const LevelList = () => {
     navigate(`/learn/modules/${moduleSlug}/levels/${levelId}`);
   };
 
+  const defaultLevelDescriptions = {
+    1: "Aquí vas a aprender las bases del lenguaje, paso a paso, sin necesidad de tener experiencia previa.",
+    2: "Empiezas a combinar conceptos y resolver desafíos un poco más complejos.",
+    3: "Tu código se vuelve más sólido: resuelves problemas reales como un profesional.",
+    4:" Dominas el lenguaje. Enfrentas desafíos exigentes y proyectos de nivel profesional."
+  }
+
   // Show loading state during initial load
   if (isInitialLoad || moduleLoading) {
     return <LoadingPage message={"Cargando niveles..."} />;
@@ -252,7 +259,7 @@ export const LevelList = () => {
                             : "text-[#ADADAD]"
                         }`}
                       >
-                        {level.description || ""}
+                        {level.description || defaultLevelDescriptions[index]}
                       </p>
                     </div>
                     <div className="flex flex-row-reverse items-center">
