@@ -210,7 +210,7 @@ export const LevelList = () => {
                   onClick={() => handleLevelClick(level.id)}
                   key={level.id}
                   className={`absolute w-full rounded-[50px] h-[400px] overflow-hidden flex items-start justify-start py-10 px-12 ${
-                    index > currentProgress?.currentLevelIndex ? "pointer-events-none" : ""
+                    index > currentProgress?.currentLevelIndex ? "pointer-events-none" : "cursor-pointer"
                   }`}
                   style={{
                     top: `${index * 250}px`,

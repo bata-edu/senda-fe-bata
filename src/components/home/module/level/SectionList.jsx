@@ -259,7 +259,7 @@ export const SectionList = () => {
             <div
               onClick={() => handleSectionClick(section.id)}
               key={section.id}
-              className={`${className} ${sectionIndex > currentSectionIndex ? "pointer-events-none" : ""}`}
+              className={`${className} ${sectionIndex > currentSectionIndex ? "pointer-events-none" : "cursor-pointer"}`}
               style={{ top: `calc(${top} + ${rowOffset}px)` }}
             >
               {extra}
