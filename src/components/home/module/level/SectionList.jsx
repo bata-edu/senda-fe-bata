@@ -92,7 +92,7 @@ export const SectionList = () => {
   };
 
   useEffect(() => { 
-    if (!modules || !modules[moduleSlug]) {
+    if (!modules || !modules.by_slug?.[moduleSlug]) {
       setLoadingMessage("Cargando módulo...")
       dispatch(fetchModules())
       return;

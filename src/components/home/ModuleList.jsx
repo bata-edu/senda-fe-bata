@@ -1,6 +1,8 @@
 import React, { useEffect } from "react";
 import { motion } from "framer-motion";
-import { fetchModules, clearLevels } from "../../features/module/moduleSlice";
+import { fetchModules, 
+  // clearLevels 
+} from "../../features/module/moduleSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUserProgress, selectProgress } from "../../features/userProgress/userProgressSlice";
 import { useNavigate } from "react-router-dom";
@@ -71,7 +73,7 @@ export const ModuleList = () => {
   };
 
   if (!modules) return <LoadingPage message="Cargando módulos..." />;
-  const moduleList = Object.values(modules) 
+  const moduleList = modules.by_id; 
   if (!moduleList) return <LoadingPage message="Cargando módulos..." />;
   if (!progress) return <LoadingPage message="Cargando progreso..." />;
 
@@ -85,8 +87,8 @@ export const ModuleList = () => {
         <img src={Right} alt="Corchete derecho" className="h-10" />
       </div>
       <section className="w-full mx-auto max-w-4xl relative">
-        {Object.values(modules)?.map((module, index) => {
-          const moduleProgress = progress[module._id];
+        {moduleList?.map((module, index) => {
+          const moduleProgress = progress[module.id];
           const percentage = moduleProgress?.courseProgress.toFixed(0) || 0;
           const moduleColor = courseColors[module.name]?.primary;
           const transparentModuleColor = courseColors[module.name]?.secondary;

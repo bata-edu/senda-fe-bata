@@ -63,21 +63,21 @@ export const SectionPage = () => {
     const loadData = async () => {
       try {
         // Load modules if not loaded
-        if (!modules || !modules[moduleSlug]) {
+        if (!modules || !modules.by_slug?.[moduleSlug]) {
           console.log("Fetching modules")
           await dispatch(fetchModules()).unwrap()
           modulesLoaded.current = true
           return
         }
         // Load levels if not loaded
-        if (modules && modules[moduleSlug] && !modules[moduleSlug].levels && !levelsLoaded.current) {
+        if (modules && modules.by_slug?.[moduleSlug] && !modules.by_slug?.[moduleSlug].levels && !levelsLoaded.current) {
           console.log("Fetching levels")
           await dispatch(fetchLevels(moduleSlug)).unwrap()
           levelsLoaded.current = true
           return
         }
         // Load sections if not loaded
-        if (modules && modules[moduleSlug] && !modules[moduleSlug].levels[levelId].sections && !sectionsLoaded.current) {
+        if (modules && modules.by_slug?.[moduleSlug] && !modules.by_slug?.[moduleSlug].levels[levelId].sections && !sectionsLoaded.current) {
           console.log("Fetching sections")
           await dispatch(fetchSections(levelId)).unwrap()
           sectionsLoaded.current = true
@@ -86,14 +86,14 @@ export const SectionPage = () => {
         // Load exercises and classes if not loaded
         if (
           modules &&
-          modules[moduleSlug] &&
-          modules[moduleSlug].levels[levelId].sections[sectionId] &&
+          modules.by_slug?.[moduleSlug] &&
+          modules.by_slug?.[moduleSlug].levels[levelId].sections[sectionId] &&
           !sectionData &&
           !exercisesAndClassesLoaded.current
         ) {
           await dispatch(fetchExercisesAndClasses({levelId, sectionId})).unwrap()
           exercisesAndClassesLoaded.current = true
-          setSectionData(modules[moduleSlug].levels[levelId].sections[sectionId])
+          setSectionData(modules.by_slug?.[moduleSlug].levels[levelId].sections[sectionId])
           return
         }
         if (!progress) {

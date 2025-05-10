@@ -24,11 +24,11 @@ export const fetchModule = createAsyncThunk(
     try {
       const state = getState()
       // Check if this specific module is already loaded
-      if (state.modules.modules[moduleSlug]) {
+      if (state.modules.modules.by_slug?.[moduleSlug]) {
         return {
           moduleSlug,
-          module: state.modules.modules[moduleSlug],
-          moduleId: state.modules.modules[moduleSlug].id,
+          module: state.modules.modules.by_slug[moduleSlug],
+          moduleId: state.modules.modules.by_slug[moduleSlug].id,
         }
       }
 
@@ -37,7 +37,7 @@ export const fetchModule = createAsyncThunk(
 
       // Find the module ID for the given slug
       const modules = response.data
-      const moduleId = modules[moduleSlug]?.id
+      const moduleId = modules.by_slug[moduleSlug]?.id
 
       return { moduleSlug, modules, moduleId }
     } catch (error) {
@@ -52,11 +52,11 @@ export const fetchLevels = createAsyncThunk(
     try {
       const state = getState()
       // Check if levels for this module are already loaded
-      if (state.modules.modules[moduleSlug]?.levels) {
-        return { moduleSlug, levels: state.modules.modules[moduleSlug].levels }
+      if (state.modules.modules.by_slug?.[moduleSlug]?.levels) {
+        return { moduleSlug, levels: state.modules.modules.by_slug[moduleSlug].levels }
       }
 
-      const moduleId = state.modules.modules[moduleSlug]?.id
+      const moduleId = state.modules.modules.by_slug?.[moduleSlug]?.id
       if (!moduleId) {
         throw new Error("Module not found")
       }
@@ -64,7 +64,7 @@ export const fetchLevels = createAsyncThunk(
       const response = await apiClient.get(`${LEVEL_INFO_ENDPOINT}/${moduleId}`)
       return { moduleSlug, levels: response.data }
     } catch (error) {
-      return rejectWithValue(error.response.data)
+      return rejectWithValue(error)
     }
   },
 )
@@ -189,7 +189,7 @@ const moduleSlice = createSlice({
       .addCase(fetchLevels.fulfilled, (state, action) => {
         const { moduleSlug, levels } = action.payload
         state.currentModule = moduleSlug
-        state.modules[moduleSlug].levels = levels
+        state.modules.by_slug[moduleSlug].levels = levels
         state.loading = false
       })
       .addCase(fetchLevels.rejected, (state, action) => {
@@ -203,7 +203,7 @@ const moduleSlice = createSlice({
       .addCase(fetchSections.fulfilled, (state, action) => {
         const { levelId, data } = action.payload
         state.currentLevel = levelId
-        state.modules[state.currentModule].levels[levelId].sections = data
+        state.modules.by_slug[state.currentModule].levels[levelId].sections = data
         state.loading = false
       })
       .addCase(fetchSections.rejected, (state, action) => {
@@ -218,8 +218,8 @@ const moduleSlice = createSlice({
         const { sectionId, data } = action.payload
         const { exercises, classes } = data
         state.currentSection = sectionId
-        state.modules[state.currentModule].levels[state.currentLevel].sections[sectionId].exercises = exercises
-        state.modules[state.currentModule].levels[state.currentLevel].sections[sectionId].classes =   classes
+        state.modules.by_slug[state.currentModule].levels[state.currentLevel].sections[sectionId].exercises = exercises
+        state.modules.by_slug[state.currentModule].levels[state.currentLevel].sections[sectionId].classes =   classes
         state.loading = false
       })
       .addCase(fetchExercisesAndClasses.rejected, (state, action) => {
@@ -234,13 +234,13 @@ const moduleSlice = createSlice({
 export const selectModules = (state) => state.modules.modules
 export const selectModuleError = (state) => state.modules.error
 export const selectModuleLoading = (state) => state.modules.loading
-export const selectModule = (state, moduleSlug) => state.modules.modules[moduleSlug]
-export const selectModuleId = (state, moduleSlug) => state.modules.modules[moduleSlug]?.id
+export const selectModule = (state, moduleSlug) => state.modules.modules.by_slug?.[moduleSlug]
+export const selectModuleId = (state, moduleSlug) => state.modules.modules.by_slug?.[moduleSlug]?.id
 export const selectCurrentModuleId = (state) => state.modules.currentModuleId
-export const selectLevels = (state, moduleSlug) => state.modules.modules[moduleSlug]?.levels
+export const selectLevels = (state, moduleSlug) => state.modules.modules?.by_slug?.[moduleSlug]?.levels
 export const selectSection = (state, moduleSlug, levelId, sectionId) =>
-  state.modules.modules[moduleSlug]?.levels[levelId]?.sections[sectionId]
+  state.modules.modules.by_slug?.[moduleSlug]?.levels[levelId]?.sections[sectionId]
 export const selectExercise = (state, moduleSlug, exerciseId) =>
-  state.modules.modules[moduleSlug]?.exercises[exerciseId]
+  state.modules.modules.by_slug?.[moduleSlug]?.exercises[exerciseId]
 export const { clearLevels } = moduleSlice.actions
 export default moduleSlice.reducer
