@@ -31,19 +31,19 @@ export const fetchUserModuleProgress = createAsyncThunk(
   "userProgress/fetchUserModuleProgress",
   async ({ moduleId, moduleSlug }, { rejectWithValue, getState }) => {
     try {
-      // Check if module progress is already loaded
-      const state = getState()
+      const state = getState();
+      // If progress for this module is already in state, just return it (but still trigger the reducer)
       if (state.userProgress.progress && state.userProgress.progress[moduleSlug]) {
-        return { moduleId, moduleSlug, data: state.userProgress.progress[moduleSlug] }
+        return { moduleId, moduleSlug, data: state.userProgress.progress[moduleSlug] };
       }
-
-      const response = await apiClient.get(`${USER_PROGRESS_ENDPOINT}/${moduleId}`)
-      return { moduleId, moduleSlug, data: response.data }
+      // Otherwise, fetch from API
+      const response = await apiClient.get(`${USER_PROGRESS_ENDPOINT}/${moduleId}`);
+      return { moduleId, moduleSlug, data: response.data };
     } catch (error) {
-      return rejectWithValue(error.response.data)
+      return rejectWithValue(error.response?.data || error);
     }
-  },
-)
+  }
+);
 
 export const fetchUserSectionProgress = createAsyncThunk(
   "userProgress/fetchUserSectionProgress",
@@ -64,7 +64,7 @@ export const fetchUserSectionProgress = createAsyncThunk(
       const response = await apiClient.get(`${USER_PROGRESS_ENDPOINT}/${currentModule.id}/${sectionId}`)
       return { sectionId, progress: response.data }
     } catch (error) {
-      return rejectWithValue(error.response.data)
+      return rejectWithValue(error)
     }
   },
 )

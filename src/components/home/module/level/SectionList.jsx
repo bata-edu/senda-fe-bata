@@ -18,6 +18,7 @@ export const SectionList = () => {
   const { progress } = useSelector((state) => state.userProgress || {});
   const levels = useSelector((state) => selectLevels(state, moduleSlug));
   const [level, setLevel] = useState(null);
+  console.log(level)
   const [currentSectionIndex, setCurrentSectionIndex] = useState(null);
   const [loading, setLoading] = useState(true);
   const [loadingMessage, setLoadingMessage] = useState("Cargando nivel...");
@@ -153,7 +154,7 @@ export const SectionList = () => {
               Volver
             </span>
           </button>
-          <GuideViewer guide={level?.guide} />
+          <GuideViewer guide={level?.guide} icon/>
         </div>
         <div className="text-white font-mono text-2xl">
           Nivel {level?.order}: {level?.name}

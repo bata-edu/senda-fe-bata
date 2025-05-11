@@ -91,39 +91,43 @@ export const LevelList = () => {
   };
 
   useEffect(() => {
-    if (!moduleSlug) return;    
+    if (!moduleSlug) return;
     const loadInitialData = async () => {
       try {
+        setIsInitialLoad(true);
         await dispatch(fetchModule(moduleSlug)).unwrap();
+        await dispatch(fetchUserProgress()).unwrap();
         await dispatch(fetchLevels(moduleSlug)).unwrap();
-        if (!progress) {
-          await dispatch(fetchUserProgress()).unwrap();
+
+        if (moduleId) {
+          await dispatch(fetchUserModuleProgress({ moduleId, moduleSlug })).unwrap();
         }
-        if (progress && !progress[moduleSlug] && moduleId) {
-          await dispatch(fetchUserModuleProgress({ moduleId, moduleSlug })).unwrap()
-        }
+
         setIsInitialLoad(false);
       } catch (error) {
         console.error("Error loading initial data:", error);
         setIsInitialLoad(false);
       }
     };
-    
+    console.log("loadInitialData")
     loadInitialData();
-  }, [moduleSlug, dispatch, progress, moduleId]);
+    // REMOVE the cleanup function here!
+  }, [moduleSlug, dispatch, moduleId]);
 
   // This effect updates the current progress when data changes
   useEffect(() => {
-    if (!moduleSlug || !levels || !progress || !progress[moduleSlug]) return;
-    
+    if (!moduleSlug || !levels || !progress || !progress[moduleSlug]) {
+      return;
+    }
+
     try {
       const moduleProgress = progress[moduleSlug];
       const currentLevel = levels[moduleProgress.current_level_id];
-      
+
       if (currentLevel) {
         const currentLevelIndex = currentLevel.order - 1;
         const levelProgress = 0;
-        
+
         setCurrentProgress({
           currentLevelIndex,
           levelProgress
@@ -133,12 +137,6 @@ export const LevelList = () => {
       console.error("Error setting progress:", error);
     }
   }, [moduleSlug, levels, progress]);
-
-  // Reset state when module changes
-  useEffect(() => {
-    setIsInitialLoad(true);
-    setCurrentProgress(null);
-  }, [moduleSlug]);
 
   const handleLevelClick = (levelId) => {
     navigate(`/learn/modules/${moduleSlug}/levels/${levelId}`);
@@ -162,9 +160,9 @@ export const LevelList = () => {
   }
 
   // Show loading state if we have levels but no progress yet
-  // if (!currentProgress?) {
-  //   return <LoadingPage message={"Cargando progreso..."} />;
-  // }
+  if (!currentProgress) {
+    return <LoadingPage message={"Cargando progreso..."} />;
+  }
 
   return (
     <div className="w-full max-w-5xl px-4 mx-auto">
