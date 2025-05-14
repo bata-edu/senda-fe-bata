@@ -103,7 +103,7 @@ export const FillBlank = ({
         </h2>
       </div>
       <div className="w-full font-mono flex justify-center">
-        <div className="inline-flex flex-wrap items-center justify-center w-1/2 whitespace-pre-wrap p-4">
+        <div className="inline-flex flex-wrap items-center justify-center w-fit whitespace-pre-wrap p-4">
           {renderContent()}
         </div>
       </div>

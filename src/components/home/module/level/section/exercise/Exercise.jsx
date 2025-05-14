@@ -28,17 +28,7 @@ const Exercise = ({ content, advance }) => {
   // Reset state when content changes
   useEffect(() => {
     if (!content) return
-  
-    // Use template or content.answers to infer what the initial selectedOption should be
-    let initialSelection
-    if (content.template === 1 || (content.template === 2 && content.ismultiple_answers)) {
-      // drag and drop or multiple choice with multiple answers
-      initialSelection = []
-    } else {
-      initialSelection = ""
-    }
-  
-    setSelectedOption(initialSelection)
+    setSelectedOption([])
     setIsAnswered(false)
     setFeedbackState(null)
     setIsSubmitting(false)
@@ -62,26 +52,8 @@ const Exercise = ({ content, advance }) => {
 
   const checkCorrectness = () => {
     const answers = content.answers || []
-
-    if (Array.isArray(selectedOption)) {
-      // Check if arrays have same length
-      if (selectedOption.length !== answers.length) return false
-
-      if (content.template === 1 || content.template === 2) {
-        // drag and drop or multiple choice with ordered answers
-        // Compare each answer with the corresponding answer in the answers array
-        return selectedOption.every((option, index) => option === answers[index])
-      } else if (content.template === 3) {
-        // fill blank
-        // For fill blank, the order might not matter, just check if all answers are included
-        return selectedOption.every((option) => answers.includes(option))
-      }
-
-      return false
-    } else {
-      // Single answer case
-      return answers.includes(selectedOption)
-    }
+    if (selectedOption.length !== answers.length) return false;
+    return selectedOption.every((option, index) => option === answers[index])
   }
 
   const handleSubmit = () => {
