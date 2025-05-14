@@ -58,63 +58,39 @@ export const FillBlank = ({
   const renderContent = () => {
     if (!exercise?.content) return null;
 
-    // Handle the case where there's no explicit placeholder but we still need an input
-    if (placeholderCount === 0 || !exercise.content.match(placeholderPattern)) {
-      // Fallback for the original single placeholder case
-      const contentParts = exercise.content.includes("______")
-        ? exercise.content.split("______")
-        : [exercise.content, ""];
-
-      return (
-        <div className="flex items-center w-full justify-center gap-2">
-          <span>{contentParts[0]}</span>
-          <input
-            type="text"
-            disabled={locked}
-            className={`
-              border-2 rounded-md px-3 py-1 max-w-[200px]
-              ${locked ? "pointer-events-none opacity-50" : "border-[#E4E7EC]"}
-            `}
-            value={answers[0]}
-            onChange={(e) => handleAnswerChange(0, e.target.value)}
-            placeholder=""
-          />
-          <span>{contentParts[1]}</span>
-        </div>
-      );
-    }
-
-    // Split content by placeholder pattern
-    const contentParts = exercise.content.split(placeholderPattern);
-
+    // Dividir el contenido por líneas primero
+    const lines = exercise.content.split("\n");
     return (
       <>
-        {contentParts.map((part, index) => (
-          <React.Fragment key={index}>
-            {/* Display text content safely */}
-            <span className="inline whitespace-pre-wrap">{part}</span>
-
-            {/* Add input field after each part except the last one */}
-            {index < contentParts.length - 1 && (
-              <input
-                type="text"
-                disabled={locked}
-                className={`
-                  mx-1 appearance-none rounded-md px-2 py-1
-                  border-2 min-w-[80px] max-w-[150px] inline-block
-                  ${
-                    locked
-                      ? "pointer-events-none opacity-50"
-                      : "border-[#E4E7EC]"
-                  }
-                `}
-                value={answers[index]}
-                onChange={(e) => handleAnswerChange(index, e.target.value)}
-                placeholder=""
-              />
-            )}
-          </React.Fragment>
-        ))}
+        {lines.map((line, lineIdx) => {
+          // Procesar cada línea por separado para los placeholders
+          const parts = line.split(placeholderPattern);
+          return (
+            <div key={lineIdx} className="inline-flex flex-wrap my-0.5 items-center whitespace-pre-wrap w-full">
+              {parts.map((part, index) => (
+                <React.Fragment key={index}>
+                  <span className="inline whitespace-pre-wrap">{part}</span>
+                  {index < parts.length - 1 && (
+                    <input
+                      type="text"
+                      disabled={locked}
+                      className={`mx-1 appearance-none rounded-md px-2 py-1 border-2 min-w-[80px] max-w-[150px] inline-block ${locked ? "pointer-events-none opacity-50" : "border-[#E4E7EC]"}`}
+                      value={answers[
+                        // Calcular el índice global del input considerando líneas anteriores
+                        lines.slice(0, lineIdx).reduce((acc, l) => acc + (l.match(placeholderPattern)?.length || 0), 0) + index
+                      ]}
+                      onChange={e => handleAnswerChange(
+                        lines.slice(0, lineIdx).reduce((acc, l) => acc + (l.match(placeholderPattern)?.length || 0), 0) + index,
+                        e.target.value
+                      )}
+                      placeholder=""
+                    />
+                  )}
+                </React.Fragment>
+              ))}
+            </div>
+          );
+        })}
       </>
     );
   };
@@ -126,8 +102,10 @@ export const FillBlank = ({
           {exercise?.prompt}
         </h2>
       </div>
-      <div className="flex p-4 flex-col items-center justify-center font-mono">
-        {renderContent()}
+      <div className="w-full font-mono flex justify-center">
+        <div className="inline-flex flex-wrap items-center justify-center w-1/2 whitespace-pre-wrap p-4">
+          {renderContent()}
+        </div>
       </div>
     </div>
   );
