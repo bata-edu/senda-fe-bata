@@ -5,7 +5,7 @@ import { useDragAndDrop } from "../../../../../../../utils/hooks/useDragAndDrop"
 const DragNDrop = ({ exercise, setSelectedOption, colors }) => {
   const [droppedAnswers, setDroppedAnswers] = useState({})
   const { isDragging, handleDragging } = useDragAndDrop()
-  const isMultipleAnswers = exercise.isMultipleAnswers
+  const ismultiple_answers = exercise.ismultiple_answers
   
   // Find all placeholder patterns (two or more underscores)
   const placeholderPattern = /_{2,}/g
@@ -90,77 +90,93 @@ const DragNDrop = ({ exercise, setSelectedOption, colors }) => {
     // Split content by placeholder pattern
     const contentParts = exercise.content.split(placeholderPattern)
     return (
-<>
-{contentParts.map((part, index) => {
-  // Lista de tags que no deben renderizarse como HTML
-  const nonRenderableTags = ['title', 'meta', 'link', 'script', 'style'];
+      <>
+      {contentParts.map((part, index) => {
+        // Lista de tags que no deben renderizarse como HTML
+        const nonRenderableTags = ['title', 'meta', 'link', 'script', 'style'];
 
-  const isNonRenderableTag = nonRenderableTags.some(tag =>
-    part.trim().toLowerCase().includes(`<${tag}`) || 
-    part.trim().toLowerCase().includes(`</${tag}>`)
-  );
+        const isNonRenderableTag = nonRenderableTags.some(tag =>
+          part.trim().toLowerCase().includes(`<${tag}`) || 
+          part.trim().toLowerCase().includes(`</${tag}>`)
+        );
 
-  // Reemplazar etiquetas para que se rendericen como texto sin que React escape su contenido
-  const escapeHtml = (str) => {
-    return str
-      .replace(/</g, "‹")  // Usamos ‹ y › en lugar de &lt; y &gt;
-      .replace(/>/g, "›");
-  };
+        // Reemplazar etiquetas para que se rendericen como texto sin que React escape su contenido
+        const escapeHtml = (str) => {
+          return str
+            .replace(/</g, "‹")  // Usamos ‹ y › en lugar de &lt; y &gt;
+            .replace(/>/g, "›");
+        };
 
-  return (
-    <React.Fragment key={index}>
-      <div
-        className="inline whitespace-pre-wrap"
-        style={{
-          margin: 0,
-          padding: 0,
-          display: 'inline',
-          whiteSpace: 'pre-wrap',
-          wordWrap: 'break-word',
-        }}
-      >
-        {isNonRenderableTag ? part : escapeHtml(part)}
-      </div>
+        return (
+          <React.Fragment key={index}>
+            <div
+              className="inline whitespace-pre-wrap"
+              style={{
+                margin: 0,
+                padding: 0,
+                display: 'inline',
+                whiteSpace: 'pre-wrap',
+                wordWrap: 'break-word',
+              }}
+            >
+              {isNonRenderableTag ? part : escapeHtml(part)}
+            </div>
 
-      {index < contentParts.length - 1 && (
-        <span
-          className={`
-            relative mx-1 px-2 py-1 rounded-md min-w-[60px] inline-block
-            ${isDragging ? 'bg-[#4558C8]/10' : droppedAnswers[index] ? 'bg-[#F0F4FF]' : 'bg-gray-100'}
-            ${droppedAnswers[index] ? 'border border-[#4558C8]' : 'border border-gray-300'}
-          `}
-          onDrop={(e) => handleDrop(e, index)}
-          onDragOver={handleDragOver}
-        >
-          {droppedAnswers[index] ? (
-            <>
-              {droppedAnswers[index]}
-              <button
-                className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
-                onClick={() => handleRemoveAnswer(index)}
+            {index < contentParts.length - 1 && (
+              <span
+                className={`
+                  relative mx-1 px-2 py-1 rounded-md min-w-[60px] inline-block
+                  ${isDragging ? 'bg-[#4558C8]/10 animate-pulse' : droppedAnswers[index] ? 'bg-[#F0F4FF]' : 'bg-gray-100'}
+                  ${droppedAnswers[index] ? 'border border-[#4558C8]' : 'border border-gray-300'}
+                `}
+                onDrop={(e) => handleDrop(e, index)}
+                onDragOver={handleDragOver}
               >
-                ×
-              </button>
-            </>
-          ) : '_____'}
-        </span>
-      )}
-    </React.Fragment>
-  );
-})}
-
-
-</>
+                {droppedAnswers[index] ? (
+                  <>
+                    {droppedAnswers[index]}
+                    <button
+                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
+                      onClick={() => handleRemoveAnswer(index)}
+                    >
+                      ×
+                    </button>
+                  </>
+                ) : '_____'}
+              </span>
+            )}
+          </React.Fragment>
+        );
+      })}
+      </>
     )
   }
   
   // Get all dropped answers
   const usedOptions = Object.values(droppedAnswers).filter(Boolean)
   
-  // Get options that haven't been dropped yet or all options if isMultipleAnswers is true
-  const availableOptions = isMultipleAnswers 
-    ? exercise?.options 
-    : exercise?.options.filter(option => !usedOptions.includes(option))
+  // Get options that haven't been dropped yet or all options if ismultiple_answers is true
+  let availableOptions
+  if (ismultiple_answers) {
+    availableOptions = exercise?.options
+  } else {
+    // Build a count map for used options
+    const usedCount = {}
+    usedOptions.forEach(option => {
+      usedCount[option] = (usedCount[option] || 0) + 1
+    })
+    // Build available options by decrementing used count for each occurrence
+    const optionsCopy = [...exercise?.options]
+    availableOptions = []
+    for (let i = 0; i < optionsCopy.length; i++) {
+      const option = optionsCopy[i]
+      if (usedCount[option]) {
+        usedCount[option]--
+        continue
+      }
+      availableOptions.push(option)
+    }
+  }
   
   return (
     <div className="border-[#F4F5F7] border-8 rounded-lg w-full max-w-4xl mx-auto">
@@ -174,7 +190,6 @@ const DragNDrop = ({ exercise, setSelectedOption, colors }) => {
         <div
           className={`
             min-h-[100px] max-h-96 overflow-y-auto flex items-center justify-center rounded-lg
-            ${isDragging ? "border-2 border-dashed border-[#4558C8] bg-[#4558C8]/5" : "border-2 border-[#F4F5F7]"}
           `}
         >
           <div className="font-mono">

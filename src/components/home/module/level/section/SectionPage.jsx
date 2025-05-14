@@ -54,8 +54,9 @@ export const SectionPage = () => {
   const modulesLoaded = useRef(false)
   const levelsLoaded = useRef(false)
   const sectionsLoaded = useRef(false)
-  const progressLoaded = useRef(false)
   const exercisesAndClassesLoaded = useRef(false)
+  const progressLoaded = useRef(false)
+  const generalProgressLoaded = useRef(false)
 
   // Load all data needed (modules, sections, progress)
   useEffect(() => {
@@ -77,7 +78,9 @@ export const SectionPage = () => {
           return
         }
         // Load sections if not loaded
-        if (modules && modules.by_slug?.[moduleSlug] && !modules.by_slug?.[moduleSlug].levels[levelId].sections && !sectionsLoaded.current) {
+        if (
+          modules && modules.by_slug?.[moduleSlug] && 
+          !modules.by_slug?.[moduleSlug].levels[levelId].sections && !sectionsLoaded.current) {
           console.log("Fetching sections")
           await dispatch(fetchSections(levelId)).unwrap()
           sectionsLoaded.current = true
@@ -85,23 +88,22 @@ export const SectionPage = () => {
         }
         // Load exercises and classes if not loaded
         if (
-          modules &&
-          modules.by_slug?.[moduleSlug] &&
           modules.by_slug?.[moduleSlug].levels[levelId].sections[sectionId] &&
-          !sectionData &&
           !exercisesAndClassesLoaded.current
         ) {
+          console.log("Fetching exercises and classes")
           await dispatch(fetchExercisesAndClasses({levelId, sectionId})).unwrap()
-          exercisesAndClassesLoaded.current = true
           setSectionData(modules.by_slug?.[moduleSlug].levels[levelId].sections[sectionId])
+          exercisesAndClassesLoaded.current = true
           return
         }
-        if (!progress) {
+        if (!progress && !generalProgressLoaded.current) {
+          generalProgressLoaded.current = true
           console.log("Fetching general progress")
-          dispatch(fetchUserProgress())
+          await dispatch(fetchUserProgress()).unwrap();
           return;
         }
-        if (!progress || !currentSection || !currentSection.progress ) {
+        if (progress && !currentSection && !currentSection?.progress ) {
           console.log("Fetching section progress")
           await dispatch(
             fetchUserSectionProgress({

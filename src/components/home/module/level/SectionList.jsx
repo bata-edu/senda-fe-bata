@@ -18,7 +18,6 @@ export const SectionList = () => {
   const { progress } = useSelector((state) => state.userProgress || {});
   const levels = useSelector((state) => selectLevels(state, moduleSlug));
   const [level, setLevel] = useState(null);
-  console.log(level)
   const [currentSectionIndex, setCurrentSectionIndex] = useState(null);
   const [loading, setLoading] = useState(true);
   const [loadingMessage, setLoadingMessage] = useState("Cargando nivel...");

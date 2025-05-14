@@ -19,7 +19,7 @@ const getTemplate = (templateNum) => {
 }
 
 const Exercise = ({ content, advance }) => {
-  const [selectedOption, setSelectedOption] = useState(content?.isMultipleAnswers ? [] : "")
+  const [selectedOption, setSelectedOption] = useState(content?.ismultiple_answers ? [] : "")
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isAnswered, setIsAnswered] = useState(false)
   const [feedbackState, setFeedbackState] = useState(null) // null, "incomplete", "correct", or "incorrect"
@@ -31,7 +31,7 @@ const Exercise = ({ content, advance }) => {
   
     // Use template or content.answers to infer what the initial selectedOption should be
     let initialSelection
-    if (content.template === 1 || (content.template === 2 && content.isMultipleAnswers)) {
+    if (content.template === 1 || (content.template === 2 && content.ismultiple_answers)) {
       // drag and drop or multiple choice with multiple answers
       initialSelection = []
     } else {
@@ -49,7 +49,7 @@ const Exercise = ({ content, advance }) => {
     // For multiple answers (arrays)
     if (Array.isArray(selectedOption)) {
       // For drag and drop with multiple placeholders or multiple choice with multiple answers
-      const expectedAnswerCount = content.isMultipleAnswers
+      const expectedAnswerCount = content.ismultiple_answers
         ? content.answers?.length
         : (content.content?.match(/_{2,}/g) || []).length || 1
 

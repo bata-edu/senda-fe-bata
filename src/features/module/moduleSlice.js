@@ -112,7 +112,6 @@ export const fetchExercisesAndClasses = createAsyncThunk(
       }
 
       const response = await apiClient.get(`${SECTION_ENDPOINT}/${levelId}/${sectionId}`)
-      console.log(response.data)
       return { sectionId, data: response.data }
     } catch (error) {
       return rejectWithValue(error.response.data)

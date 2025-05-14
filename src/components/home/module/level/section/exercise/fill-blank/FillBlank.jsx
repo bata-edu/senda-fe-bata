@@ -44,7 +44,7 @@ export const FillBlank = ({
       1
     );
 
-    setAnswers(Array(newPlaceholderCount).fill(""));
+    setAnswers(Array(newPlaceholderCount));
   }, [exercise?.content]);
 
   const handleAnswerChange = (index, value) => {
@@ -75,9 +75,9 @@ export const FillBlank = ({
               border-2 rounded-md px-3 py-1 max-w-[200px]
               ${locked ? "pointer-events-none opacity-50" : "border-[#E4E7EC]"}
             `}
-            value={answers[0] || ""}
+            value={answers[0]}
             onChange={(e) => handleAnswerChange(0, e.target.value)}
-            placeholder="Tu respuesta"
+            placeholder=""
           />
           <span>{contentParts[1]}</span>
         </div>
@@ -108,9 +108,9 @@ export const FillBlank = ({
                       : "border-[#E4E7EC]"
                   }
                 `}
-                value={answers[index] || ""}
+                value={answers[index]}
                 onChange={(e) => handleAnswerChange(index, e.target.value)}
-                placeholder="..."
+                placeholder=""
               />
             )}
           </React.Fragment>
