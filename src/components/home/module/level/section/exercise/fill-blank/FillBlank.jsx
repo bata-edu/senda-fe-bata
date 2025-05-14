@@ -9,19 +9,7 @@ export const FillBlank = ({
   locked,
 }) => {
   // Initialize answers state properly
-  const [answers, setAnswers] = useState(() => {
-    // If selectedOption is an array and has values, use it
-    if (Array.isArray(selectedOption) && selectedOption.length > 0) {
-      return selectedOption;
-    }
-
-    // Otherwise, create an empty array with the right number of slots
-    const placeholderPattern = /_{2,}/g;
-    const placeholders = exercise?.content?.match(placeholderPattern) || [];
-    const placeholderCount = Math.max(placeholders.length, 1); // At least 1 placeholder
-
-    return Array(placeholderCount).fill("");
-  });
+    const [answers, setAnswers] = useState([]);
 
   // Find all placeholder patterns (two or more underscores)
   const placeholderPattern = /_{2,}/g;
